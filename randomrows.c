@@ -9,10 +9,11 @@
 int n;
 int k;
 int kc;
+double epsilon;
 
-//Matrice che ogni riga rappresenta un punto e ogni colonna un centroide
-//L'elemento m[i][j] rappresenta la distanza del punto i dal centroide j
-MATRIX distancesFromCentroids;
+//Matrice di due colonne che per ogni indice i che rappresenta il punto corrispondente
+//memorizza in [i][0] il centroide corrispondendente e in [i][1] la distanza dal centroide
+MATRIX centroideDelPunto;
 
 //Punti del dataset da sosituire con quelli veri
 VECTOR ds;
@@ -147,6 +148,40 @@ void aggiorna_centroidi(){
 
 		dealloc_matrix(tmp);
 		free(c);
+}
+
+//calcola la somma dei quadrati delle distanze dei punti dai rispettivi centroidi
+
+double sumOfDistances(){
+
+		int i;
+		double sum=0;
+
+		for(i=0;i<n;i++){    // per ogni punto i, aggiunge distanza(i,q(i))^2
+			sum+=centroideDelPunto[i*2+1]*centroideDelPunto[i*2+1];
+		}
+
+		return sum;
+
+}
+
+//calcola i centroidi partendo dall'inizializzazione ed aggiornando i centroidi
+//fino a quando la somma delle distanze dai centroidi non è inferiore ad epsilon
+
+void calculate_centroids(){
+
+		generate_centroids(n,k);
+  	centroideDelPunto = alloc_matrix(n,2)
+  	computeDistancesFromCentroids();
+  	double sommadistanze=sumOfDistances();
+
+  	while(sommadistanze>epsilon) {
+
+				aggiorna_centroidi();
+    		computeDistancesFromCentroids();
+    		sommadist=sumOfDistances();
+  	}
+
 }
 
 
