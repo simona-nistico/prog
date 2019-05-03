@@ -28,6 +28,9 @@ MATRIX centroids;
 
 params *input;
 
+
+//------------------------------------METODI------------------------------------
+
 /**La funzione seguente seleziona k punti da usare come centroidi iniziali
  * n =  numero di punti del data set
  * d = numero di dimensioni del data/query set
@@ -42,38 +45,44 @@ void generate_centroids(int n, int d, int k){
 	centroids = alloc_matrix(k,d);
 
   //rand() function returns an integer value between 0 and RAND_MAX(32767)
-	srand(time(NULL));
-	old_number = rand()%(n/k);  //divido n in k pezzi e per ognuno devo avere un numero casuale
-	printf("%d\n",old_number);
+	// TODO togliere per avere numeri sempre casueli:  srand(time(NULL));
 
-}
-/*
+	/**IDEA:
+	  * divido gli n punti in k intervalli e ottengo un range di valori;
+		* scelgo un numero casuale tra 0 e range e prendo il punto corrispondente;
+		* nel caso peggiore viene scelto sempre il max del range e i punti restano sempre entro n;
+		* i restanti punti li divido in k-1 intervalli ottenendo un nuovo range;
+		* cosi facendo ottengo dei numeri casuali sempre diversi che coprono l'intervallo da  a n;
+		*/
+
+	old_number = rand()%(n/k);
+	printf("Punto 0 scelto: %d\n",old_number);
+
 	// Inseriamo il primo centroide nella matrice lungo la riga 0
-	for(j=0;j<d;j++){
-		centroids[i*d+j] = input.ds[old_number*d+i];
-	}
-///QUI
+	for(j=0;j<d;j++)
+		centroids[j] = input->ds[old_number*d+j];
+
 	int range;
 	for(i=1;i<k;i++){
-
-		range = (n-old_number)/(k-i);
-		printf("Range: %d  ",range );
-  	number=old_number+rand()%range+1;
-		printf("%d\n",numbers[i]);
+		range = (n-old_number)/(k-i);	//trovo il nuovo range tra cui scegliere i valori casuali
+  	number = old_number+rand()%range+1; //seleziono un numero casuale nel range
+		printf("Punto %d scelto: %d\n",i, number);
 
 		// Inseriamo il centroide nella matrice
-		for(j=0;j<d;j++){
-			centroids[i*d+j] = ds[number*d+i];
-		}
+		for(j=0;j<d;j++)
+			centroids[i*d+j] = input->ds[number*d+j];
 
 		old_number = number;
+ 	}//for
 
- 	}
-  /*
+	print_matrix(k, d, centroids);
+}//generate_centroids
 
-//Mettere nella matrice centroids i punti corrispondenti agli indici trovati
 
-}
+
+
+
+/*
 
 // la matrice distances deve essere creata una volta sola visto che il metodo seguente deve stare dentro un ciclo
 void computeDistancesFromCentroids(){
@@ -144,8 +153,10 @@ void testIndex(params* input2){
     Mettere qui tutto quello che serve per testare quanto scritto
 
   */
+	//Collego l'input passato dal main con la struttura usata in questo codice
   input = input2;
 
-  //generate_centroids(input.n, input.d, input.k);
-  generate_centroids(100, 218, 10);
+
+  //generate_centroids(input->n, input->d, input->k);
+  generate_centroids(100, 128, 10);	//Test
 }
