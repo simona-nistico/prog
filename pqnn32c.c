@@ -45,43 +45,13 @@
 #include <string.h>
 #include <time.h>
 #include <xmmintrin.h>
-#include "datatypes.h"  //Header che raccoglie struct, dati e tipi comuni
+
+#include "datatypes.h" 	//Header che raccoglie struct, dati e tipi comuni
+#include "testindex.c"	//file dove implemento le funzioni prima in c e poi assembly
+
 
 struct params;
 
-/*
- *
- *	Le funzioni sono state scritte assumento che le matrici siano memorizzate
- * 	mediante un array (float*), in modo da occupare un unico blocco
- * 	di memoria, ma a scelta del candidato possono essere
- * 	memorizzate mediante array di array (float**).
- *
- * 	In entrambi i casi il candidato dovrà inoltre scegliere se memorizzare le
- * 	matrici per righe (row-major order) o per colonne (column major-order).
- *
- * 	L'assunzione corrente è che le matrici siano in row-major order.
- *
- */
-
-
-void* get_block(int size, int elements) {
-	return _mm_malloc(elements*size,16); //32 nel caso pqnn64
-}
-
-
-void free_block(void* p) {
-	_mm_free(p);
-}
-
-
-MATRIX alloc_matrix(int rows, int cols) {
-	return (MATRIX) get_block(sizeof(double),rows*cols);
-}
-
-
-void dealloc_matrix(MATRIX mat) {
-	free_block(mat);
-}
 
 /*
  *
@@ -129,15 +99,7 @@ MATRIX load_data(char* filename, int *n, int *d) {
 	*d = cols;
 
 //----------Stampa tutti i punti-----------
-/*
-  printf("Numero punti: %d\tDimensione di ogni punto: %d\n", rows, cols);
-  for (i = 0; i < rows; i++) {
-    printf("Punto n %d:\t", i);
-    for (int j = 0; j < cols; j++)
-      printf("%18.2f\t", data[i*cols+j] );
-    printf("\n");
-  }
-*/
+	//print_matrix(rows, cols, data);
 
 	return data;
 }
@@ -161,9 +123,6 @@ void save_ANN(char* filename, int* ANN, int nq, int knn) {
 
 extern void pqnn32_index(params* input);
 extern int* pqnn32_search(params* input);
-
-extern void testIndex(params* input);
-
 
 /*
  *	pqnn_index

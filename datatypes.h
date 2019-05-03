@@ -1,5 +1,12 @@
-#define	MATRIX		double*
-#define	VECTOR		double*
+#ifndef datatypes
+#define datatypes
+//Siccome pqnn e testindex usano questo file, senza queste righe, l'header viene
+//definito ppiù volte
+
+#include <xmmintrin.h>	//Usato dalle 4 funzioni sotto per gestire la memoria
+
+#define	MATRIX	double*
+#define	VECTOR	double*
 
 
 typedef struct {
@@ -34,3 +41,53 @@ typedef struct {
 	// ...
 	//
 } params;
+
+
+/*
+ *
+ *	Le funzioni sono state scritte assumento che le matrici siano memorizzate
+ * 	mediante un array (float*), in modo da occupare un unico blocco
+ * 	di memoria, ma a scelta del candidato possono essere
+ * 	memorizzate mediante array di array (float**).
+ *
+ * 	In entrambi i casi il candidato dovrà inoltre scegliere se memorizzare le
+ * 	matrici per righe (row-major order) o per colonne (column major-order).
+ *
+ * 	L'assunzione corrente è che le matrici siano in row-major order.
+ *
+ */
+
+
+void* get_block(int size, int elements) {
+	return _mm_malloc(elements*size,16); //32 nel caso pqnn64
+}
+
+
+void free_block(void* p) {
+	_mm_free(p);
+}
+
+
+MATRIX alloc_matrix(int rows, int cols) {
+	return (MATRIX) get_block(sizeof(double),rows*cols);
+}
+
+
+void dealloc_matrix(MATRIX mat) {
+	free_block(mat);
+}
+
+//----------Stampa tutti i punti-----------
+void print_matrix(int rows, int cols, MATRIX data){
+	int i, j;
+  printf("Numero punti: %d\tDimensione di ogni punto: %d\n", rows, cols);
+  for (i = 0; i < rows; i++) {
+    printf("Punto n %d:\t", i);
+    for (int j = 0; j < cols; j++)
+      printf("%18.2f\t", data[i*cols+j] );
+    printf("\n");
+	}
+}
+
+
+#endif
