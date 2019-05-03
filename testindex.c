@@ -76,31 +76,37 @@ void generate_centroids(int n, int d, int k){
  	}//for
 
 	print_matrix(k, d, centroids);
+
+	//TESTATO  	--> 	OK
 }//generate_centroids
 
 
 
 
 
-/*
+
 
 // la matrice distances deve essere creata una volta sola visto che il metodo seguente deve stare dentro un ciclo
-void computeDistancesFromCentroids(){
+void compute_distance_from_centroids(int n, int d, int k){
 
-	VECTOR punto = alloc_matrix(1,k);	// Alloco il vettore che conterrà di volta in volta il punto
-	double minDist,distanza;
-	int minCentr;
-	int i,j,k;
+	VECTOR punto = alloc_matrix(1,d);	// Alloco il vettore che conterrà di volta in volta il punto
+	double distanza;
+	double minDist; //Distanza dal minimo centroide
+	int minCentr;	//Centroide a minima distanza
+	int i,j;
 
-	for(i=0;i<n;i++){
+	for(i=0;i<n;i++){	//per ogni punto del dataset devo calcolare la distanza dal primo centroide
 
-		for(k=0;k<d;k++){
-			punto[k] = ds[d*i+k];	// Sto supponendo che il dataset sia memorizzato per righe
-		}
+		for(j=0;j<d;j++)	//copio il punto dal dataset nel vettore punto
+			punto[j] = input->ds[d*i+j];	// Sto supponendo che il dataset sia memorizzato per righe
 
-		minDist = distance(punto, centroids[0]);
+
+		//Inizializzo con il primo punto e con la distanza da esso
+//		minDist = distance(punto, centroids[0]);
 		minCentr = 0;
-
+}
+}
+/*
 		for(j=1;j<kc;j++){ //Verificare la sintassi, l'obiettivo è passare l'indirizzo di partenza
 					//del punto i-esimo
 input.k
@@ -159,4 +165,7 @@ void testIndex(params* input2){
 
   //generate_centroids(input->n, input->d, input->k);
   generate_centroids(100, 128, 10);	//Test
+
+	//compute_distance_from_centroids(input->n, input->d, input->k);
+	compute_distance_from_centroids(100, 128, 10);	//Test
 }
