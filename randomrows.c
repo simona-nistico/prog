@@ -123,6 +123,33 @@ double distance(VECTOR puntoX, VECTOR puntoY){
 
 //Ripetere finchè la distanza tra il centroide di prima e quello nuovo non è inferiore ad epsilon
 
+
+// Funzione che calcola il nuovo centroide facendo la media geometrica dei punti
+void aggiorna_centroidi(){
+		// Creiamo una matrice che ci consenta di effettuare l'aggiornamento dei centroidi
+		MATRIX tmp = alloc_matrix(k,d);
+		VECTOR c = VECTOR malloc(k,sizeof(double));
+		int i,j,centroide;
+
+		for(i=0;i<n;i++){
+			centroide = centroideDelPunto[i][0];
+			c[centroide]++;
+			for(j=0;j<d;j++){
+				tmp[centroide*d+j] += ds[i*d+j];
+			}
+		}
+
+		for(i=0;i<k;i++){
+			for(j=0;j<d;j++){
+				centroids[i*d+j] = tmp[i*d+j] / c[i];
+			}
+		}
+
+		dealloc_matrix(tmp);
+		free(c);
+}
+
+
 int main(){
 
   generate(100,9);
