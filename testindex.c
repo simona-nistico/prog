@@ -15,6 +15,7 @@ MATRIX distances_from_centroids; //TODO Verificare se serve questa struttura
 //Per ogni punto (riga) viene indicato il centroide più vicino e la distanza da stesso
 //centroid_of_point[i][0] = centroide a minima distanza
 //centroid_of_point[i][1] = distanza dal centroide
+//Corrisponde alla funzione q(x) := dato il punto, restituisce l'indice del suo centroide
 MATRIX centroid_of_point;
 
 
@@ -168,6 +169,83 @@ void points_of_centroid(int n, int d, int k){
 
 
 
+/** La funzione seguente alcola il nuovo centroide facendo la media geometrica dei punti
+	* Per ogni punto del dataset, fa la media (componente per componente)
+	* di tutti i punti che appartengono alla stessa cella
+	* COSTO: n*d+k*d
+  * n =  numero di punti del data set
+  * d = numero di dimensioni del data/query set
+  * k =  numero di centroidi di ogni sotto-quantizzatore
+  * TODO: parallelizzare la somma in assembly
+  */
+void update_centroids(int n, int d, int k){
+		// Matrice temporanea per memorizzare i nuovi centroidi
+		MATRIX tmp = alloc_matrix(k,d);
+
+		//Vettore che, per ogni centroide, conta quanti punti appartengono alla sua cella
+		VECTOR cont = malloc(k*sizeof(double));
+
+		int centroide; //Centroide a cui appartiene il punto corrente
+
+		for(int i=0;i<n;i++){ //per ogni punto del dataset
+			centroide = centroid_of_point[2*i]; //prendo il centroide di appartenenza
+			cont[centroide]++;	//conto un punto in più per questo centroide
+
+			for(int j=0;j<d;j++)	//sommo tutte le cordinate di punti del centroide
+				tmp[centroide*d+j] += input->ds[i*d+j];
+		}//for tutti i punti
+
+		//Divido ogni somma di cordinate per il numero di punti e lo inserisco come nuovo centroide
+		for(int i=0;i<k;i++){
+			for(int j=0;j<d;j++)
+				centroids[i*d+j] = tmp[i*d+j] / (double) cont[i];
+		}//for tutti i centroidi
+
+		dealloc_matrix(tmp);
+		free(cont);
+
+		printf("Nuovi centroidi:\n");
+		print_matrix(k,d,centroids);
+}//update_centroids
+
+/*
+
+
+//calcola la somma dei quadrati delle distanze dei punti dai rispettivi centroidi
+
+double sum_of_distances(int n){
+
+		double sum = 0, dist = 0;
+
+		for(int i=0;i<n;i++){    // per ogni punto i, aggiunge distanza(i,q(i))^2
+			dist = centroid_of_point[2*i+1]
+			sum += dist*dist;
+		}
+
+		return sum;
+}//sum_of_distances
+
+//calcola i centroidi partendo dall'inizializzazione ed aggiornando i centroidi
+//fino a quando la somma delle distanze dai centroidi non è inferiore ad epsilon
+
+void calculate_centroids(){
+
+		generate_centroids(n,k);
+  	centroideDelPunto = alloc_matrix(n,2)
+  	computeDistancesFromCentroids();
+  	double sommadistanze=sumOfDistances();
+
+  	while(sommadistanze>epsilon) {
+
+				aggiorna_centroidi();
+    		computeDistancesFromCentroids();
+    		sommadist=sumOfDistances();
+  	}
+
+}
+*/
+
+
 
 //Per  ogni punto si ha il centroide di appartenenza (q(x))
 
@@ -189,7 +267,7 @@ void testIndex(params* input2){
 //---------------------------Dati piccoli per il test---------------------------
 	for(int i=0; i<4; i++)
 		for( int j=0; j<4; j++)
- 			input->ds[i*4+j] = i+j;
+ 			input->ds[i*4+j] = i+j*2.5;
 
 	input->n = 4;
 	input->d = 4;
@@ -205,15 +283,14 @@ void testIndex(params* input2){
 	//double y[4] = {9, 8, 7, 6};
 	//printf("Distanza: %f\n", distance(x, y,4) );
 
-	centroid_of_point = alloc_matrix(input->n,2);
+	centroid_of_point = alloc_matrix(input->n,2);	//forse la metto dentro la funzione next
 
 	//printf("%s\n", input->ds+2*1 );
 
 	points_of_centroid(input->n, input->d, input->k);
 	//points_of_centroid(100, 128, 10);	//Test
 
-	//printf("Centroids: %f\n", *(centroids+128+3) );
 
-
+	update_centroids(input->n, input->d, input->k);
 
 }

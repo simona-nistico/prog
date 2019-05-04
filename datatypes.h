@@ -87,6 +87,7 @@ void print_matrix(int rows, int cols, MATRIX data){
       printf("%18.2f\t", data[i*cols+j] );
     printf("\n");
 	}
+	printf("\n\n");
 }
 
 
