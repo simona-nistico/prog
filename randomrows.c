@@ -66,26 +66,31 @@ void generate_centroids(int n, int k){
 // la matrice distances deve essere creata una volta sola visto che il metodo seguente deve stare dentro un ciclo
 void computeDistancesFromCentroids(){
 
-	VECTOR punto = alloc_matrix(1,k);	// Alloco il vettore che conterrà di volta in volta il punto
+	VECTOR punto = alloc_matrix(1,d);	// Alloco il vettore che conterrà di volta in volta il punto
+  VECTOR centroide = alloc_matrix(1,d); // Alloco il vettore che conterrà di volta in volta il centroide
 	double minDist,distanza;
 	int minCentr;
-	int i,j,k;
+	int i,j,l;
 
 	for(i=0;i<n;i++){
 
-		for(k=0;k<d;k++){
-			punto[k] = ds[d*i+k];	// Sto supponendo che il dataset sia memorizzato per righe
+		for(l=0;l<d;l++){
+			punto[l] = ds[d*i+l];	// Sto supponendo che il dataset sia memorizzato per righe
 		}
 
-		minDist = distance(punto, centroids[0]);
+		for(l=0;l<d;l++){
+			centroide[l] = centroids[d*0+l];	// Sto supponendo che il dataset sia memorizzato per righe
+		}
+
+		minDist = distance(punto, centroide);
 		minCentr = 0;
 
-		for(j=1;j<kc;j++){ //Verificare la sintassi, l'obiettivo è passare l'indirizzo di partenza
+		for(j=1;j<k;j++){ //Verificare la sintassi, l'obiettivo è passare l'indirizzo di partenza
 					//del punto i-esimo
 
-			for(k=0;k<d;k++){
-				punto[k] = ds[d*i+k];
-			}	// Sto supponendo che il dataset sia memorizzato per righe
+			for(l=0;l<d;l++){
+				centroide[l] = centroids[d*j+l];	// Sto supponendo che il dataset sia memorizzato per righe
+			}
 
 			distanza=distance(punto, centroids[j]);
 
@@ -102,6 +107,7 @@ void computeDistancesFromCentroids(){
 
 	// Liberiamo lo spazio (verificare se si può utilizzare la stessa funzione della matrice)
 	dealloc_matrix(punto);
+	dealloc_matrix(centroide);
 
 }
 
