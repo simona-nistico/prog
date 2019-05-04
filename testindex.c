@@ -169,7 +169,7 @@ void points_of_centroid(int n, int d, int k){
 
 
 
-/** La funzione seguente alcola il nuovo centroide facendo la media geometrica dei punti
+/** La funzione seguente calcola il nuovo centroide facendo la media geometrica dei punti
 	* Per ogni punto del dataset, fa la media (componente per componente)
 	* di tutti i punti che appartengono alla stessa cella
 	* COSTO: n*d+k*d
@@ -206,50 +206,70 @@ void update_centroids(int n, int d, int k){
 
 		printf("Nuovi centroidi:\n");
 		print_matrix(k,d,centroids);
+
+		//TESTATO  	--> 	OK
 }//update_centroids
 
-/*
 
 
-//calcola la somma dei quadrati delle distanze dei punti dai rispettivi centroidi
 
-double sum_of_distances(int n){
+//-----------------------------ATTENZIONE-----------------------------
+//forse l'arresto non dipende dalla funzione obiettivo ma da:
+// dist(vecchio centroide, nuovo centroide) < epsilon
 
+/** La funzione seguente calcola il valore della funzione obiettivo
+  * che deve essere minimizzata al fine avere un buon insieme di centroidi
+	* C = min   sum[ dist^2(y, centroide(y) )  ]
+	* COSTO: n
+  * n =  numero di punti del data set
+  * TODO: parallelizzare la somma in assembly
+  */
+double objective_function(int n){
 		double sum = 0, dist = 0;
 
 		for(int i=0;i<n;i++){    // per ogni punto i, aggiunge distanza(i,q(i))^2
-			dist = centroid_of_point[2*i+1]
+			dist = centroid_of_point[2*i+1];	//verificare se questo valore è aggiornato
 			sum += dist*dist;
 		}
 
+		printf("Funzione obiettivo: %s\n", sum );
 		return sum;
-}//sum_of_distances
-
-//calcola i centroidi partendo dall'inizializzazione ed aggiornando i centroidi
-//fino a quando la somma delle distanze dai centroidi non è inferiore ad epsilon
-
-void calculate_centroids(){
-
-		generate_centroids(n,k);
-  	centroideDelPunto = alloc_matrix(n,2)
-  	computeDistancesFromCentroids();
-  	double sommadistanze=sumOfDistances();
-
-  	while(sommadistanze>epsilon) {
-
-				aggiorna_centroidi();
-    		computeDistancesFromCentroids();
-    		sommadist=sumOfDistances();
-  	}
-
-}
-*/
+}//objective_function
 
 
 
-//Per  ogni punto si ha il centroide di appartenenza (q(x))
+/** La funzione seguente calcola i centroidi finali:
+  * genera dei centroidi casuali, divide lo spazio in celle di Voronoi,
+	* calcola i nuovi centroidi facendo la media dei punti di ogni cella
+	* ripete finchè....????
+	* C = min   sum[ dist^2(y, centroide(y) )  ]
+	* COSTO:
+  * n =  numero di punti del data set
+  * d = numero di dimensioni del data/query set
+  * k =  numero di centroidi di ogni sotto-quantizzatore
+  */
+void calculate_centroids(int n, int d, int k){
 
-//Per ogni centroide bisogna trovare il punto medio e sostituirlo ai centroidi di partenza
+	generate_centroids(n, d, k);  //Genera Centroidi casuali
+
+	centroid_of_point = alloc_matrix(n,2);	//la matrice FORSE non va mai aggiornata
+	points_of_centroid(n, d, k);	//Divide lo spazio in celle di Voronoi
+
+	double sommadistanze = objective_function(n); //FORSE NON SERVE
+
+	while(sommadistanze > epsilon) {
+
+				update_centroids(n, d, k);
+
+				//FORSE: calcolare la distanza tra il vecchio e il nuovo centroideDelPunto
+				//quando dist<epsilon -> stop
+
+    		computeDistancesFromCentroids();//FORSE NON SERVE
+    		sommadist = objective_function(n);//FORSE NON SERVE
+  }//while
+
+}//calculate_centroids
+
 
 //Ripetere finchè la distanza tra il centroide di prima e quello nuovo non è inferiore ad epsilon
 
@@ -290,7 +310,11 @@ void testIndex(params* input2){
 	points_of_centroid(input->n, input->d, input->k);
 	//points_of_centroid(100, 128, 10);	//Test
 
+	objective_function(input->n);
 
-	update_centroids(input->n, input->d, input->k);
+
+	//update_centroids(input->n, input->d, input->k);
+
+
 
 }
