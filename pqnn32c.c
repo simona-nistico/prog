@@ -124,6 +124,8 @@ void save_ANN(char* filename, int* ANN, int nq, int knn) {
 extern void pqnn32_index(params* input);
 extern int* pqnn32_search(params* input);
 
+extern void testIndex(params* input2);
+
 /*
  *	pqnn_index
  * 	==========
