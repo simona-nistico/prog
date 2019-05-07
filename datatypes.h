@@ -78,11 +78,15 @@ void dealloc_matrix(MATRIX mat) {
 }
 
 //----------Stampa tutti i punti-----------
-void print_matrix(int rows, int cols, MATRIX data){
+void print_matrix(int rows, int cols, MATRIX data, char c){
 	int i, j;
   printf("Numero punti: %d\nDimensione di ogni punto: %d\n", rows, cols);
   for (i = 0; i < rows; i++) {
-    printf("Punto n %d:\t", i);
+		if( c=='c')
+    	printf("Centroide n %d:\t", i);
+		else if( c=='p')
+			printf("Punto n %d:\t", i);
+			
     for (int j = 0; j < cols; j++)
       printf("%18.2f\t", data[i*cols+j] );
     printf("\n");

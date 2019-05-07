@@ -54,7 +54,7 @@ void generate_centroids(int n, int d, int k, MATRIX ds){
 		* cosi facendo ottengo dei numeri casuali sempre diversi che coprono l'intervallo da  a n;
 		*/
 
-	old_number = rand()%(n/k);
+	old_number = rand()%((n-1)/k);
 	printf("Centroide 0 scelto il punto numero: %d\n",old_number);
 
 	// Inseriamo il primo centroide nella matrice lungo la riga 0
@@ -63,8 +63,8 @@ void generate_centroids(int n, int d, int k, MATRIX ds){
 
 	int range;
 	for(i=1;i<k;i++){
-		range = (n-old_number)/(k-i);	//trovo il nuovo range tra cui scegliere i valori casuali
-  	number = old_number+rand()%range; //seleziono un numero casuale nel range (con +1 sfora il range)
+		range = (n-1-old_number)/(k-i);	//trovo il nuovo range tra cui scegliere i valori casuali
+  	number = old_number+rand()%range+1; //seleziono un numero casuale nel range
 		printf("Centroide %d scelto il punto numero: %d\n",i, number);
 
 		// Inseriamo il centroide nella matrice
@@ -74,7 +74,7 @@ void generate_centroids(int n, int d, int k, MATRIX ds){
 		old_number = number;
  	}//for
 
-	print_matrix(k, d, centroids);
+	print_matrix(k, d, centroids, 'c');
 
 	//TESTATO  	--> 	OK
 }//generate_centroids
@@ -162,7 +162,7 @@ void points_of_centroid(int n, int d, int k, MATRIX ds){
 	//dealloc_matrix(punto);
 	printf("Colonna 0: indice del vettore 'centroids' indicante il centroide più vicino al punto\n");
 	printf("Colonna 1: distanza tra il punto e il centroide\n");
-	print_matrix(n,2, centroid_of_point);
+	print_matrix(n,2, centroid_of_point, 'p');
 
 	//TESTATO  	--> 	OK
 }//points_of_centroid
@@ -201,14 +201,20 @@ void update_centroids(int n, int d, int k, MATRIX ds){
 		//Divido ogni somma di cordinate per il numero di punti e lo inserisco come nuovo centroide
 		for(int i=0;i<k;i++){
 			for(int j=0;j<d;j++)
-				centroids[i*d+j] = tmp[i*d+j] / (double) cont[i];
+				if( cont[i]!=0 )
+					centroids[i*d+j] = tmp[i*d+j] / (double) cont[i];
+				else
+					centroids[i*d+j] = -1;
+			if( cont[i]==0 )
+					printf("###############Nessun punto appartiene al centroide %d\n", i);
+
 		}//for tutti i centroidi
 
 		dealloc_matrix(tmp);
 		free(cont);
 
 		printf("Nuovi centroidi:\n");
-		print_matrix(k,d,centroids);
+		print_matrix(k,d,centroids, 'c');
 
 		//TESTATO  	--> 	OK
 }//update_centroids
@@ -292,10 +298,10 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps){
 		iter++;
 
 		printf("Variazione funzione obiettivo: %lf\n", (obiettivoPrev - obiettivo) );
-		printf("TEST: %d\n", ((obiettivoPrev - obiettivo ) >eps));
+		printf("CONDIZIONE DEL WHILE: %d\n", ((obiettivoPrev - obiettivo ) >eps));
 		if( obiettivoPrev - obiettivo < 0 ){
 			printf("La funzione obiettivo sta salendo:\n");
-			printf("Obiettivo vecchio: %lf\nObiettivo corrente: %lf\n", obiettivoPrev, obiettivo);
+			printf("Obiettivo vecchio: %lf\nObiettivo corrent: %lf\n", obiettivoPrev, obiettivo);
 		}
 
   }//while
@@ -323,18 +329,19 @@ void testIndex(params* input2){
 */
 
 //---------------------------Dati piccoli per il test---------------------------
-/*	for(int i=0; i<4; i++)
+
+	for(int i=0; i<12; i++)
 		for( int j=0; j<4; j++)
- 			input->ds[i*4+j] = i+j*2.5;
-*/
+ 			input->ds[i*4+j] = i+j*2.5+rand()%20;
+
 //Prendo un sottoinsieme del dataset
 	input->n = 12;
 	input->d = 4;
-	input->k = 2;
-	input->eps = 2;
+	input->k = 4; //2
+	input->eps = 20;
 
 	printf("Dataset Iniziale\n");
-	print_matrix(input->n, input->d, input->ds);
+	print_matrix(input->n, input->d, input->ds, 'p');
 
 //---------------------------Test singole funzioni---------------------------
 /*
