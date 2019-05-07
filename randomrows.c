@@ -9,7 +9,11 @@
 int n;
 int k;
 int kc;
+int m;
 double epsilon;
+
+// Numero di elementi per sottogruppo
+int ns = d/m;
 
 //Matrice di due colonne che per ogni indice i che rappresenta il punto corrispondente
 //memorizza in [i][0] il centroide corrispondendente e in [i][1] la distanza dal centroide
@@ -188,6 +192,50 @@ void calculate_centroids(){
     		sommadist=sumOfDistances();
   	}
 
+}
+
+// Funzione che calcola e salva le distanze tra i centroidi e li salva in una
+// struttura dati triangolare
+
+
+// Funzione che quantizza il punto dell query.
+int* quantize(int x){
+	// Centroidi che quantizzano ciascuna porzione
+	int* cents = (int*) malloc(m,sizeof(int))
+	int centr;
+	double dist,tmp;
+
+	// Calcoliamo il centroide di ciascun sottogruppo
+	for(int i=0;i<ns;i++){
+		// Calcoliamo il centroide più vicino del sottogruppo
+		centr = 0;
+		dist = dist_cent(x,0,i);
+		for(int j=1;j<k;j++){
+			tmp = dist_cent(x,j,i);
+			if(tmp < dist){
+				centr = j;
+				dist = tmp;
+			}
+			// Abbiamo trovato il centroide della porzione
+			cents[i] = centr;
+		}
+	}
+	return cents;
+}
+
+// Funzione che calcola la distanza tra il punto ed il centroide del del sottogruppo
+// indicato attraverso l'input, in input si passano inoltre l'indirizzo di partenza
+// del punto e quel centroide.
+// Versione per il query set.
+double dist_cent_qs(int point,int centr,int group){
+	double sum,diff;
+
+	for(int i=0;i<ns;i++){
+		diff = qs[point*d+group*ns+i]-centroids[centr*d+group*ns+i];
+		sum = diff*diff;
+	}
+
+	return sqrt(sum);
 }
 
 
