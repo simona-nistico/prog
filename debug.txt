@@ -1,0 +1,80 @@
+
+###########Chiamata a Funzione TestIndex############
+Dataset Iniziale
+Numero punti: 12
+Dimensione di ogni punto: 4
+Punto n 0:	   824633857120.00	              0.00	              0.00	              2.00	
+Punto n 1:	  1649267712128.00	422212534968320.00	              0.00	              0.01	
+Punto n 2:	        4194305.03	 96757040582656.00	              0.00	              0.00	
+Punto n 3:	    25769808042.00	              0.01	              0.01	              2.00	
+Punto n 4:	        4194305.05	              0.00	              0.00	   137438953472.00	
+Punto n 5:	      100663312.75	 12094630066176.00	              0.01	  1649267701760.00	
+Punto n 6:	           8192.00	562950092881920.00	    85899362892.00	           2048.00	
+Punto n 7:	       16777220.15	      134217760.53	  2748779606784.00	       67108880.58	
+Punto n 8:	           2048.00	              0.00	              0.00	   549755943936.00	
+Punto n 9:	              0.00	              2.00	   412316860416.00	562950093520896.00	
+Punto n 10:	              0.00	       16777220.02	562950091997184.00	        2097152.52	
+Punto n 11:	              0.00	              0.01	 24189260103680.00	              0.01	
+
+
+Centroide 0 scelto il punto numero: 1
+Centroide 1 scelto il punto numero: 11
+Numero punti: 2
+Dimensione di ogni punto: 4
+Punto n 0:	  1649267712128.00	422212534968320.00	              0.00	              0.01	
+Punto n 1:	              0.00	              0.01	 24189260103680.00	              0.01	
+
+
+############################ ITERAZIONE 0 ############################
+Colonna 0: indice del vettore 'centroids' indicante il centroide più vicino al punto
+Colonna 1: distanza tra il punto e il centroide
+Numero punti: 12
+Dimensione di ogni punto: 2
+Punto n 0:	              1.00	 24203312280797.30	
+Punto n 1:	              0.00	              0.00	
+Punto n 2:	              1.00	 99734874575933.78	
+Punto n 3:	              1.00	 24189273830491.30	
+Punto n 4:	              1.00	 24189650552032.25	
+Punto n 5:	              1.00	 27094657494851.91	
+Punto n 6:	              0.00	140747247469155.53	
+Punto n 7:	              1.00	 21440480497427.69	
+Punto n 8:	              1.00	 24195506524174.65	
+Punto n 9:	              1.00	563451995138165.25	
+Punto n 10:	              1.00	538760831893504.25	
+Punto n 11:	              1.00	              0.00	
+
+
+Funzione obiettivo: 641033515376903692938884677632.000000
+
+############################ ITERAZIONE 1 ############################
+Nuovi centroidi:
+Numero punti: 2
+Dimensione di ogni punto: 4
+Punto n 0:	   824633860160.00	492581313925120.00	    42949681446.00	           1024.00	
+Punto n 1:	    85052949635.30	 10885182164381.46	 59030044856806.40	 56528662532610.11	
+
+
+Colonna 0: indice del vettore 'centroids' indicante il centroide più vicino al punto
+Colonna 1: distanza tra il punto e il centroide
+Numero punti: 12
+Dimensione di ogni punto: 2
+Punto n 0:	              1.00	 82456473694868.56	
+Punto n 1:	              0.00	 70373623734577.77	
+Punto n 2:	              1.00	118549648607751.12	
+Punto n 3:	              1.00	 82453178160485.19	
+Punto n 4:	              1.00	 82359035427762.69	
+Punto n 5:	              1.00	 80608710161588.73	
+Punto n 6:	              0.00	 70373623734577.77	
+Punto n 7:	              1.00	 80508101571667.50	
+Punto n 8:	              1.00	 82077272148967.88	
+Punto n 9:	              1.00	509918815326947.88	
+Punto n 10:	              1.00	507197592088229.25	
+Punto n 11:	              1.00	 67289407745167.52	
+
+
+Funzione obiettivo: 585849977594877770634780213248.000000
+
+Variazione funzione obiettivo: 55183537782025922304104464384.000000
+TEST: 1
+0.000
+0.000

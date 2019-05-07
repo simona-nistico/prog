@@ -80,7 +80,7 @@ void dealloc_matrix(MATRIX mat) {
 //----------Stampa tutti i punti-----------
 void print_matrix(int rows, int cols, MATRIX data){
 	int i, j;
-  printf("Numero punti: %d\tDimensione di ogni punto: %d\n", rows, cols);
+  printf("Numero punti: %d\nDimensione di ogni punto: %d\n", rows, cols);
   for (i = 0; i < rows; i++) {
     printf("Punto n %d:\t", i);
     for (int j = 0; j < cols; j++)

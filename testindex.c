@@ -33,9 +33,10 @@ params *input;
  * n =  numero di punti del data set
  * d = numero di dimensioni del data/query set
  * k =  numero di centroidi di ogni sotto-quantizzatore
+ * ds = data set
  * k numeri casuali diversi da 0 a n incluso
  */
-void generate_centroids(int n, int d, int k){
+void generate_centroids(int n, int d, int k, MATRIX ds){
 
 	int number,old_number,i,j;
 
@@ -58,17 +59,17 @@ void generate_centroids(int n, int d, int k){
 
 	// Inseriamo il primo centroide nella matrice lungo la riga 0
 	for(j=0;j<d;j++)
-		centroids[j] = input->ds[old_number*d+j];
+		centroids[j] = ds[old_number*d+j];
 
 	int range;
 	for(i=1;i<k;i++){
 		range = (n-old_number)/(k-i);	//trovo il nuovo range tra cui scegliere i valori casuali
-  	number = old_number+rand()%range+1; //seleziono un numero casuale nel range
+  	number = old_number+rand()%range; //seleziono un numero casuale nel range (con +1 sfora il range)
 		printf("Centroide %d scelto il punto numero: %d\n",i, number);
 
 		// Inseriamo il centroide nella matrice
 		for(j=0;j<d;j++)
-			centroids[i*d+j] = input->ds[number*d+j];
+			centroids[i*d+j] = ds[number*d+j];
 
 		old_number = number;
  	}//for
@@ -103,14 +104,15 @@ double distance(VECTOR puntoX, VECTOR puntoY, int d){
 	* Logicamente divide lo spazio in celle di Voronoi
 	* Per ogni punto del dataset, calcola la di stanza con tutti i centroidi
 	* e sceglie la distanza minima
-	* COSTO: n*c* O(distance)
+	* COSTO: n*k* O(distance)[cioè d]
   * n =  numero di punti del data set
   * d = numero di dimensioni del data/query set
   * k =  numero di centroidi di ogni sotto-quantizzatore
+	* ds = data set
   * TODO: verificare se è possibile sfruttare gli indirizzi ed evitare l'uso
   *       del vettore punto
   */
-void points_of_centroid(int n, int d, int k){
+void points_of_centroid(int n, int d, int k, MATRIX ds){
 
 	//VECTOR punto = alloc_matrix(1,d);	// Alloco il vettore che conterrà di volta in volta il punto
 	//Si può evitare dal momento che posso accedere ai singoli elementi
@@ -130,7 +132,7 @@ void points_of_centroid(int n, int d, int k){
 			*/
 
 		//Inizializzo con il primo punto e con la distanza da esso
-		minDist = distance(input->ds+d*i, centroids, d);
+		minDist = distance(ds+d*i, centroids, d);
 		minCentr = 0;
 		//printf("Distanza del punto %i dal centroide  0: %f\n", i, minDist);
 
@@ -141,7 +143,7 @@ void points_of_centroid(int n, int d, int k){
 				punto[j] = input->ds[d*i+j]; // Dataset memorizzato per righe
 				*/
 
-			distanza = distance(input->ds+d*i, centroids+d*c, d);
+			distanza = distance(ds+d*i, centroids+d*c, d);
 			//printf("Distanza del punto %i dal centroide %i: %f\n", i, c, distanza);
 
 			if(distanza < minDist){
@@ -160,7 +162,7 @@ void points_of_centroid(int n, int d, int k){
 	//dealloc_matrix(punto);
 	printf("Colonna 0: indice del vettore 'centroids' indicante il centroide più vicino al punto\n");
 	printf("Colonna 1: distanza tra il punto e il centroide\n");
-	print_matrix(input->n,2, centroid_of_point);
+	print_matrix(n,2, centroid_of_point);
 
 	//TESTATO  	--> 	OK
 }//points_of_centroid
@@ -176,9 +178,10 @@ void points_of_centroid(int n, int d, int k){
   * n =  numero di punti del data set
   * d = numero di dimensioni del data/query set
   * k =  numero di centroidi di ogni sotto-quantizzatore
+	* ds = data set
   * TODO: parallelizzare la somma in assembly
   */
-void update_centroids(int n, int d, int k){
+void update_centroids(int n, int d, int k, MATRIX ds){
 		// Matrice temporanea per memorizzare i nuovi centroidi
 		MATRIX tmp = alloc_matrix(k,d);
 
@@ -192,7 +195,7 @@ void update_centroids(int n, int d, int k){
 			cont[centroide]++;	//conto un punto in più per questo centroide
 
 			for(int j=0;j<d;j++)	//sommo tutte le cordinate di punti del centroide
-				tmp[centroide*d+j] += input->ds[i*d+j];
+				tmp[centroide*d+j] += ds[i*d+j];
 		}//for tutti i punti
 
 		//Divido ogni somma di cordinate per il numero di punti e lo inserisco come nuovo centroide
@@ -232,7 +235,7 @@ double objective_function(int n){
 			sum += dist*dist;
 		}
 
-		printf("Funzione obiettivo: %s\n", sum );
+		printf("Funzione obiettivo: %lf\n\n", sum );
 		return sum;
 }//objective_function
 
@@ -247,31 +250,57 @@ double objective_function(int n){
   * n =  numero di punti del data set
   * d = numero di dimensioni del data/query set
   * k =  numero di centroidi di ogni sotto-quantizzatore
+	* ds = data set
   */
-void calculate_centroids(int n, int d, int k){
+void calculate_centroids(int n, int d, int k, MATRIX ds, float eps){
+	int iter = 1;
 
-	generate_centroids(n, d, k);  //Genera Centroidi casuali
+	//Genera Centroidi casuali
+	//COSTO: d+k*d
+	generate_centroids(n, d, k, ds);
 
-	centroid_of_point = alloc_matrix(n,2);	//la matrice FORSE non va mai aggiornata
-	points_of_centroid(n, d, k);	//Divide lo spazio in celle di Voronoi
+	centroid_of_point = alloc_matrix(n,2);	//la matrice va aggiornata
 
-	double sommadistanze = objective_function(n); //FORSE NON SERVE
+	printf("############################ ITERAZIONE %d ############################\n", 0);
+	//Divide lo spazio in celle di Voronoi
+	//COSTO: n*k* O(distance)[cioè d] = n*k*d
+	points_of_centroid(n, d, k, ds);
 
-	while(sommadistanze > epsilon) {
+	//Verifica l'ottimalità dei Punti
+	//COSTO: n
+	double obiettivo = objective_function(n);
+	double obiettivoPrev = 0.0;
 
-				update_centroids(n, d, k);
 
-				//FORSE: calcolare la distanza tra il vecchio e il nuovo centroideDelPunto
-				//quando dist<epsilon -> stop
+//Per la formula della terminazione il prof deve aggiornare le specifiche di progetto sul sito
+	while( (obiettivoPrev - obiettivo ) > eps || iter == 1) {
+		printf("############################ ITERAZIONE %d ############################\n", iter);
 
-    		computeDistancesFromCentroids();//FORSE NON SERVE
-    		sommadist = objective_function(n);//FORSE NON SERVE
+		//Trova i nuovi centroidi facendo la media dei punti delle celle di Voronoi
+		//COSTO: n*d+k*d
+		update_centroids(n, d, k, ds);
+
+		//Cambiati i centroidi, cambiano le celle di Voronoi;
+		//determina a quale cella appartengono i Punti
+		//COSTO: n*k* O(distance)[cioè d] = n*k*d
+		points_of_centroid(n, d, k, ds);
+
+		//Verifica l'ottimalità dei Punti
+		//COSTO: n
+		obiettivoPrev = obiettivo;
+		double obiettivo = objective_function(n);
+		iter++;
+
+		printf("Variazione funzione obiettivo: %lf\n", (obiettivoPrev - obiettivo) );
+		printf("TEST: %d\n", ((obiettivoPrev - obiettivo ) >eps));
+		if( obiettivoPrev - obiettivo < 0 ){
+			printf("La funzione obiettivo sta salendo:\n");
+			printf("Obiettivo vecchio: %lf\nObiettivo corrente: %lf\n", obiettivoPrev, obiettivo);
+		}
+
   }//while
 
 }//calculate_centroids
-
-
-//Ripetere finchè la distanza tra il centroide di prima e quello nuovo non è inferiore ad epsilon
 
 
 
@@ -279,23 +308,37 @@ void testIndex(params* input2){
   printf("\n###########Chiamata a Funzione TestIndex############\n");
   /*
     Mettere qui tutto quello che serve per testare quanto scritto
-
   */
+
 	//Collego l'input passato dal main con la struttura usata in questo codice
   input = input2;
 
+//---------------------------Visualizza dati veri---------------------------
+/*
+	printf("Dataset:\n");
+	print_matrix(input->n,input->d,input->ds);
+
+	printf("Queryset:\n");
+	print_matrix(input->nq,input->d,input->qs);
+*/
+
 //---------------------------Dati piccoli per il test---------------------------
-	for(int i=0; i<4; i++)
+/*	for(int i=0; i<4; i++)
 		for( int j=0; j<4; j++)
  			input->ds[i*4+j] = i+j*2.5;
-
-	input->n = 4;
+*/
+//Prendo un sottoinsieme del dataset
+	input->n = 12;
 	input->d = 4;
 	input->k = 2;
+	input->eps = 2;
 
-	print_matrix(4,4,input->ds);
+	printf("Dataset Iniziale\n");
+	print_matrix(input->n, input->d, input->ds);
 
-  generate_centroids(input->n, input->d, input->k);
+//---------------------------Test singole funzioni---------------------------
+/*
+  generate_centroids(input->n, input->d, input->k, input->ds);
   //generate_centroids(100, 128, 10);	//Test
 
 
@@ -305,16 +348,22 @@ void testIndex(params* input2){
 
 	centroid_of_point = alloc_matrix(input->n,2);	//forse la metto dentro la funzione next
 
-	//printf("%s\n", input->ds+2*1 );
 
-	points_of_centroid(input->n, input->d, input->k);
-	//points_of_centroid(100, 128, 10);	//Test
+	points_of_centroid(input->n, input->d, input->k, input->ds);
+
 
 	objective_function(input->n);
 
 
-	//update_centroids(input->n, input->d, input->k);
+	update_centroids(input->n, input->d, input->k, input->ds);
+
+	points_of_centroid(input->n, input->d, input->k, input->ds);
+
+	objective_function(input->n);
+
+	*/
 
 
+	calculate_centroids(input->n, input->d, input->k, input->ds, input->eps);
 
 }
