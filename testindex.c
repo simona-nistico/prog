@@ -132,7 +132,7 @@ void points_of_centroid(int n, int d, int k, MATRIX ds){
 			*/
 
 		//Inizializzo con il primo punto e con la distanza da esso
-		minDist = distance(ds+d*i, centroids, d);
+		minDist = distance(&ds[d*i], &centroids[0], d);
 		minCentr = 0;
 		//printf("Distanza del punto %i dal centroide  0: %f\n", i, minDist);
 
@@ -143,7 +143,7 @@ void points_of_centroid(int n, int d, int k, MATRIX ds){
 				punto[j] = input->ds[d*i+j]; // Dataset memorizzato per righe
 				*/
 
-			distanza = distance(ds+d*i, centroids+d*c, d);
+			distanza = distance(&ds[d*i], &centroids[d*c], d);
 			//printf("Distanza del punto %i dal centroide %i: %f\n", i, c, distanza);
 
 			if(distanza < minDist){
