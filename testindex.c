@@ -25,6 +25,10 @@ MATRIX centroids;
 //Parametri ottenuti in input
 params *input;
 
+//Struttura dati che contiene le distanze tra i centroidi finali
+//Triangolo superiore della matrice delle distanze che è simmetrica
+VECTOR distances_between_centroids;
+
 
 //------------------------------------METODI------------------------------------
 
@@ -220,6 +224,13 @@ void update_centroids(int n, int d, int k, MATRIX ds){
 }//update_centroids
 
 
+/** La funzione calcola e memorizza la distanza tra centroidi, le distanze
+  * sono memorizzate considerando solo il triangolo superiore della matrice
+	* non salvando la parte superiore
+	*/
+void store_distances(){
+	distances_between_centroids = (VECTOR) malloc(,sizeof(float));
+}
 
 
 //-----------------------------ATTENZIONE-----------------------------

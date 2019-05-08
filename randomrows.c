@@ -194,9 +194,6 @@ void calculate_centroids(){
 
 }
 
-// Funzione che calcola e salva le distanze tra i centroidi e li salva in una
-// struttura dati triangolare
-
 
 // Funzione che quantizza il punto dell query.
 int* quantize(int x){
