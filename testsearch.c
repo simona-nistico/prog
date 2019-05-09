@@ -17,16 +17,20 @@ int* quantize(int x){
 	double dist,tmp;
 
 	// Calcoliamo il centroide di ciascun sottogruppo
-	for(int i=0;i<ns;i++){
+	for(int i=0;i<m;i++){
 		// Calcoliamo il centroide più vicino del sottogruppo
 		centr = 0;
-		dist = dist_cent(x,0,i);
+		dist = dist_cent_qs(x,0,i);
+
+		//Considero tutti i punti del codeboock del sottogruppo prendendo quello a
+		//dimensione minima
 		for(int j=1;j<k;j++){
-			tmp = dist_cent(x,j,i);
+			tmp = dist_cent_qs(x,j,i);
 			if(tmp < dist){
 				centr = j;
 				dist = tmp;
 			}
+
 			// Abbiamo trovato il centroide della porzione
 			cents[i] = centr;
 		}
@@ -41,14 +45,13 @@ int* quantize(int x){
 double dist_cent_qs(int point,int centr,int group){
 	double sum,diff;
 
-	for(int i=0;i<ns;i++){
-		diff = qs[point*d+group*ns+i]-centroids[centr*d+group*ns+i];
-		sum = diff*diff;
+	for(int j=0;j<d_star;j++){
+		diff = dq[point*d+group*d_star+j]-centroids[(centr+group*k)*d_star+j];
+		sum += diff*diff;
 	}
 
 	return sqrt(sum);
 }
-
 
 
 void testSearch(params* input2){

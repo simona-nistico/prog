@@ -12,32 +12,35 @@
 //L'elemento m[i][j] rappresenta la distanza del punto i dal centroide j
 MATRIX distances_from_centroids; //TODO Verificare se serve questa struttura
 
-//Per ogni punto (riga) viene indicato il centroide più vicino e la distanza da stesso
-//centroid_of_point[i][0] = centroide a minima distanza
-//centroid_of_point[i][1] = distanza dal centroide
+//Per ogni punto (riga) viene indicato il centroide prodotto più vicino e la distanza da stesso
+//centroid_of_point[i][j] = centroide a minima distanza del sottogruppo j
 //Corrisponde alla funzione q(x) := dato il punto, restituisce l'indice del suo centroide
 MATRIX centroid_of_point;
 
 
-//Centroidi veri e propri codificati come i punti
-MATRIX centroids;
+//Codebooks dei vari sottogruppi
+MATRIX centroids;	//dimensione: m*k righe,d_star(d/m) colonne
 
 //Parametri ottenuti in input
 params *input;
 
 //Struttura dati che contiene le distanze tra i centroidi finali
 //Triangolo superiore della matrice delle distanze che è simmetrica
-VECTOR distances_between_centroids;
+VECTOR distances_between_centroids; //TODO scegliere struttura
+
+//Numero di elementi per sottovettore
+int d_star = d/m;
 
 
 //------------------------------------METODI------------------------------------
 
 /**La funzione seguente seleziona k punti da usare come centroidi iniziali
- * COSTO: d+k*d
+ * COSTO: k*(d/m)*m (Per favore Fabio gli dai un'occhiata?)
  * n =  numero di punti del data set
  * d = numero di dimensioni del data/query set
  * k =  numero di centroidi di ogni sotto-quantizzatore
  * ds = data set
+ * m = numero di sottoquantizzatori
  * k numeri casuali diversi da 0 a n incluso
  */
 void generate_centroids(int n, int d, int k, MATRIX ds){
@@ -45,7 +48,7 @@ void generate_centroids(int n, int d, int k, MATRIX ds){
 	int number,old_number,i,j;
 
 	// Alloco la matrice dei centroidi
-	centroids = alloc_matrix(k,d);
+	centroids = alloc_matrix(k*m,d_star);
 
   //rand() function returns an integer value between 0 and RAND_MAX(32767)
 	// TODO togliere per avere numeri sempre casuali:  srand(time(NULL));
@@ -58,52 +61,69 @@ void generate_centroids(int n, int d, int k, MATRIX ds){
 		* cosi facendo ottengo dei numeri casuali sempre diversi che coprono l'intervallo da  a n;
 		*/
 
-	old_number = rand()%((n-1)/k);
-	printf("Centroide 0 scelto il punto numero: %d\n",old_number);
+		//Effettuiamo le operazioni di calcolo per ciasun sottogruppo
+		for(int g=0;g<m;g++){
+			old_number = rand()%((n-1)/k);
+			printf("Centroide 0 scelto il punto numero: %d\n",old_number);
 
-	// Inseriamo il primo centroide nella matrice lungo la riga 0
-	for(j=0;j<d;j++)
-		centroids[j] = ds[old_number*d+j];
+			// Inseriamo il primo centroide nella matrice lungo la riga 0
+			for(j=0;j<d_star;j++)
+				centroids[j*d_star*g] = ds[old_number*d+d_star*g+j];	//[numero_riga*d+numero_gruppo*(d/m)+j]
 
-	int range;
-	for(i=1;i<k;i++){
-		range = (n-1-old_number)/(k-i);	//trovo il nuovo range tra cui scegliere i valori casuali
-  	number = old_number+rand()%range+1; //seleziono un numero casuale nel range
-		printf("Centroide %d scelto il punto numero: %d\n",i, number);
+			int range;
+			for(i=1;i<k;i++){
+				range = (n-1-old_number)/(k-i);	//trovo il nuovo range tra cui scegliere i valori casuali
+  			number = old_number+rand()%range+1; //seleziono un numero casuale nel range
+				printf("Centroide %d scelto il punto numero: %d\n",i, number);
 
-		// Inseriamo il centroide nella matrice
-		for(j=0;j<d;j++)
-			centroids[i*d+j] = ds[number*d+j];
+				// Inseriamo il centroide nella matrice
+				for(j=0;j<d_star;j++)
+					//[riga->(i+group*k)*d_star,colonna->j]     [riga->number*d,colonna->d_star*g+j]
+					centroids[(i+group*k)*d_star+j] = ds[number*d+d_star*g+j];
 
-		old_number = number;
- 	}//for
+				old_number = number;
+ 			}//for i
+		}//for g
 
-	print_matrix(k, d, centroids, 'c');
+		print_matrix(k, d, centroids, 'c');
 
-	//TESTATO  	--> 	OK
+	//DA TESTARE!
 }//generate_centroids
 
 
 
-/** Metodo per calcolare la distanza tra due punti memorizzati row first order
-	* COSTO: d
-  * d = dimensione dei punti
+
+/** Metodo per calcolare la distanza tra due porzioni di punti memorizzati row first order
+	* COSTO: d_star
+  * d_star = dimensione del sottovettore
 	* TODO: applicare il loop vectorization cioè più operazioni nello stesso ciclo
   * Oppure più punti alla volta
   */
-double distance(VECTOR puntoX, VECTOR puntoY, int d){
+double distance_subgroup(int x,int y,int group){
 	double sum = 0;
 	double diff = 0;
-	for(int i=0;i<d;i++){
-		diff = (puntoX[i]-puntoY[i]);
-		sum+= diff*diff;
+
+	for(int j=0;j<d_star;j++){
+		diff = ds[x*d+d_star*group+j] - ds[y*d+d_star*group+j]
+		sum += diff*diff;
 	}
 	return sqrt(sum);
-	//TESTATO  	--> 	OK
+	//DA TESTARE!
 }//distance
 
+double dist_cent_ds(int point,int centr,int group){
+	double sum,diff;
 
+	for(int j=0;j<d_star;j++){
+		diff = ds[point*d+group*d_star+j]-centroids[(centr+group*k)*d_star+j];
+		sum += diff*diff;
+	}
 
+	return sqrt(sum);
+	//DA TESTARE!
+}
+
+//ATTENZIONE! DA RIVEDERE
 /** La funzione seguente cerca i punti che appartengono ad ogni centroide
 	* Logicamente divide lo spazio in celle di Voronoi
 	* Per ogni punto del dataset, calcola la di stanza con tutti i centroidi
@@ -123,8 +143,8 @@ void points_of_centroid(int n, int d, int k, MATRIX ds){
 	//usando l'aritmetica dei puntatori
 
 	double distanza;
-	double minDist; //Distanza dal minimo centroide
-	int minCentr;	//Centroide a minima distanza
+	double minDist; 	//Distanza minima dal centroide
+	int minCentr;			//Centroide a minima distanza
 	int i,j,c; //i = indice per i punti, j = indice per dimensioni, c = indice per centroidi
 
 	for(i=0;i<n;i++){	//per ogni punto del dataset devo trovare il centroide più vicino
@@ -185,34 +205,37 @@ void points_of_centroid(int n, int d, int k, MATRIX ds){
 	* ds = data set
   * TODO: parallelizzare la somma in assembly
   */
-void update_centroids(int n, int d, int k, MATRIX ds){
+void update_centroids(int n, int d, int k, int m, MATRIX ds){
 		// Matrice temporanea per memorizzare i nuovi centroidi
 		MATRIX tmp = alloc_matrix(k,d);
 
 		//Vettore che, per ogni centroide, conta quanti punti appartengono alla sua cella
-		VECTOR cont = malloc(k*sizeof(double));
+		int* cont = (int*) malloc(k,sizeof(int));
 
 		int centroide; //Centroide a cui appartiene il punto corrente
 
-		for(int i=0;i<n;i++){ //per ogni punto del dataset
-			centroide = centroid_of_point[2*i]; //prendo il centroide di appartenenza
-			cont[centroide]++;	//conto un punto in più per questo centroide
+		//Considero tutti i sottogruppi
+		for(int g=0;g<m;g++){ //per ogni sottogruppo
+			for(int i=0;i<n;i++){ //per ogni punto del dataset
+				centroide = centroid_of_point[2*i]; //prendo il centroide di appartenenza
+				cont[centroide]++;	//conto un punto in più per questo centroide
 
-			for(int j=0;j<d;j++)	//sommo tutte le cordinate di punti del centroide
-				tmp[centroide*d+j] += ds[i*d+j];
-		}//for tutti i punti
+				for(int j=0;j<d;j++)	//sommo tutte le cordinate di punti del centroide
+					tmp[centroide*d+j] += ds[i*d+j];
+			}//for tutti i punti
 
-		//Divido ogni somma di cordinate per il numero di punti e lo inserisco come nuovo centroide
-		for(int i=0;i<k;i++){
-			for(int j=0;j<d;j++)
-				if( cont[i]!=0 )
-					centroids[i*d+j] = tmp[i*d+j] / (double) cont[i];
-				else
-					centroids[i*d+j] = -1;
-			if( cont[i]==0 )
-					printf("###############Nessun punto appartiene al centroide %d\n", i);
+			//Divido ogni somma di cordinate per il numero di punti e lo inserisco come nuovo centroide
+			for(int i=0;i<k;i++){
+				for(int j=0;j<d;j++)
+					if( cont[i]!=0 )
+						centroids[i*d+j] = tmp[i*d+j] / (double) cont[i];
+					else
+						centroids[i*d+j] = -1;
+				if( cont[i]==0 )
+						printf("###############Nessun punto appartiene al centroide %d\n", i);
 
-		}//for tutti i centroidi
+			}//for tutti i centroidi
+	  }//for tutti i sottogruppi
 
 		dealloc_matrix(tmp);
 		free(cont);
