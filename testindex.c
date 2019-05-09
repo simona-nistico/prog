@@ -206,33 +206,42 @@ void points_of_centroid(int n, int d, int k, MATRIX ds){
   * TODO: parallelizzare la somma in assembly
   */
 void update_centroids(int n, int d, int k, int m, MATRIX ds){
+
 		// Matrice temporanea per memorizzare i nuovi centroidi
-		MATRIX tmp = alloc_matrix(k,d);
+		MATRIX tmp = alloc_matrix(k,d_star);
 
 		//Vettore che, per ogni centroide, conta quanti punti appartengono alla sua cella
-		int* cont = (int*) malloc(k,sizeof(int));
+		int* cont = (int*) malloc(k,sizeof(int)); //usare calloc per inizializzare a 0?
 
 		int centroide; //Centroide a cui appartiene il punto corrente
 
 		//Considero tutti i sottogruppi
 		for(int g=0;g<m;g++){ //per ogni sottogruppo
+
 			for(int i=0;i<n;i++){ //per ogni punto del dataset
-				centroide = centroid_of_point[2*i]; //prendo il centroide di appartenenza
+
+				centroide = centroid_of_point[i*m+g]; //prendo il centroide di appartenenza
 				cont[centroide]++;	//conto un punto in più per questo centroide
 
-				for(int j=0;j<d;j++)	//sommo tutte le cordinate di punti del centroide
-					tmp[centroide*d+j] += ds[i*d+j];
+				for(int j=0;j<d_star;j++)	//sommo tutte le cordinate di punti del centroide
+					tmp[centroide*d_star+j] += ds[i*d+(g*d_star)+j];
+
 			}//for tutti i punti
 
 			//Divido ogni somma di cordinate per il numero di punti e lo inserisco come nuovo centroide
-			for(int i=0;i<k;i++){
-				for(int j=0;j<d;j++)
+			for(int i=0;i<k;i++){	//per ogni centroide
+
+				for(int j=0;j<d_star;j++)	//per ogni componente
 					if( cont[i]!=0 )
-						centroids[i*d+j] = tmp[i*d+j] / (double) cont[i];
+						centroids[(i+g*k)*d_star+j] = tmp[i*d_star+j] / (double) cont[i];
+						tmp[i*d_star+j] = 0;
 					else
 						centroids[i*d+j] = -1;
+
 				if( cont[i]==0 )
 						printf("###############Nessun punto appartiene al centroide %d\n", i);
+				else
+						cont[i] = 0;
 
 			}//for tutti i centroidi
 	  }//for tutti i sottogruppi
@@ -243,7 +252,7 @@ void update_centroids(int n, int d, int k, int m, MATRIX ds){
 		printf("Nuovi centroidi:\n");
 		print_matrix(k,d,centroids, 'c');
 
-		//TESTATO  	--> 	OK
+		//DA TESTARE
 }//update_centroids
 
 
