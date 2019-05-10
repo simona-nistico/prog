@@ -86,7 +86,7 @@ void print_matrix(int rows, int cols, MATRIX data, char c){
     	printf("Centroide n %d:\t", i);
 		else if( c=='p')
 			printf("Punto n %d:\t", i);
-			
+
     for (int j = 0; j < cols; j++)
       printf("%18.2f\t", data[i*cols+j] );
     printf("\n");
@@ -94,5 +94,20 @@ void print_matrix(int rows, int cols, MATRIX data, char c){
 	printf("\n\n");
 }
 
+void print_matrix_int(int rows, int cols, int* data, char c, int m){
+	int i,j;
+  printf("Numero punti: %d\nDimensione di ogni punto: %d\n", rows, cols);
+  for (i = 0; i < rows; i++) {
+		if( c=='c')
+    	printf("Centroide n %d:\t", i);
+		else if( c=='p')
+			printf("Punto n %d:\t", i);
+
+    for (int j = 0; j < cols; j++)
+      printf("%d\t", data[i*cols+j] );
+    printf("\n");
+	}
+	printf("\n\n");
+}
 
 #endif
