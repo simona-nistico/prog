@@ -94,9 +94,9 @@ void generate_centroids(int n, int d, int k, MATRIX ds, int m, int d_star){
 
 
 /** Metodo per calcolare la distanza tra due porzioni di punti memorizzati row first order
-	* COSTO: d_star
+  * COSTO: d_star
   * d_star = dimensione del sottovettore
-	* TODO: applicare il loop vectorization cioè più operazioni nello stesso ciclo
+  * TODO: applicare il loop vectorization cioè più operazioni nello stesso ciclo
   * Oppure più punti alla volta
   */
 double distance_subgroup(int x,int y,int group,MATRIX ds,int d,int d_star){
@@ -267,11 +267,29 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m, int d_star){
 
 
 /** La funzione calcola e memorizza la distanza tra centroidi, le distanze
-  * sono memorizzate considerando solo il triangolo superiore della matrice
-	* non salvando la parte superiore
-	*/
+  * sono memorizzate considerando solo il triangolo inferiore della matrice
+  * non salvando la parte superiore
+  * COSTO:
+  */
 // TODO
-void store_distances(){}
+void store_distances(int m){
+	//Stiamo salvando le m triangolari inferiori con le distanze tra i centroidi di ogni codebook per risparmiare spazio
+	distances_between_centroids = (VECTOR) malloc(m*(k*(k+1)/2)*sizeof(float));
+	int i,j;
+	
+	//Effettuiamo le operazioni per ciascun gruppo
+	for(int g=0;g<m;g++){
+		for(i=0;i<k;i++){	
+			//La prima distanza è tra il centroide e se stesso e quindi è pari a 0
+			distances_between_centroids[i*(i+1)/2+g*(k*(k+1)/2)] = 0;
+			
+			for(j=1;j<i;j++){
+				//Calcoliamo e salviamo la distanza
+				distances_between_centroids[i*(i+1)/2+g*(k*(k+1)/2)+j] = distance_between_centroid();
+			}
+		}
+	}
+}
 
 
 //-----------------------------ATTENZIONE-----------------------------
