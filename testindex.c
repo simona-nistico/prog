@@ -110,7 +110,20 @@ double distance_subgroup(int x,int y,int group,MATRIX ds,int d,int d_star){
 
 	return sqrt(sum);
 	//DA TESTARE!
-}//distance
+}//distance_subgroup
+
+double distance_centroids(int x,int y,int group,int d_star){
+	double sum = 0;
+	double diff = 0;
+
+	for(int j=0;j<d_star;j++){
+		diff = centroids[x*d+d_star*group+j] - centroids[y*d+d_star*group+j];
+		sum += diff*diff;
+	}
+
+	return sqrt(sum);
+	//DA TESTARE!
+}//distance_centroids
 
 double dist_cent_ds(int point,int centr,int group,MATRIX ds,int d,int k){
 	double sum,diff;
@@ -285,7 +298,7 @@ void store_distances(int m){
 			
 			for(j=1;j<i;j++){
 				//Calcoliamo e salviamo la distanza
-				distances_between_centroids[i*(i+1)/2+g*(k*(k+1)/2)+j] = distance_between_centroid();
+				distances_between_centroids[i*(i+1)/2+g*(k*(k+1)/2)+j] = distance_centroids(i, j, g, d_star);
 			}
 		}
 	}
