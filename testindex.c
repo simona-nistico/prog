@@ -101,52 +101,6 @@ void generate_centroids(int n, int d, int k, MATRIX ds, int m, int d_star){
 }//generate_centroids
 
 
-
-
-/** Metodo per calcolare la distanza tra due porzioni di punti memorizzati row first order
-  * COSTO: d_star
-  * d_star = dimensione del sottovettore
-  * TODO: applicare il loop vectorization cioè più operazioni nello stesso ciclo
-  * Oppure più punti alla volta
-  */
-double distance_subgroup(int x,int y,int group,MATRIX ds,int d,int d_star){
-	double sum = 0;
-	double diff = 0;
-
-	for(int j=0;j<d_star;j++){
-		diff = ds[x*d+d_star*group+j] - ds[y*d+d_star*group+j];
-		sum += diff*diff;
-	}
-
-	return sqrt(sum);
-	//DA TESTARE!
-}//distance_subgroup
-
-double distance_centroids(int x,int y,int group,int d_star){
-	double sum = 0;
-	double diff = 0;
-
-	for(int j=0;j<d_star;j++){
-		diff = centroids[x*d+d_star*group+j] - centroids[y*d+d_star*group+j];
-		sum += diff*diff;
-	}
-
-	return sqrt(sum);
-	//DA TESTARE!
-}//distance_centroids
-
-double dist_cent_ds(int point,int centr,int group,MATRIX ds,int d,int k){
-	double sum,diff;
-
-	for(int j=0;j<d_star;j++){
-		diff = ds[point*d+group*d_star+j]-centroids[(centr+group*k)*d_star+j];
-		sum += diff*diff;
-	}
-
-	return sqrt(sum);
-	//DA TESTARE!
-}
-
 //ATTENZIONE! DA RIVEDERE
 /** La funzione seguente cerca i punti che appartengono ad ogni centroide
 	* Logicamente divide lo spazio in celle di Voronoi
@@ -182,7 +136,7 @@ void points_of_centroid(int n, int d, int k, MATRIX ds, int m, int d_star){
 				*/
 
 			//Inizializzo con il primo punto e con la distanza da esso
-			minDist = dist_cent_ds(i,0,g,ds,d,k);
+			minDist = distance(&ds[i*d+g*d_star],&centroids[(g*k)*d_star],d_star); //(0+group*k)
 			minCentr = 0;
 			//printf("Distanza del punto %i dal centroide  0: %f\n", i, minDist);
 
@@ -193,7 +147,7 @@ void points_of_centroid(int n, int d, int k, MATRIX ds, int m, int d_star){
 					punto[j] = input->ds[d*i+j]; // Dataset memorizzato per righe
 					*/
 
-				distanza = dist_cent_ds(i,0,g,ds,d,k);
+				distanza = distance(&ds[i*d+g*d_star],&centroids[(c+g*k)*d_star],d_star);
 				//printf("Distanza del punto %i dal centroide %i: %f\n", i, c, distanza);
 
 				if(distanza < minDist){
@@ -304,7 +258,7 @@ void store_distances(int m){
 
 			for(j=1;j<i;j++){
 				//Calcoliamo e salviamo la distanza
-				distances_between_centroids[i*(i+1)/2+g*(k*(k+1)/2)+j] = distance_centroids(i, j, g, d_star);
+				distances_between_centroids[i*(i+1)/2+g*(k*(k+1)/2)+j] = distance(&centroids[(g*k+i)*d_star], &centroids[(g*k+j)*d_star], d_star);
 			}
 		}
 	}
