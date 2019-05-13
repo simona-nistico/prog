@@ -5,8 +5,8 @@
 
 #include <xmmintrin.h>	//Usato dalle 4 funzioni sotto per gestire la memoria
 
-#define	MATRIX	double*
-#define	VECTOR	double*
+#define	MATRIX	float*
+#define	VECTOR	float*
 
 
 typedef struct {
