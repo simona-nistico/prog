@@ -110,4 +110,17 @@ void print_matrix_int(int rows, int cols, int* data, char c, int m){
 	printf("\n\n");
 }
 
+//---------FUNZIONE CHE CALCOLA LA DISTANZA-----------------
+float distance(VECTOR x1,VECTOR x2,int d){
+	float sum = 0;
+	float diff = 0;
+	
+	for(int i=0; i<d; i++){
+		diff += x1[i]-x2[i];
+		sum += diff*diff;
+	}
+	
+	return sqrt(sum);
+}
+
 #endif
