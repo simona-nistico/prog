@@ -10,25 +10,25 @@ params *input;
 
 
 // Funzione che quantizza il punto dell query.
-int* quantize(int x){
+int* quantize(int x, int m, int d_star){
 	// Centroidi che quantizzano ciascuna porzione
 	int* cents = (int*) malloc(m,sizeof(int))
-	int centr;
-	double dist,tmp;
+	int centr,j;
+	float min,dist;
 
 	// Calcoliamo il centroide di ciascun sottogruppo
-	for(int i=0;i<m;i++){
+	for(int g=0;g<m;g++){
 		// Calcoliamo il centroide più vicino del sottogruppo
 		centr = 0;
-		dist = dist_cent_qs(x,0,i);
+		min = distance(&x[m*d_star],&centroids[m*k*d_star],d_star);
 
 		//Considero tutti i punti del codeboock del sottogruppo prendendo quello a
 		//dimensione minima
-		for(int j=1;j<k;j++){
-			tmp = dist_cent_qs(x,j,i);
-			if(tmp < dist){
+		for(j=1;j<k;j++){
+			tmp = distance(&x[m*d_star],&centroids[(m*k+i)*d_star],d_star);
+			if(dist < min){
 				centr = j;
-				dist = tmp;
+				min = dist;
 			}
 
 			// Abbiamo trovato il centroide della porzione
@@ -42,17 +42,6 @@ int* quantize(int x){
 // indicato attraverso l'input, in input si passano inoltre l'indirizzo di partenza
 // del punto e quel centroide.
 // Versione per il query set.
-double dist_cent_qs(int point,int centr,int group){
-	double sum,diff;
-
-	for(int j=0;j<d_star;j++){
-		diff = dq[point*d+group*d_star+j]-centroids[(centr+group*k)*d_star+j];
-		sum += diff*diff;
-	}
-
-	return sqrt(sum);
-}
-
 
 void testSearch(params* input2){
   printf("\n###########Chiamata a Funzione TestSearch############\n");
