@@ -111,12 +111,15 @@ void print_matrix_int(int rows, int cols, int* data, char c, int m){
 }
 
 //---------FUNZIONE CHE CALCOLA LA DISTANZA-----------------
+/**
+  * Costo: O(d)
+  *
+  */
 float distance(VECTOR x1,VECTOR x2,int d){
-	float sum = 0;
-	float diff = 0;
+	float diff,sum = 0;
 	
 	for(int i=0; i<d; i++){
-		diff += x1[i]-x2[i];
+		diff = x1[i]-x2[i];
 		sum += diff*diff;
 	}
 	
