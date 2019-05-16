@@ -43,6 +43,112 @@ int* quantize(int x, int m, int d_star){
 	return cents;
 }
 
+//-------------------------RICERCA NON ESAUSTIVA---------------
+
+void smallest_elements(MATRIX values, int* indexes, MATRIX returned_values, int* returned_indexes, int n_values, int n_indexes){
+
+	int i,j,l;
+
+	for(i=0;i<n_indexes;i++){
+		returned_values[i] = FLT_MAX;
+		returned_indexes[i]=-1;
+	}
+
+	for(i=0;j<n_values;i++){
+			if(returned_values[0]>values[i]){
+				j=1
+				while(j<n_indexes && returned_values[j]>values[i]){
+					j++
+				}
+				l=j;
+				for(j=j-1;j>-1;j--){
+					returned_values[j]]=returned_values[j+1];
+					returned_indexes[j]=returned_indexes[j+1];
+				}
+				returned_values[l]=values[i];
+				returned_indexes[l]=indexes[i];
+				}
+			}
+	}
+
+}
+
+void calculateNearestNonExt(MATRIX qs, int nq, int n, int knn, int kc, int w, boolean symmetric){
+
+
+	int* nearest_coarse = (int*) malloc(w*sizeof(double));
+	int* coarse_index = (int*) malloc(n*sizeof(double));
+	VECTOR nearest_distance = alloc_matrix(w,1);
+	VECTOR distances = alloc_matrix(n,1);
+
+	VECTOR  residual_distances;
+	int* residual_indexes;
+
+	int i,j,l,candidate_nearest,punti_ispezionati;
+	float distance;
+
+	for(i=0;i<nq;i++){
+
+		for(j=0;j<kc;j++){
+			distances[j]=distance(&qs[i*d],&coarse_centroids[k*d],d);
+			coarse_index[j]=j;
+		}
+
+		smallest_elements(distances, coarse_index, nearest_distance, nearest_coarse, kc, w)
+		dealloc_matrix(distances);
+		free(coarse_index);
+
+		// in nearest_coarse ora si trovano gli indici dei w centroidi più vicini ad x
+		// in nearest_distance le relative distanze
+
+		VECTOR residual = alloc_matrix(d,1);
+
+		for(j=0;j<w;j++){
+				candidate_nearest+=punti_quantizzatore_coarse[nearest_coarse[j]];
+		}
+
+		residual_distances=alloc_matrix(candidate_nearest,1);
+		residual_indexes= (int*) malloc(candidate_nearest*sizeof(double));
+		result_residual_distances=alloc_matrix(knn,1);
+		result_residual_indexes= (int*) malloc(knn*sizeof(double));
+
+		for(j=0;j<knn;j++){
+			result_residual_distances[j]=FLT_MAX;
+			result_residual_indexes[j]=-1;
+		}
+
+
+		for(j=0;j<w;j++){
+				 // in residual va il residuo del punto i
+				 // rispetto al centroide j
+				for(l=0;l<d;l++){
+					residual[l]=qs[i*d+l]-coarse_centroids[nearest_coarse[j]*d+l];
+				}
+				inizio=celle_prima[nearest_coarse[j]];
+				punti_ispezionati=0;
+
+				for(l=0;l<punti_quantizzatore_coarse[nearest_coarse[j]];l++){
+					if(symmetric){
+						// quantizzare x
+						// fare dist(q(r(x)),q(r(y))) e salvarla in distance
+					}
+					else {
+						// fare dist((r(x),q(r(y))) e salvarla in distance
+					}
+					residual_indexes[punti_ispezionati+l]=lista_invertita[inizio+punti_ispezionati*(m+1)+m];
+					residual_distances[punti_ispezionati+l]=distance;
+					punti_ispezionati++;
+				}
+
+		}
+
+	}
+
+	dealloc_matrix(residual_distances);
+	free(residual_indexes);
+
+}
+
 //---------------------------RICERCA ESAUSTIVA--------------------------------
 
 /** Funzione che trova per ogni punto del queryset i k punti del dataset più vicini
