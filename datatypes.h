@@ -94,6 +94,7 @@ void print_matrix(int rows, int cols, MATRIX data, char c){
 	printf("\n\n");
 }
 
+// Funzione che stampa una matrice di interi
 void print_matrix_int(int rows, int cols, int* data, char c, int m){
 	int i,j;
   printf("Numero punti: %d\nDimensione di ogni punto: %d\n", rows, cols);
@@ -110,20 +111,55 @@ void print_matrix_int(int rows, int cols, int* data, char c, int m){
 	printf("\n\n");
 }
 
-//---------FUNZIONE CHE CALCOLA LA DISTANZA-----------------
-/**
+/** Funzione che calcola la distanza
   * Costo: O(d)
   *
   */
 float distance(VECTOR x1,VECTOR x2,int d){
 	float diff,sum = 0;
-	
-	for(int i=0; i<d; i++){
+
+	// Per ridurre l'overhead dovuto ad ogni passo del ciclo effettuiamo al suo
+	// interno più operazioni (assumiamo che la dimensione d sia divisibile per
+  // due)
+	for(int i=0; i<d/2; i++){
 		diff = x1[i]-x2[i];
 		sum += diff*diff;
+		diff = x1[i+1]-x2[i+1];
+		sum += diff*diff;
 	}
-	
+
 	return sqrt(sum);
+}
+
+/** Funzione che effettua la quantizzazione della query
+	* COSTO: =(d_star)
+	*/
+int* quantize(int x, int m, int d_star){
+	// Centroidi che quantizzano ciascuna porzione
+	int* cents = (int*) malloc(m,sizeof(int))
+	int centr,j;
+	float min,dist;
+
+	// Calcoliamo il centroide di ciascun sottogruppo
+	for(int g=0;g<m;g++){
+		// Calcoliamo il centroide più vicino del sottogruppo
+		centr = 0;
+		min = distance(&x[m*d_star],&centroids[m*k*d_star],d_star);
+
+		//Considero tutti i punti del codeboock del sottogruppo prendendo quello a
+		//dimensione minima
+		for(j=1;j<k;j++){
+			tmp = distance(&x[m*d_star],&centroids[(m*k+i)*d_star],d_star);
+			if(dist < min){
+				centr = j;
+				min = dist;
+			}
+
+			// Abbiamo trovato il centroide della porzione
+			cents[i] = centr;
+		}
+	}
+	return cents;
 }
 
 #endif

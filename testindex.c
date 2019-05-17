@@ -259,9 +259,12 @@ void store_distances(int m){
 			for(j=1;j<i;j++){
 				//Calcoliamo e salviamo la distanza
 				distances_between_centroids[i*(i+1)/2+g*(k*(k+1)/2)+j] = distance(&centroids[(g*k+i)*d_star], &centroids[(g*k+j)*d_star], d_star);
-			}
-		}
-	}
+			}// for j
+
+		}// for i
+
+	}// for g
+
 }
 
 
