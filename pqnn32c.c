@@ -48,7 +48,7 @@
 
 #include "datatypes.h" 	//Header che raccoglie struct, dati e tipi comuni
 #include "testindex.c"	//file dove implemento le funzioni prima in c e poi assembly per index
-#include "testsearch.c"	//file dove implemento le funzioni prima in c e poi assembly per search
+//#include "testsearch.c"	//file dove implemento le funzioni prima in c e poi assembly per search
 
 
 struct params;
@@ -126,7 +126,7 @@ extern void pqnn32_index(params* input);
 extern int* pqnn32_search(params* input);
 
 extern void testIndex(params* input2);
-extern void testSearch(params* input2);
+//extern void testSearch(params* input2);
 
 /*
  *	pqnn_index
@@ -159,7 +159,7 @@ void pqnn_search(params* input) {
 
     pqnn32_search(input); // Chiamata funzione assembly
 
-		testSearch(input);
+//		testSearch(input);
 
 	// Restituisce il risultato come una matrice di nq * knn
 	// identificatori associati agli ANN approssimati delle nq query.

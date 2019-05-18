@@ -5,8 +5,8 @@
 
 #include <xmmintrin.h>	//Usato dalle 4 funzioni sotto per gestire la memoria
 
-#define	MATRIX	float*
-#define	VECTOR	float*
+#define	MATRIX float*
+#define	VECTOR float*
 
 
 typedef struct {
@@ -88,14 +88,14 @@ void print_matrix(int rows, int cols, MATRIX data, char c){
 			printf("Punto n %d:\t", i);
 
     for (int j = 0; j < cols; j++)
-      printf("%18.2f\t", data[i*cols+j] );
+      printf("%8.2f\t", data[i*cols+j] );
     printf("\n");
 	}
 	printf("\n\n");
 }
 
 // Funzione che stampa una matrice di interi
-void print_matrix_int(int rows, int cols, int* data, char c, int m){
+void print_matrix_int(int rows, int cols, int* data, char c){
 	int i,j;
   printf("Numero punti: %d\nDimensione di ogni punto: %d\n", rows, cols);
   for (i = 0; i < rows; i++) {
@@ -124,7 +124,7 @@ float distance(VECTOR x1,VECTOR x2,int d){
   // due)
 
 	// Si lavora su gruppi di 4
-	for(i=0; i<=n-4; i+=4){
+	for(i=0; i<=d-4; i+=4){
 		diff = x1[i]-x2[i];
 		sum += diff*diff;
 		diff = x1[i+1]-x2[i+1];
@@ -136,20 +136,22 @@ float distance(VECTOR x1,VECTOR x2,int d){
 	}
 
 	// Processiamo un eventuale residual_centroids
-	for(i;i<n;i++){
+	for(i;i<d;i++){
 		diff = x1[i]-x2[i];
 		sum += diff*diff;
 	}
 
 	return sum;
-}
+}//distance
+
 
 // Funzione che calcola il residuo, versione ottimizzata
-VECTOR residual(VECTOR x,VECTOR centroid,int d){
+/*VECTOR residual(VECTOR x,VECTOR centroid,int d){
 	VECTOR res = alloc_matrix(1,d);
 	int i;
+	int p=10; //Che cos'è p?
 
-	for(i=0;i<=n-p;i+=p){
+	for(i=0;i<=d-p;i+=p){
 		res[i] = x[x+i]-centroid[x+i];
 		res[i+1] = x[x+i+1]-centroid[x+i+1];
 		res[i+2] = x[x+i+2]-centroid[x+i+2];
@@ -157,18 +159,18 @@ VECTOR residual(VECTOR x,VECTOR centroid,int d){
 	}
 
 	// Ciclo per eventuali cicli residui
-	for(i;i<n;i++){
+	for(i;i<d;i++){
 		res[i] = x[x+i]-centroid[x+i];
 	}
 
-	return rer;
-	
-}
+	return res;
+}//residual
+*/
 
 /** Funzione che effettua la quantizzazione della query
 	* COSTO: =(d_star)
 	*/
-int* quantize(int x, int m, int d_star){
+/*int* quantize(int x, int m, int d_star){
 	// Centroidi che quantizzano ciascuna porzione
 	int* cents = (int*) malloc(m,sizeof(int));
 	int centr,j;
@@ -195,7 +197,7 @@ int* quantize(int x, int m, int d_star){
 	}
 	return cents;
 }
-
+*/
 // Funzione che calcola i residui
 
 #endif
