@@ -627,12 +627,12 @@ void testIndex(params* input2){
   //generate_centroids(input->n, input->d, input->k, input->ds, input->m);
   //generate_centroids(100, 128, 10);	//Test
 
-
+/*
 	float  x[6] = {1, 2, 3, 8, 7, 2};
 	float y[6] = {9, 8, 7, 6, 1, 3};
 	printf("Distanza: %f\n", distance(x, y, 5) );
 
-/*	centroid_of_point = alloc_matrix(input->n,2);	//forse la metto dentro la funzione next
+	centroid_of_point = alloc_matrix(input->n,2);	//forse la metto dentro la funzione next
 
 
 	points_of_centroid(input->n, input->d, input->k, input->ds);

@@ -127,7 +127,6 @@ float distance(VECTOR x1,VECTOR x2,int d){
 
 	// Si lavora su gruppi di 4
 	for(i=0; i<=d-4; i+=4){
-		printf("%d",i );
 		diff = x1[i]-x2[i];
 		sum += diff*diff;
 		diff = x1[i+1]-x2[i+1];
