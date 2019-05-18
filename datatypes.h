@@ -78,14 +78,15 @@ void dealloc_matrix(MATRIX mat) {
 }
 
 //----------Stampa tutti i punti-----------
-void print_matrix(int rows, int cols, MATRIX data, char c){
+void print_matrix(int rows, int cols, int k, MATRIX data, char c){
 	int i, j;
   printf("Numero punti: %d\nDimensione di ogni punto: %d\n", rows, cols);
   for (i = 0; i < rows; i++) {
+		if( i%k == 0) printf("Gruppo %d\n", i/k);
 		if( c=='c')
-    	printf("Centroide n %d:\t", i);
+    	printf("Centroide n %d:\t", i%k);
 		else if( c=='p')
-			printf("Punto n %d:\t", i);
+			printf("Punto n %d:\t", i%k);
 
     for (int j = 0; j < cols; j++)
       printf("%8.2f\t", data[i*cols+j] );
@@ -143,10 +144,10 @@ float distance(VECTOR x1,VECTOR x2,int d){
 
 	return sum;
 }//distance
-
+/*
 
 // Funzione che calcola il residuo, versione ottimizzata
-/*VECTOR residual(VECTOR x,VECTOR centroid,int d){
+VECTOR residual(VECTOR x,VECTOR centroid,int d){
 	VECTOR res = alloc_matrix(1,d);
 	int i;
 	int p=10; //Che cos'è p?
