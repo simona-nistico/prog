@@ -305,17 +305,6 @@ double objective_function(int n,int m){
 // ---------- RICERCA NON ESAUSIVA -----------------
 
 
-double distance(VECTOR puntoX, VECTOR puntoY){
-
-	double sum=0;
-	double diff=0;
-	for(int i=0;i<d;i++){
-		diff = (puntoX[i]-puntoY[i]);
-		sum += diff*diff;
-	}
-	return sqrt(sum);
-}
-
 // la matrice distances deve essere creata una volta sola visto che il metodo seguente deve stare dentro un ciclo
 void compute_distances_from_centroids(MATRIX points,MATRIX centroids,MATRIX centroid_of_point, int num_points,int num_centroids, int dimensions){
 

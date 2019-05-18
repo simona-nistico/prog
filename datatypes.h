@@ -113,22 +113,56 @@ void print_matrix_int(int rows, int cols, int* data, char c, int m){
 
 /** Funzione che calcola la distanza
   * Costo: O(d)
-  *
+  * versione ottimizzata
   */
 float distance(VECTOR x1,VECTOR x2,int d){
 	float diff,sum = 0;
+	int i;
 
 	// Per ridurre l'overhead dovuto ad ogni passo del ciclo effettuiamo al suo
 	// interno più operazioni (assumiamo che la dimensione d sia divisibile per
   // due)
-	for(int i=0; i<d/2; i++){
+
+	// Si lavora su gruppi di 4
+	for(i=0; i<=n-4; i+=4){
 		diff = x1[i]-x2[i];
 		sum += diff*diff;
 		diff = x1[i+1]-x2[i+1];
 		sum += diff*diff;
+		diff = x1[i+3]-x2[i+3];
+		sum += diff*diff;
+		diff = x1[i+4]-x2[i+4];
+		sum += diff*diff;
 	}
 
-	return sqrt(sum);
+	// Processiamo un eventuale residual_centroids
+	for(i;i<n;i++){
+		diff = x1[i]-x2[i];
+		sum += diff*diff;
+	}
+
+	return sum;
+}
+
+// Funzione che calcola il residuo, versione ottimizzata
+VECTOR residual(VECTOR x,VECTOR centroid,int d){
+	VECTOR res = alloc_matrix(1,d);
+	int i;
+
+	for(i=0;i<=n-p;i+=p){
+		res[i] = x[x+i]-centroid[x+i];
+		res[i+1] = x[x+i+1]-centroid[x+i+1];
+		res[i+2] = x[x+i+2]-centroid[x+i+2];
+		res[i+3] = x[x+i+3]-centroid[x+i+3];
+	}
+
+	// Ciclo per eventuali cicli residui
+	for(i;i<n;i++){
+		res[i] = x[x+i]-centroid[x+i];
+	}
+
+	return rer;
+	
 }
 
 /** Funzione che effettua la quantizzazione della query
@@ -136,7 +170,7 @@ float distance(VECTOR x1,VECTOR x2,int d){
 	*/
 int* quantize(int x, int m, int d_star){
 	// Centroidi che quantizzano ciascuna porzione
-	int* cents = (int*) malloc(m,sizeof(int))
+	int* cents = (int*) malloc(m,sizeof(int));
 	int centr,j;
 	float min,dist;
 
@@ -161,5 +195,7 @@ int* quantize(int x, int m, int d_star){
 	}
 	return cents;
 }
+
+// Funzione che calcola i residui
 
 #endif
