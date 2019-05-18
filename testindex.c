@@ -19,7 +19,10 @@ int* centroid_of_point;
 
 
 //Codebooks dei vari sottogruppi
-MATRIX centroids;	//dimensione: m*k righe,d_star(d/m) colonne
+//Dimensione: m*k righe, d_star cioè d/m colonne
+//Per andare da un sottogruppo all'altro bisgna avanzare di m righe
+//Le colonne sono d_start cioè d/m
+MATRIX centroids;
 
 //Parametri ottenuti in input
 params *input;
@@ -29,11 +32,11 @@ params *input;
 VECTOR distances_between_centroids; //TODO scegliere struttura
 
 //Numero di elementi per sottovettore
-int d_star;
+int d_star; //Dato già presente in datatypes con il nome di 'k', verificare
 
+//Matrice dei centroidi del quantizzatore grossolano di dimensione n*d
+int* centroids_coarse;
 
-int* centroids_coarse //matrice dei centroidi del quantizzatore grossolano
-                      //di dimensione nxd
 
 int* coarse_centroid_of_point; // matrice di dimensione nx2 che contiene
                                  // in m[i][0] il centroide del punto
@@ -42,6 +45,7 @@ int* coarse_centroid_of_point; // matrice di dimensione nx2 che contiene
 																 //invertita relativa al centroide
 
 MATRIX residuals;
+
 
 //------------------------------------METODI------------------------------------
 
@@ -52,54 +56,29 @@ MATRIX residuals;
  * k =  numero di centroidi di ogni sotto-quantizzatore
  * ds = data set
  * m = numero di sottoquantizzatori
- * k numeri casuali diversi da 0 a n incluso
  */
-void generate_centroids(int n, int d, int k, MATRIX ds, int m, int d_star){
+void generate_centroids(int n, int d, int k, MATRIX ds, int m){
+		int d_star = d/m;
 
-	int number,old_number,i,j;
+		// Alloco la matrice dei centroidi
+		centroids = alloc_matrix(k*m,d_star);
 
-	// Alloco la matrice dei centroidi
-	centroids = alloc_matrix(k*m,d_star);
+		int number = 0; //centroide_scelto
+		for(int g=0;g<m;g++){ //per ogni sottogruppo
 
-  //rand() function returns an integer value between 0 and RAND_MAX(32767)
-	// TODO togliere per avere numeri sempre casuali:  srand(time(NULL));
-
-	/**IDEA:
-	  * divido gli n punti in k intervalli e ottengo un range di valori;
-		* scelgo un numero casuale tra 0 e range e prendo il punto corrispondente;
-		* nel caso peggiore viene scelto sempre il max del range e i punti restano sempre entro n;
-		* i restanti punti li divido in k-1 intervalli ottenendo un nuovo range;
-		* cosi facendo ottengo dei numeri casuali sempre diversi che coprono l'intervallo da  a n;
-		*/
-
-		//Effettuiamo le operazioni di calcolo per ciasun sottogruppo
-
-		for(int g=0;g<m;g++){
-			old_number = rand()%((n-1)/k);
-			printf("Centroide 0 scelto il punto numero: %d\n",old_number);
-
-			// Inseriamo il primo centroide nella matrice lungo la riga 0
-			for(j=0;j<d_star;j++)
-				centroids[j*d_star*g] = ds[old_number*d+d_star*g+j];	//[numero_riga*d+numero_gruppo*(d/m)+j]
-
-			int range;
-			for(i=1;i<k;i++){
-				range = (n-1-old_number)/(k-i);	//trovo il nuovo range tra cui scegliere i valori casuali
-  			number = old_number+rand()%range+1; //seleziono un numero casuale nel range
+			for(int i=0;i<k;i++){
 				printf("Centroide %d scelto il punto numero: %d\n",i, number);
 
 				// Inseriamo il centroide nella matrice
-				for(j=0;j<d_star;j++)
+				for(int j=0;j<d_star;j++)
 					//[riga->(i+group*k)*d_star,colonna->j]     [riga->number*d,colonna->d_star*g+j]
 					centroids[(i+g*k)*d_star+j] = ds[number*d+d_star*g+j];
-
-				old_number = number;
+				number ++;
  			}//for i
 		}//for g
 
 		print_matrix(k*m, d_star, centroids, 'c');
 
-	//DA TESTARE!
 }//generate_centroids
 
 
@@ -116,6 +95,7 @@ void generate_centroids(int n, int d, int k, MATRIX ds, int m, int d_star){
   * TODO: verificare se è possibile sfruttare gli indirizzi ed evitare l'uso
   *       del vettore punto
   */
+	/*TODO
 void points_of_centroid(int n, int d, int k, MATRIX ds,MATRIX centroids,int* centroid_of_point, int m, int d_star){
 
 	//VECTOR punto = alloc_matrix(1,d);	// Alloco il vettore che conterrà di volta in volta il punto
@@ -138,7 +118,7 @@ void points_of_centroid(int n, int d, int k, MATRIX ds,MATRIX centroids,int* cen
 				*/
 
 			//Inizializzo con il primo punto e con la distanza da esso
-			minDist = distance(&ds[i*d+g*d_star],&centroids[(g*k)*d_star],d_star); //(0+group*k)
+/*			minDist = distance(&ds[i*d+g*d_star],&centroids[(g*k)*d_star],d_star); //(0+group*k)
 			minCentr = 0;
 			//printf("Distanza del punto %i dal centroide  0: %f\n", i, minDist);
 
@@ -149,7 +129,7 @@ void points_of_centroid(int n, int d, int k, MATRIX ds,MATRIX centroids,int* cen
 					punto[j] = input->ds[d*i+j]; // Dataset memorizzato per righe
 					*/
 
-				distanza = distance(&ds[i*d+g*d_star],&centroids[(c+g*k)*d_star],d_star);
+/*				distanza = distance(&ds[i*d+g*d_star],&centroids[(c+g*k)*d_star],d_star);
 				//printf("Distanza del punto %i dal centroide %i: %f\n", i, c, distanza);
 
 				if(distanza < minDist){
@@ -189,7 +169,7 @@ void points_of_centroid(int n, int d, int k, MATRIX ds,MATRIX centroids,int* cen
 	* ds = data set
   * TODO: parallelizzare la somma in assembly
   */
-void update_centroids(int n, int d, int k, MATRIX ds, MATRIX centroids, int* centroid_of_point, int m, int d_star){
+/*void update_centroids(int n, int d, int k, MATRIX ds, MATRIX centroids, int* centroid_of_point, int m, int d_star){
 
 		// Matrice temporanea per memorizzare i nuovi centroidi
 		MATRIX tmp = alloc_matrix(k,d_star);
@@ -247,7 +227,7 @@ void update_centroids(int n, int d, int k, MATRIX ds, MATRIX centroids, int* cen
   * COSTO:
   */
 // TODO
-void store_distances(int m, int k, MATRIX centroids){
+/*void store_distances(int m, int k, MATRIX centroids){
 	//Stiamo salvando le m triangolari inferiori con le distanze tra i centroidi di ogni codebook per risparmiare spazio
 	distances_between_centroids = (VECTOR) malloc(m*(k*(k+1)/2)*sizeof(float));
 	int i,j;
@@ -281,7 +261,7 @@ void store_distances(int m, int k, MATRIX centroids){
   * n =  numero di punti del data set
   * TODO: parallelizzare la somma in assembly
   */
-double objective_function(int n,int m){
+/*double objective_function(int n,int m){
 		double sum = 0, dist = 0;
 		int i;
 
@@ -316,6 +296,7 @@ double distance(VECTOR puntoX, VECTOR puntoY){
 	return sqrt(sum);
 }
 
+/*TODO
 // la matrice distances deve essere creata una volta sola visto che il metodo seguente deve stare dentro un ciclo
 void compute_distances_from_centroids(MATRIX points,MATRIX centroids,MATRIX centroid_of_point, int num_points,int num_centroids, int dimensions){
 
@@ -388,6 +369,7 @@ void update_coarse_centroids(MATRIX points, MATRIX centroids, MATRIX centroid_of
 		free(c);
 }
 
+
 // genera un vettore di length numeri casuali compresi tra 0 e last_index
 // diversi tra loro
 void generate_random_index(int* indexes, int last_index, int length){
@@ -407,7 +389,7 @@ void generate_random_index(int* indexes, int last_index, int length){
 		}
 }
 
-
+/*TODO
 // mette result_rows righe di source (che ha dimensions colonne e num_rows righe)
 // nella matrice result (entrambe le matrici di float)
 void extract_casual_rows(int num_rows, int result_rows, int dimensions, MATRIX result, MATRIX source){
@@ -435,7 +417,8 @@ double sumOfDistances(MATRIX centroid_of_point){
 		return sum;
 
 }
-
+*/
+/*TODO
 void calculate_coarse_quantizer(num_points,num_points_reduced,dimensions,num_centroids,MATRIX dataset,MATRIX coarse_centroids,MATRIX coarse_centroid_of_point){
 
 		MATRIX reduced_dataset = alloc_matrix(num_points_reduced,dimensions);
@@ -486,7 +469,7 @@ void calculate_accurate_quantizer(int num_points, int num_centroids, int subgrou
 
 
 }
-
+*/
 
 //La funzione seguente realizza l'indicizzazione non esaustiva dei punti del
 //dataset. Come specificato sull'articolo, il primo passo è realizzare
@@ -496,7 +479,7 @@ void calculate_accurate_quantizer(int num_points, int num_centroids, int subgrou
 // struttura che per ogni centroide q(y) contenga ogni punto y che
 // in forma quantizzata è q(y), accompagnato dal relativo residuo che però
 // non è memorizzato esplicitamente bensì c'è un secondo quantizzatore prodotto
-
+/*TODO
 void non_exhaustive_indexing(MATRIX dataset, int num_points, int num_points_reduced, int num_centroids, int dimensions, int dim_star, int subgroups){
 
 	MATRIX coarse_centroids = alloc_matrix(num_centroids,dimensions);
@@ -565,7 +548,7 @@ void non_exhaustive_indexing(MATRIX dataset, int num_points, int num_points_redu
 	}
 
 }
-
+*/
 
 /** La funzione seguente calcola i centroidi finali:
   * genera dei centroidi casuali, divide lo spazio in celle di Voronoi,
@@ -578,15 +561,15 @@ void non_exhaustive_indexing(MATRIX dataset, int num_points, int num_points_redu
   * k =  numero di centroidi di ogni sotto-quantizzatore
 	* ds = data set
   */
-void calculate_centroids(int n, int d, int k, MATRIX ds, float eps,int m,int d_star){
+void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, int d_star){
 	int iter = 1;
 
 	//Genera Centroidi casuali
 	//COSTO: d+k*d
-	generate_centroids(n, d, k, ds, m, d_star);
+	generate_centroids(n, d, k, ds, m);
 
 	centroid_of_point = (int*) malloc(n*m*sizeof(int));	//la matrice va aggiornata
-
+/* TODO
 	printf("############################ ITERAZIONE %d ############################\n", 0);
 	//Divide lo spazio in celle di Voronoi
 	//COSTO: n*k* O(distance)[cioè d] = n*k*d
@@ -625,7 +608,7 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps,int m,int d_s
 		}
 
   }//while
-
+*/
 }//calculate_centroids
 
 
@@ -655,10 +638,10 @@ void testIndex(params* input2){
  			input->ds[i*4+j] = i+j*2.5+rand()%20;
 
 //Prendo un sottoinsieme del dataset
-	input->n = 12;
-	input->d = 4;
-	input->k = 4; //2
-	input->m = 1;
+	input->n = 12; // numero di punti del data set
+	input->d = 4; // numero di dimensioni del data/query set
+	input->k = 4; // numero di centroidi di ogni sotto-quantizzatore
+	input->m = 1; // numero di gruppi del quantizzatore prodotto
 	input->eps = 20;
 
 	d_star = (input->d)/(input->m);
@@ -694,6 +677,7 @@ void testIndex(params* input2){
 	*/
 
 
-	calculate_centroids(input->n, input->d, input->k, input->ds, input->eps,input->m,d_star);
+	calculate_centroids(input->n, input->d, input->k, input->ds,
+		input->eps, input->m, d_star);
 
 }

@@ -88,7 +88,7 @@ void print_matrix(int rows, int cols, MATRIX data, char c){
 			printf("Punto n %d:\t", i);
 
     for (int j = 0; j < cols; j++)
-      printf("%18.2f\t", data[i*cols+j] );
+      printf("%7.2f\t", data[i*cols+j] );
     printf("\n");
 	}
 	printf("\n\n");
@@ -113,18 +113,18 @@ void print_matrix_int(int rows, int cols, int* data, char c, int m){
 
 /** Funzione che calcola la distanza
   * Costo: O(d)
-  *
   */
 float distance(VECTOR x1,VECTOR x2,int d){
 	float diff,sum = 0;
 
 	// Per ridurre l'overhead dovuto ad ogni passo del ciclo effettuiamo al suo
 	// interno più operazioni (assumiamo che la dimensione d sia divisibile per
-  // due)
+  // due) [Anche se questa ottimizzazione va fatta in assembly]
 	for(int i=0; i<d/2; i++){
 		diff = x1[i]-x2[i];
 		sum += diff*diff;
-		diff = x1[i+1]-x2[i+1];
+		i++; //Mancava l'incremento cit.
+		diff = x1[i]-x2[i];
 		sum += diff*diff;
 	}
 
@@ -134,6 +134,8 @@ float distance(VECTOR x1,VECTOR x2,int d){
 /** Funzione che effettua la quantizzazione della query
 	* COSTO: =(d_star)
 	*/
+
+/*
 int* quantize(int x, int m, int d_star){
 	// Centroidi che quantizzano ciascuna porzione
 	int* cents = (int*) malloc(m,sizeof(int))
@@ -161,5 +163,5 @@ int* quantize(int x, int m, int d_star){
 	}
 	return cents;
 }
-
+*/
 #endif

@@ -9,15 +9,16 @@
 params *input;
 
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
 //--------------------------- RICERCA ESAUSTIVA --------------------------------
-=======
+//=======
 //------------------------------------METODI------------------------------------
 
 
 /** Funzione che effettua la quantizzazione della query
 	* COSTO: =(d_star)
 	*/
+/*
 int* quantize(int x, int m, int d_star){
 	// Centroidi che quantizzano ciascuna porzione
 	int* cents = (int*) malloc(m,sizeof(int))
@@ -160,7 +161,8 @@ void calculateNearestNonExt(MATRIX qs, int nq, int n, int knn, int kc, int w, bo
 	* e si mantiengono i k punti più vicini ed un vettore che mantiene
 	* in memoria le loro distanze per confrontarli man mano con tutti i punti
 	*/
-void calNearExtS(MATRIX qs, int* ANN, int* centroid_of_point,MATRIX  distances_between_centroids, int k, int m, int knn, int nq, int n, int d_star){
+
+/*void calNearExtS(MATRIX qs, int* ANN, int* centroid_of_point,MATRIX  distances_between_centroids, int k, int m, int knn, int nq, int n, int d_star){
 	// RICORDA:
 	// ANN = (int*) malloc(knn*nq*sizeof(int))
 	VECTOR distances = (VECTOR) malloc(knn*sizeof(double));
@@ -360,7 +362,7 @@ void NoExaSearch(MATRIX ds,MATRIX centroids_coarse,int* ANN, int d, int knn,int 
 	dealloc_matrix(dist);
 
 } // NoExaSearch
-
+*/
 void testSearch(params* input2){
   printf("\n###########Chiamata a Funzione TestSearch############\n");
   /*
