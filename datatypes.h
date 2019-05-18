@@ -82,11 +82,11 @@ void print_matrix(int rows, int cols, int k, MATRIX data, char c){
 	int i, j;
   printf("Numero punti: %d\nDimensione di ogni punto: %d\n", rows, cols);
   for (i = 0; i < rows; i++) {
-		if( i%k == 0) printf("Gruppo %d\n", i/k);
-		if( c=='c')
+		if( c=='c'){
+			if( i%k == 0) printf("Gruppo %d\n", i/k);
     	printf("Centroide n %d:\t", i%k);
-		else if( c=='p')
-			printf("Punto n %d:\t", i%k);
+		}else if( c=='p')
+			printf("Punto n %d:\t", i);
 
     for (int j = 0; j < cols; j++)
       printf("%8.2f\t", data[i*cols+j] );
@@ -96,13 +96,14 @@ void print_matrix(int rows, int cols, int k, MATRIX data, char c){
 }
 
 // Funzione che stampa una matrice di interi
-void print_matrix_int(int rows, int cols, int* data, char c){
+void print_matrix_int(int rows, int cols, int k, int* data, char c){
 	int i,j;
   printf("Numero punti: %d\nDimensione di ogni punto: %d\n", rows, cols);
   for (i = 0; i < rows; i++) {
-		if( c=='c')
-    	printf("Centroide n %d:\t", i);
-		else if( c=='p')
+		if( c=='c'){
+			if( i%k == 0) printf("Gruppo %d\n", i/k);
+    	printf("Centroide n %d:\t", i%k);
+		}else if( c=='p')
 			printf("Punto n %d:\t", i);
 
     for (int j = 0; j < cols; j++)
@@ -126,13 +127,14 @@ float distance(VECTOR x1,VECTOR x2,int d){
 
 	// Si lavora su gruppi di 4
 	for(i=0; i<=d-4; i+=4){
+		printf("%d",i );
 		diff = x1[i]-x2[i];
 		sum += diff*diff;
 		diff = x1[i+1]-x2[i+1];
 		sum += diff*diff;
-		diff = x1[i+3]-x2[i+3];
+		diff = x1[i+2]-x2[i+2];
 		sum += diff*diff;
-		diff = x1[i+4]-x2[i+4];
+		diff = x1[i+3]-x2[i+3];
 		sum += diff*diff;
 	}
 
