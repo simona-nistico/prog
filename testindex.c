@@ -7,7 +7,6 @@
 #include "datatypes.h"
 
 
-
 //Matrice che ogni riga rappresenta un punto e ogni colonna un centroide
 //L'elemento m[i][j] rappresenta la distanza del punto i dal centroide j
 MATRIX distances_from_centroids; //TODO Verificare se serve questa struttura
@@ -92,15 +91,12 @@ void generate_centroids(int n, int d, int k, MATRIX ds, int m){
   * d = numero di dimensioni del data/query set
   * k =  numero di centroidi di ogni sotto-quantizzatore
 	* ds = data set
-  * TODO: verificare se è possibile sfruttare gli indirizzi ed evitare l'uso
-  *       del vettore punto
+	*
   */
-	/*TODO
-void points_of_centroid(int n, int d, int k, MATRIX ds,MATRIX centroids,int* centroid_of_point, int m, int d_star){
 
-	//VECTOR punto = alloc_matrix(1,d);	// Alloco il vettore che conterrà di volta in volta il punto
-	//Si può evitare dal momento che posso accedere ai singoli elementi
-	//usando l'aritmetica dei puntatori
+void points_of_centroid(int n, int d, int k, MATRIX ds, int m){
+
+	int d_star = d/m;
 
 	double distanza;
 	double minDist; 	//Distanza minima dal centroide
@@ -111,26 +107,17 @@ void points_of_centroid(int n, int d, int k, MATRIX ds,MATRIX centroids,int* cen
 
 		for(i=0;i<n;i++){	//per ogni punto del dataset devo trovare il centroide più vicino
 
-			/*
-			for(j=0;j<d;j++)	//copio il punto dal dataset nel vettore punto
-				punto[j] = input->ds[d*i+j];	// Dataset memorizzato per righe
-
-				*/
 
 			//Inizializzo con il primo punto e con la distanza da esso
-/*			minDist = distance(&ds[i*d+g*d_star],&centroids[(g*k)*d_star],d_star); //(0+group*k)
+			minDist = distance(&ds[i*d+g*d_star],&centroids[(g*k)*d_star],d_star); //(0+group*k)
 			minCentr = 0;
-			//printf("Distanza del punto %i dal centroide  0: %f\n", i, minDist);
+			printf("Distanza del punto %i dal centroide 0: %f\n", i, minDist);
 
 
 			for(c=1;c<k;c++){ //Calcolo la distanza tra il punto attuale e ogni centroide
 
-				/*for(j=0;j<d;j++)
-					punto[j] = input->ds[d*i+j]; // Dataset memorizzato per righe
-					*/
-
-/*				distanza = distance(&ds[i*d+g*d_star],&centroids[(c+g*k)*d_star],d_star);
-				//printf("Distanza del punto %i dal centroide %i: %f\n", i, c, distanza);
+ 				distanza = distance(&ds[i*d+g*d_star],&centroids[(c+g*k)*d_star],d_star);
+				printf("Distanza del punto %i dal centroide %i: %f\n", i, c, distanza);
 
 				if(distanza < minDist){
 					minDist = distanza;
@@ -139,7 +126,7 @@ void points_of_centroid(int n, int d, int k, MATRIX ds,MATRIX centroids,int* cen
 			}//for ogni centroide
 
 			//Salvo i risultati trovati
-			//printf("Distanza del punto %i dal centroide minimo %i: %f\n", i, minCentr, minDist);
+			printf("Distanza del punto %i dal centroide minimo %i: %f\n", i, minCentr, minDist);
 			centroid_of_point[i*m+g] = minCentr;
       distances_from_centroids[i*m+g] = minDist;
 			//vedere se è necessario salvarlo in una struttura dati ed eventualmente
@@ -569,12 +556,12 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, int d
 	generate_centroids(n, d, k, ds, m);
 
 	centroid_of_point = (int*) malloc(n*m*sizeof(int));	//la matrice va aggiornata
-/* TODO
+
 	printf("############################ ITERAZIONE %d ############################\n", 0);
 	//Divide lo spazio in celle di Voronoi
 	//COSTO: n*k* O(distance)[cioè d] = n*k*d
-	points_of_centroid(n, d, k, ds, m, d_star);
-
+	points_of_centroid(n, d, k, ds, m);
+/*
 	//Verifica l'ottimalità dei Punti
 	//COSTO: n
 	double obiettivo = objective_function(n,m);
