@@ -144,6 +144,8 @@ float distance(VECTOR x1,VECTOR x2,int d){
 	}
 
 	return sum;
+
+	// TESTATA
 }//distance
 /*
 
