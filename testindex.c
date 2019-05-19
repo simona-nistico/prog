@@ -11,7 +11,7 @@
 //Matrice che ogni riga rappresenta un punto e ogni colonna il gruppo
 //L'elemento m[i][j] rappresenta la distanza del punto i dal centroide più vicino del
 //sottogruppo j
-MATRIX distances_from_centroids; //TODO Verificare se serve questa struttura
+MATRIX distances_from_centroids;
 
 //Per ogni punto (riga) viene indicato il centroide prodotto più vicino e la distanza da esso
 //centroid_of_point[i][j] = centroide a minima distanza dap punti i del sottogruppo j
@@ -83,7 +83,7 @@ int* centroids_coarse; //matrice dei centroidi del quantizzatore grossolano
  }//generate_centroids
 
 
-//ATTENZIONE! DA RIVEDERE
+
 /** La funzione seguente cerca i punti che appartengono ad ogni centroide
 	* Logicamente divide lo spazio in celle di Voronoi
 	* Per ogni punto del dataset, calcola la di stanza con tutti i centroidi
@@ -153,18 +153,24 @@ void points_of_centroid(int n, int d, int k, MATRIX ds, int m){
 	* ds = data set
   * TODO: parallelizzare la somma in assembly
   */
-/*void update_centroids(int n, int d, int k, MATRIX ds, MATRIX centroids, int* centroid_of_point, int m, int d_star){
+void update_centroids(int n, int d, int k, MATRIX ds, int m){
+		int d_star = d/m;
 
-		// Matrice temporanea per memorizzare i nuovi centroidi
-		MATRIX tmp = alloc_matrix(k,d_star);
-
-		//Vettore che, per ogni centroide, conta quanti punti appartengono alla sua cella
-		int* cont = (int*) malloc(k*sizeof(int)); //usare calloc per inizializzare a 0?
-
-		int centroide; //Centroide a cui appartiene il punto corrente
 
 		//Considero tutti i sottogruppi
 		for(int g=0;g<m;g++){ //per ogni sottogruppo
+
+			//##########Inizializzo qui queste strutture per evitare che ci siano conflitti
+			//					Visto che facciamo +=
+			//				Questa cosa va discussa e ottimizzata poiché l'allocazione consuma un po
+			// Matrice temporanea per memorizzare i nuovi centroidi
+			MATRIX tmp = alloc_matrix(k,d_star);
+
+			//Vettore che, per ogni centroide, conta quanti punti appartengono alla sua cella
+			int* cont = (int*) calloc(k,sizeof(int)); //usare calloc per inizializzare a 0?
+
+			int centroide; //Centroide a cui appartiene il punto corrente
+
 
 			for(int i=0;i<n;i++){ //per ogni punto del dataset
 
@@ -175,6 +181,9 @@ void points_of_centroid(int n, int d, int k, MATRIX ds, int m){
 					tmp[centroide*d_star+j] += ds[i*d+(g*d_star)+j];
 
 			}//for tutti i punti
+
+			// centroids = [riga->(i+group*k)*d_star,colonna->j]
+			// dataset = [riga->number*d,colonna->d_star*g+j]
 
 			//Divido ogni somma di cordinate per il numero di punti e lo inserisco come nuovo centroide
 			for(int i=0;i<k;i++){	//per ogni centroide
@@ -193,15 +202,17 @@ void points_of_centroid(int n, int d, int k, MATRIX ds, int m){
 						cont[i] = 0;
 
 			}//for tutti i centroidi
+
+			dealloc_matrix(tmp);
+			free(cont);
+
 	  }//for tutti i sottogruppi
 
-		dealloc_matrix(tmp);
-		free(cont);
 
 		printf("Nuovi centroidi:\n");
-		print_matrix(k*m,d_star,centroids, 'c');
+		print_matrix(k*m,d_star, k, centroids, 'c');
 
-		//DA TESTARE
+		//DA TESTARE -> MEGLIO
 }//update_centroids
 
 
@@ -235,8 +246,7 @@ void points_of_centroid(int n, int d, int k, MATRIX ds, int m){
 
 
 //-----------------------------ATTENZIONE-----------------------------
-//forse l'arresto non dipende dalla funzione obiettivo ma da:
-// dist(vecchio centroide, nuovo centroide) < epsilon
+//Sistemare l'arresto del k-means chiedere al prof
 
 /** La funzione seguente calcola il valore della funzione obiettivo
   * che deve essere minimizzata al fine avere un buon insieme di centroidi
@@ -247,13 +257,12 @@ void points_of_centroid(int n, int d, int k, MATRIX ds, int m){
   */
 double objective_function(int n,int m){
 		double sum = 0, dist = 0;
-		int i;
 
 		for(int g=0;g<m;g++){		// per ogni gruppo
 
-			for(i=0;i<n;i++){    // per ogni punto i, aggiunge distanza(i,q(i))^2
+			for(int i=0;i<n;i++){    // per ogni punto i, aggiunge distanza(i,q(i))^2
 				dist = distances_from_centroids[i*m+g];	//verificare se questo valore è aggiornato
-				sum += dist*dist;
+				sum += dist;//*dist; //E' gia al quadrato la distanza restituita
 			}
 
 		}// per ogni gruppo
@@ -261,7 +270,7 @@ double objective_function(int n,int m){
 		printf("Funzione obiettivo: %lf\n\n", sum );
 		return sum;
 
-		// Controllare se corretto
+		// Controllare se corretto -> sembra di si
 
 }//objective_function
 
@@ -547,11 +556,12 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m){
 	//Divide lo spazio in celle di Voronoi
 	//COSTO: n*k* O(distance)[cioè d] = n*k*d
 	points_of_centroid(n, d, k, ds, m);
-/*
+
 	//Verifica l'ottimalità dei Punti
 	//COSTO: n
 	double obiettivo = objective_function(n,m);
 	double obiettivoPrev = 0.0;
+
 
 
 //Per la formula della terminazione il prof deve aggiornare le specifiche di progetto sul sito
@@ -560,12 +570,12 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m){
 
 		//Trova i nuovi centroidi facendo la media dei punti delle celle di Voronoi
 		//COSTO: n*d+k*d
-		update_centroids(n, d, k, ds, m, d_star);
+		update_centroids(n, d, k, ds, m);
 
 		//Cambiati i centroidi, cambiano le celle di Voronoi;
 		//determina a quale cella appartengono i Punti
 		//COSTO: n*k* O(distance)[cioè d] = n*k*d
-		points_of_centroid(n, d, k, ds, m, d_star);
+		points_of_centroid(n, d, k, ds, m);
 
 		//Verifica l'ottimalità dei Punti
 		//COSTO: n
@@ -578,10 +588,11 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m){
 		if( obiettivoPrev - obiettivo < 0 ){
 			printf("La funzione obiettivo sta salendo:\n");
 			printf("Obiettivo vecchio: %lf\nObiettivo corrent: %lf\n", obiettivoPrev, obiettivo);
-		}
 
+		}
+		break;
   }//while
-*/
+
 }//calculate_centroids
 
 
@@ -650,7 +661,7 @@ void testIndex(params* input2){
 	*/
 
 
-	//calculate_centroids(input->n, input->d, input->k,
-	//	input->ds, input->eps, input->m);
+	calculate_centroids(input->n, input->d, input->k,
+		input->ds, input->eps, input->m);
 
 }
