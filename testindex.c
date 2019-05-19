@@ -78,7 +78,7 @@ int* centroids_coarse; //matrice dei centroidi del quantizzatore grossolano
 				number = 0;
  		}//for g
 
- 		print_matrix(k*m, d_star, k, centroids, 'c');
+// 		print_matrix(k*m, d_star, k, centroids, 'c');
 
     // TESTATA
  }//generate_centroids
@@ -136,10 +136,10 @@ void points_of_centroid(int n, int d, int k, MATRIX ds, int m){
 
 		}// for ogni sottogruppo
 
-		printf("\nIndici del vettore 'centroids' indicante i centroidi più vicini al punto per sottogruppi\n");
-		print_matrix_int(n,m, k, centroid_of_point, 'p');
-		printf("\nDistanza AL QUADRATO del centroide più vicino ai punti per sottogruppi\n");
-		print_matrix(n,m, k, distances_from_centroids, 'p');
+//		printf("\nIndici del vettore 'centroids' indicante i centroidi più vicini al punto per sottogruppi\n");
+//		print_matrix_int(n,m, k, centroid_of_point, 'p');
+//		printf("\nDistanza AL QUADRATO del centroide più vicino ai punti per sottogruppi\n");
+//		print_matrix(n,m, k, distances_from_centroids, 'p');
 
     // TESTATA
 }//points_of_centroid
@@ -223,8 +223,8 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m){
     dealloc_matrix(tmp);
     free(cont);
 
-		printf("Nuovi centroidi:\n");
-		print_matrix(k*m,d_star, k, centroids, 'c');
+//		printf("Nuovi centroidi:\n");
+//		print_matrix(k*m,d_star, k, centroids, 'c');
 
     // TESTATA
 }//update_centroids
@@ -577,7 +577,6 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m){
 	double obiettivoPrev = 0.0;
 
 
-
 //Per la formula della terminazione il prof deve aggiornare le specifiche di progetto sul sito
 	while( (obiettivoPrev - obiettivo ) > eps || iter == 1) {
 		printf("############################ ITERAZIONE %d ############################\n", iter);
@@ -594,17 +593,17 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m){
 		//Verifica l'ottimalità dei Punti
 		//COSTO: n
 		obiettivoPrev = obiettivo;
-		double obiettivo = objective_function(n,m);
+		obiettivo = objective_function(n,m);
 		iter++;
 
-		printf("Variazione funzione obiettivo: %lf\n", (obiettivoPrev - obiettivo) );
-		printf("CONDIZIONE DEL WHILE: %d\n", ((obiettivoPrev - obiettivo ) >eps));
-		if( obiettivoPrev - obiettivo < 0 ){
-			printf("La funzione obiettivo sta salendo:\n");
-			printf("Obiettivo vecchio: %lf\nObiettivo corrent: %lf\n", obiettivoPrev, obiettivo);
+    printf("Obiettivo vecchio: %14.2f\nObiettivo corrent: %14.2f\n", obiettivoPrev, obiettivo);
+		printf("Variazione obiett: %14.2f\n", (obiettivoPrev - obiettivo) );
+		printf("CONDIZIONE DEL WHILE: %d\n", (obiettivoPrev - obiettivo > eps) );
+		if( obiettivoPrev - obiettivo < 0 )
+			printf("La funzione obiettivo sta salendo.\n");
+    else if( obiettivoPrev - obiettivo == 0 )
+        printf("La funzione obiettivo è costante.\n");
 
-		}
-		break;
   }//while
 
 }//calculate_centroids
@@ -630,7 +629,7 @@ void testIndex(params* input2){
 */
 
 //---------------------------Dati piccoli per il test---------------------------
-
+/*
 	for(int i=0; i<12; i++)
 		for( int j=0; j<4; j++)
  			input->ds[i*4+j] = i+j*2.5+rand()%20;
@@ -640,13 +639,13 @@ void testIndex(params* input2){
 	input->d = 4;
 	input->k = 4; //2
 	input->m = 2;
-	input->eps = 20;
+	input->eps = 15;
 
 	d_star = (input->d)/(input->m);
 
 	printf("Dataset Iniziale\n");
 	print_matrix(input->n, input->d, input->n , input->ds, 'p');
-
+*/
 //---------------------------Test singole funzioni---------------------------
 
   //generate_centroids(input->n, input->d, input->k, input->ds, input->m);
@@ -674,7 +673,7 @@ void testIndex(params* input2){
 
 	*/
 
-
+//---------------------------Test completo---------------------------
 	calculate_centroids(input->n, input->d, input->k,
 		input->ds, input->eps, input->m);
 
