@@ -25,7 +25,7 @@ void calNearExtS(MATRIX qs, int* ANN, int* centroid_of_point,MATRIX  distances_b
 	float distance;
 	int j,l;
 
-	for(int i=0;i<nq){
+	for(int i=0;i<nq;i++){
 
 		if(input->symmetric==1){
 			// Calcoliamo la quantizzazione del punto
@@ -59,7 +59,7 @@ void calNearExtS(MATRIX qs, int* ANN, int* centroid_of_point,MATRIX  distances_b
 
 			if(distances[0]>distance){
 				l = 0;
-				while(distances[l+1]>distance && l<knn-1){
+				while(l<knn-1 && distances[l+1]>distance){
 					distances[l] = distances [l+1];
 					ANN[i*knn+l] = ANN[i*knn+l];
 					l++;
