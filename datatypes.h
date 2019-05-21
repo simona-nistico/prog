@@ -118,7 +118,7 @@ void print_quantizer(int m, int* data){
   for (int j = 0; j < m; j++){
       printf("%3d", data[j] );
 			if( j!=m-1 )
-				printf(",", data[j] );
+				printf(", ");
 	}
 	printf("]\n\n");
 }
@@ -182,6 +182,7 @@ VECTOR residual(VECTOR x,VECTOR centroid,int d){
 }//residual
 */
 
+
 /** Funzione che effettua la quantizzazione della query
   * x = punto di cui restituire il quantizzatore
 	* k = centroidi per ciascun sottogruppo
@@ -218,13 +219,13 @@ int* quantize(VECTOR x, int k, int m, int d_star, VECTOR centroids){
 				min = dist;
 			}
 
-
 		}//for centroide del gruppo g
 		// Abbiamo trovato il centroide del gruppo g
 		cents[g] = centr;
 	}//for gruppo
 
 	return cents;
+	//TESTATA
 }//quantize
 
 

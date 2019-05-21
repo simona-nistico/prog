@@ -12,15 +12,24 @@ params *input;
 //---------------------------RICERCA ESAUSTIVA--------------------------------
 
 /** Funzione che trova per ogni punto del queryset i k punti del dataset più vicini
-	* per ciascun punto del dataset si prende la sua quantizzazione da centroid_of_point
+	* Per ciascun punto del dataset si prende la sua quantizzazione da centroid_of_point
 	* e si mantiengono i k punti più vicini ed un vettore che mantiene
 	* in memoria le loro distanze per confrontarli man mano con tutti i punti
+  * n =  numero di punti del data set
+  * k =  numero di centroidi di ogni sotto-quantizzatore
+	* m = numero di gruppi del quantizzatore prodotto
+	* knn = numero di ANN (Aproximate Nearest Neighbor) approssimati da restituire per ogni query
+  * nq = numero di punti del query set
+	* qs = query set
+  * d_star = numero di dimensioni per ogni sottogruppo
 	*/
 	/*
-void calNearExtS(MATRIX qs, int* ANN, int* centroid_of_point,MATRIX  distances_between_centroids, int k, int m, int knn, int nq, int n, int d_star){
+void calNearExtS(int n, int k, int m, int knn, int nq, int d_star, MATRIX qs,
+				int* ANN, int* centroid_of_point, MATRIX  distances_between_centroids){
 	// RICORDA:
 	// ANN = (int*) malloc(knn*nq*sizeof(int))
-	VECTOR distances = (VECTOR) malloc(knn*sizeof(double));
+	VECTOR distances = (VECTOR) malloc(knn*sizeof(float)); //double?
+
 	// Vettore che contiene la quantizzazione del punto
 	int* quantizzation;
 	float distance;
@@ -81,7 +90,7 @@ void calNearExtS(MATRIX qs, int* ANN, int* centroid_of_point,MATRIX  distances_b
 	dealloc_matrix(distances);
 
 }// calNearExtS
-*/
+
 
 //-------------------------- RICERCA NON ESAUSTIVA ---------------------------
 /*
@@ -208,7 +217,7 @@ void testSearch(params* input2){
   input = input2;
 
 	//---------------------------Dati piccoli per il test---------------------------
-
+/*
 		for(int i=0; i<12; i++)
 			for( int j=0; j<4; j++)
 	 			input->ds[i*4+j] = i+j*2.5+rand()%20;
@@ -224,7 +233,7 @@ void testSearch(params* input2){
 
 		printf("Dataset Iniziale\n");
 		print_matrix(input->n, input->d, input->n , input->ds, 'p');
-
+*/
 	//---------------------------Test singole funzioni---------------------------
 
 

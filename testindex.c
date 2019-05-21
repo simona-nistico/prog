@@ -136,10 +136,10 @@ void points_of_centroid(int n, int d, int k, MATRIX ds, int m){
 
 		}// for ogni sottogruppo
 
-//		printf("\nIndici del vettore 'centroids' indicante i centroidi più vicini al punto per sottogruppi\n");
-//		print_matrix_int(n,m, k, centroid_of_point, 'p');
-//		printf("\nDistanza AL QUADRATO del centroide più vicino ai punti per sottogruppi\n");
-//		print_matrix(n,m, k, distances_from_centroids, 'p');
+		printf("\nIndici del vettore 'centroids' indicante i centroidi più vicini al punto per sottogruppi\n");
+		print_matrix_int(n,m, k, centroid_of_point, 'p');
+		printf("\nDistanza AL QUADRATO del centroide più vicino ai punti per sottogruppi\n");
+		print_matrix(n,m, k, distances_from_centroids, 'p');
 
     // TESTATA
 }//points_of_centroid
@@ -161,28 +161,23 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m){
 
     // Matrice temporanea per memorizzare i nuovi centroidi
     MATRIX tmp = alloc_matrix(k,d_star);
+    memset(tmp, 0, k*d_star*sizeof(float));
 
     // Ciclo per azzerare la matrice
-    for(i=0;i<k;i++){
+/*    for(i=0;i<k;i++){
       for(j=0;j<d_star;j++){
         tmp[i*d_star+j] = 0;
+        //printf(" %f ", tmp[i*d_star+j] );// = 0;
       }
     }
-
+*/
     //Vettore che, per ogni centroide, conta quanti punti appartengono alla sua cella
     int* cont = (int*) calloc(k,sizeof(int)); //usare calloc per inizializzare a 0?
 
 		//Considero tutti i sottogruppi
 		for(int g=0;g<m;g++){ //per ogni sottogruppo
 
-			//##########Inizializzo qui queste strutture per evitare che ci siano conflitti
-			//					Visto che facciamo +=
-			//				Questa cosa va discussa e ottimizzata poiché l'allocazione consuma un po
-
-
-
 			int centroide; //Centroide a cui appartiene il punto corrente
-
 
 			for(int i=0;i<n;i++){ //per ogni punto del dataset
 
@@ -196,7 +191,6 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m){
 
 			// centroids = [riga->(i+group*k)*d_star,colonna->j]
 			// dataset = [riga->number*d,colonna->d_star*g+j]
-
 
 			//Divido ogni somma di cordinate per il numero di punti e lo inserisco come nuovo centroide
 			for(int i=0;i<k;i++){	//per ogni centroide
@@ -216,9 +210,7 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m){
 
 			}//for tutti i centroidi
 
-
 	  }//for tutti i sottogruppi
-
 
     dealloc_matrix(tmp);
     free(cont);
@@ -339,7 +331,7 @@ double objective_function(int n,int m){
 	dealloc_matrix(centroide);
 
 }
-
+/*
 void update_coarse_centroids(MATRIX points, MATRIX centroids, MATRIX centroid_of_point, int num_points, int num_centroids, int dimensions){
 		// Creiamo una matrice che ci consenta di effettuare l'aggiornamento dei centroidi
 		MATRIX tmp = alloc_matrix(k,d);
@@ -647,14 +639,14 @@ void testIndex(params* input2){
 	print_matrix(input->n, input->d, input->n , input->ds, 'p');
 
 //---------------------------Test singole funzioni---------------------------
-
+/*
   generate_centroids(input->n, input->d, input->k, input->ds, input->m);
   //generate_centroids(100, 128, 10);	//Test
 
 
 	float x[6] = {1, 2, 3, 8, 7, 2};
 	float y[6] = {9, 8, 7, 6, 1, 3};
-/*	printf("Distanza: %f\n", distance(x, y, 5) );
+	printf("Distanza: %f\n", distance(x, y, 5) );
 
 	centroid_of_point = alloc_matrix(input->n,2);	//forse la metto dentro la funzione next
 
@@ -662,22 +654,23 @@ void testIndex(params* input2){
 	points_of_centroid(input->n, input->d, input->k, input->ds);
 
 
-	objective_function(input->n);
+	objective_function(input->n, input->m);
 
 
 	update_centroids(input->n, input->d, input->k, input->ds);
 
 	points_of_centroid(input->n, input->d, input->k, input->ds);
 
-	objective_function(input->n);
+	objective_function(input->n, input->m);
 
-	*/
 
   int* q = quantize( x, input->k, input->m, d_star, centroids);
   print_quantizer(input->m, q);
 
+  */
+
 //---------------------------Test completo---------------------------
-//	calculate_centroids(input->n, input->d, input->k,
-//		input->ds, input->eps, input->m);
+	calculate_centroids(input->n, input->d, input->k,
+		input->ds, input->eps, input->m);
 
 }
