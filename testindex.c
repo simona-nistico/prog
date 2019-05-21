@@ -223,30 +223,32 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m){
 
 
 /** La funzione calcola e memorizza la distanza tra centroidi, le distanze
-  * sono memorizzate considerando solo il triangolo inferiore della matrice
+  * sono memorizzate considerando solo il triangolo inferiore? della matrice
   * non salvando la parte superiore
+  * m = numero di sottoquantizzatori
+  * k =  numero di centroidi di ogni sotto-quantizzatore
   * COSTO:
   */
-// TODO
-/*void store_distances(int m, int k, MATRIX centroids){
+void store_distances(int m, int k){
 	//Stiamo salvando le m triangolari inferiori con le distanze tra i centroidi di ogni codebook per risparmiare spazio
-	distances_between_centroids = (VECTOR) malloc(m*(k*(k+1)/2)*sizeof(float));
-	int i,j;
+	distances_between_centroids = (VECTOR) malloc(m*(k*(k-1)/2)*sizeof(float));
 
-	//Effettuiamo le operazioni per ciascun gruppo
-	for(int g=0;g<m;g++){
-		for(i=0;i<k;i++){
-			//La prima distanza è tra il centroide e se stesso e quindi è pari a 0
-			distances_between_centroids[i*(i+1)/2+g*(k*(k+1)/2)] = 0;
+	for(int g=0;g<1;g++){//per ciascun gruppo
+		for(int i=0;i<k;i++){//per ogni centroide
 
-			for(j=1;j<i;j++){
+    	//La prima distanza è tra il centroide e se stesso e quindi è pari a 0
+//			distances_between_centroids[i*(i+1)/2+g*(k*(k+1)/2)] = 0;
+
+			for(int j=i+1;j<k;j++){
+
 				//Calcoliamo e salviamo la distanza
+        printf("riga: %d  colonna: %d \n", i, j);
 				distances_between_centroids[i*(i+1)/2+g*(k*(k+1)/2)+j] = distance(&centroids[(g*k+i)*d_star], &centroids[(g*k+j)*d_star], d_star);
-			}// for j
+
+      }// for j
 
 		}// for i
-
-	}// for g
+	}// for gruppo
 
 }
 
@@ -277,15 +279,16 @@ double objective_function(int n,int m){
 		return sum;
 
 		// Controllare se corretto -> sembra di si
-
 }//objective_function
+
 
 
 // ---------- RICERCA NON ESAUSIVA -----------------
 
+/*________________________________DEPRECATED?________________________________
 
 // la matrice distances deve essere creata una volta sola visto che il metodo seguente deve stare dentro un ciclo
-/*void compute_distances_from_centroids(MATRIX points,MATRIX centroids,MATRIX centroid_of_point, int num_points,int num_centroids, int dimensions){
+void compute_distances_from_centroids(MATRIX points,MATRIX centroids,MATRIX centroid_of_point, int num_points,int num_centroids, int dimensions){
 
 	VECTOR punto = alloc_matrix(1,dimensions);	// Alloco il vettore che conterrà di volta in volta il punto
   VECTOR centroide = alloc_matrix(1,dimensions); // Alloco il vettore che conterrà di volta in volta il centroide
@@ -331,6 +334,8 @@ double objective_function(int n,int m){
 	dealloc_matrix(centroide);
 
 }
+________________________________END DEPRECATED?________________________________
+*/
 /*
 void update_coarse_centroids(MATRIX points, MATRIX centroids, MATRIX centroid_of_point, int num_points, int num_centroids, int dimensions){
 		// Creiamo una matrice che ci consenta di effettuare l'aggiornamento dei centroidi
@@ -390,7 +395,8 @@ void extract_casual_rows(int num_rows, int result_rows, int dimensions, MATRIX r
 	}
 
 }
-
+*/
+/**________________________________DEPRECATED?________________________________
 double sumOfDistances(MATRIX centroid_of_point){
 
 		int i;
@@ -399,10 +405,11 @@ double sumOfDistances(MATRIX centroid_of_point){
 		for(i=0;i<n;i++){    // per ogni punto i, aggiunge distanza(i,q(i))^2
 			sum+=centroid_of_point[i*2+1]*centroid_of_point[i*2+1];
 		}
-
 		return sum;
-
 }
+
+________________________________END DEPRECATED?________________________________*/
+/*
 
 void calculate_coarse_quantizer(num_points,num_points_reduced,dimensions,num_centroids,MATRIX dataset,MATRIX coarse_centroids,MATRIX coarse_centroid_of_point){
 
@@ -451,9 +458,8 @@ void calculate_accurate_quantizer(int num_points, int num_centroids, int subgrou
 
 	}//while
 
-
-
 }
+
 
 
 //La funzione seguente realizza l'indicizzazione non esaustiva dei punti del
@@ -533,7 +539,7 @@ void non_exhaustive_indexing(MATRIX dataset, int num_points, int num_points_redu
 	}
 
 }
-
+*/
 
 /** La funzione seguente calcola i centroidi finali:
   * genera dei centroidi casuali, divide lo spazio in celle di Voronoi,
@@ -597,6 +603,10 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m){
         printf("La funzione obiettivo è costante.\n");
 
   }//while
+
+  store_distances(m,k);
+  printf("\nDistanze tra centroidi:\n");
+  print_centroids_distances(k, m, distances_between_centroids);
 
 }//calculate_centroids
 
