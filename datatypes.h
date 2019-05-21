@@ -128,16 +128,15 @@ void print_centroids_distances(int k, int m, float* data){
 	int val = 0;
 	for( int g=0; g<m; g++){
 		printf("Gruppo %d\n", g);
-		printf("DA ");
-		for (int i = 1; i < k; i++) printf("      %d ", i);
+		printf(" A->");
+		for (int j = 0; j < k; j++) printf("      %d ", j);
 		printf("\n");
-	  for (int i = 1; i < k; i++) {
-			printf("A->%d ", i);
-			for( int j=1; j< i; j++)	printf("        ");
-			for( int j=i; j<k; j++) 	printf("  %6.2f", data[val++] );
+	  for (int i = 0; i < k; i++) {
+			printf("DA->%d ", i);
+			for( int j=-1; j< i; j++)	printf("        ");
+			for( int j=i+1; j<k; j++) 	printf("  %6.2f", data[val++] );
 			printf("\n");
 		}
-		printf("\n\n");
 	}//for gruppo
 }
 

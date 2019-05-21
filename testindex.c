@@ -78,7 +78,7 @@ int* centroids_coarse; //matrice dei centroidi del quantizzatore grossolano
 				number = 0;
  		}//for g
 
- 		print_matrix(k*m, d_star, k, centroids, 'c');
+// 		print_matrix(k*m, d_star, k, centroids, 'c');
 
     // TESTATA
  }//generate_centroids
@@ -136,10 +136,10 @@ void points_of_centroid(int n, int d, int k, MATRIX ds, int m){
 
 		}// for ogni sottogruppo
 
-		printf("\nIndici del vettore 'centroids' indicante i centroidi più vicini al punto per sottogruppi\n");
-		print_matrix_int(n,m, k, centroid_of_point, 'p');
-		printf("\nDistanza AL QUADRATO del centroide più vicino ai punti per sottogruppi\n");
-		print_matrix(n,m, k, distances_from_centroids, 'p');
+//		printf("\nIndici del vettore 'centroids' indicante i centroidi più vicini al punto per sottogruppi\n");
+//		print_matrix_int(n,m, k, centroid_of_point, 'p');
+//		printf("\nDistanza AL QUADRATO del centroide più vicino ai punti per sottogruppi\n");
+//		print_matrix(n,m, k, distances_from_centroids, 'p');
 
     // TESTATA
 }//points_of_centroid
@@ -232,8 +232,8 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m){
 void store_distances(int m, int k){
 	//Stiamo salvando le m triangolari inferiori con le distanze tra i centroidi di ogni codebook per risparmiare spazio
 	distances_between_centroids = (VECTOR) malloc(m*(k*(k-1)/2)*sizeof(float));
-
-	for(int g=0;g<1;g++){//per ciascun gruppo
+  int pos = 0;
+	for(int g=0;g<m;g++){//per ciascun gruppo
 		for(int i=0;i<k;i++){//per ogni centroide
 
     	//La prima distanza è tra il centroide e se stesso e quindi è pari a 0
@@ -242,15 +242,35 @@ void store_distances(int m, int k){
 			for(int j=i+1;j<k;j++){
 
 				//Calcoliamo e salviamo la distanza
-        printf("riga: %d  colonna: %d \n", i, j);
-				distances_between_centroids[i*(i+1)/2+g*(k*(k+1)/2)+j] = distance(&centroids[(g*k+i)*d_star], &centroids[(g*k+j)*d_star], d_star);
-
+//        printf("riga: %d  colonna: %d \n", i, j);
+				//distances_between_centroids[i*(i+1)/2+g*(k*(k+1)/2)+j] = distance(&centroids[(g*k+i)*d_star], &centroids[(g*k+j)*d_star], d_star);
+        distances_between_centroids[pos++] = distance(&centroids[(g*k+i)*d_star], &centroids[(g*k+j)*d_star], d_star);
       }// for j
 
 		}// for i
 	}// for gruppo
+  printf("\nDistanze tra centroidi AL QUADRATO:\n");
+  print_centroids_distances(k, m, distances_between_centroids);
+  //TESTATA
+}//store_distances
 
-}
+float get_distance(int a, int b, int k, int g){
+  if( a == b ) return 0;
+  if( a >= k || b >= k ) return -1;
+  int min = ((a) < (b)) ? (a) : (b); //riga della matrice
+  int max = ((a) > (b)) ? (a) : (b); //colonna della matrice
+  //min*(min+1)/2+g*(k*(k+1)/2)+max
+
+  /*Spostarsi all'inizio della riga:
+   *(k-1) + k-2 +  k-3  + k-4  = 4*k - 4*(4-1)/2 = 4*min - min*(min+1)/2
+   *Spostarsi dentro la colonna:
+   *dove voglio arrivare - da dove parto - 1 visto che la diagonale non la metto
+   */
+  printf("Gruppo %d, distanza da %d a %d: %f\n",g,min,max,
+    distances_between_centroids[g*k*(k-1)/2 + min*k - min*(min+1)/2 +max -min-1] );
+  return distances_between_centroids[g*k*(k-1)/2 + min*k - min*(min+1)/2 +max -min-1];
+  //TESTATO
+}//get_distance
 
 
 //-----------------------------ATTENZIONE-----------------------------
@@ -604,9 +624,11 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m){
 
   }//while
 
+  printf("\nCentroidi ottimi finali:\n");
+	print_matrix(k*m,d_star, k, centroids, 'c');
+
   store_distances(m,k);
-  printf("\nDistanze tra centroidi:\n");
-  print_centroids_distances(k, m, distances_between_centroids);
+
 
 }//calculate_centroids
 
@@ -682,5 +704,7 @@ void testIndex(params* input2){
 //---------------------------Test completo---------------------------
 	calculate_centroids(input->n, input->d, input->k,
 		input->ds, input->eps, input->m);
+
+    get_distance(2, 3, input->k, 0);
 
 }
