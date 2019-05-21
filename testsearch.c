@@ -16,6 +16,7 @@ params *input;
 	* e si mantiengono i k punti più vicini ed un vettore che mantiene
 	* in memoria le loro distanze per confrontarli man mano con tutti i punti
 	*/
+	/*
 void calNearExtS(MATRIX qs, int* ANN, int* centroid_of_point,MATRIX  distances_between_centroids, int k, int m, int knn, int nq, int n, int d_star){
 	// RICORDA:
 	// ANN = (int*) malloc(knn*nq*sizeof(int))
@@ -80,10 +81,10 @@ void calNearExtS(MATRIX qs, int* ANN, int* centroid_of_point,MATRIX  distances_b
 	dealloc_matrix(distances);
 
 }// calNearExtS
-
+*/
 
 //-------------------------- RICERCA NON ESAUSTIVA ---------------------------
-
+/*
 void NoExaSearch(MATRIX ds,MATRIX centroids_coarse,int* ANN, int d, int knn,int m,int nq, int d_star){
 	// Per ogni punto cerchiamo i w centroidi coarse più vicini
 	int* c_coarse = (int*) malloc(w*sizeof(int));
@@ -195,7 +196,7 @@ void NoExaSearch(MATRIX ds,MATRIX centroids_coarse,int* ANN, int d, int knn,int 
 	dealloc_matrix(res);
 
 } // NoExaSearch
-
+*/
 
 void testSearch(params* input2){
   printf("\n###########Chiamata a Funzione TestSearch############\n");
@@ -205,4 +206,30 @@ void testSearch(params* input2){
 
 	//Collego l'input passato dal main con la struttura usata in questo codice
   input = input2;
+
+	//---------------------------Dati piccoli per il test---------------------------
+
+		for(int i=0; i<12; i++)
+			for( int j=0; j<4; j++)
+	 			input->ds[i*4+j] = i+j*2.5+rand()%20;
+
+	//Prendo un sottoinsieme del dataset
+		input->n = 12;
+		input->d = 4;
+		input->k = 4; //2
+		input->m = 2;
+		input->eps = 15;
+
+		d_star = (input->d)/(input->m);
+
+		printf("Dataset Iniziale\n");
+		print_matrix(input->n, input->d, input->n , input->ds, 'p');
+
+	//---------------------------Test singole funzioni---------------------------
+
+
+
+	//---------------------------Test completo---------------------------
+
+
 }

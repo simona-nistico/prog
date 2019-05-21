@@ -78,7 +78,7 @@ int* centroids_coarse; //matrice dei centroidi del quantizzatore grossolano
 				number = 0;
  		}//for g
 
-// 		print_matrix(k*m, d_star, k, centroids, 'c');
+ 		print_matrix(k*m, d_star, k, centroids, 'c');
 
     // TESTATA
  }//generate_centroids
@@ -629,7 +629,7 @@ void testIndex(params* input2){
 */
 
 //---------------------------Dati piccoli per il test---------------------------
-/*
+
 	for(int i=0; i<12; i++)
 		for( int j=0; j<4; j++)
  			input->ds[i*4+j] = i+j*2.5+rand()%20;
@@ -645,16 +645,16 @@ void testIndex(params* input2){
 
 	printf("Dataset Iniziale\n");
 	print_matrix(input->n, input->d, input->n , input->ds, 'p');
-*/
+
 //---------------------------Test singole funzioni---------------------------
 
-  //generate_centroids(input->n, input->d, input->k, input->ds, input->m);
+  generate_centroids(input->n, input->d, input->k, input->ds, input->m);
   //generate_centroids(100, 128, 10);	//Test
 
-/*
-	float  x[6] = {1, 2, 3, 8, 7, 2};
+
+	float x[6] = {1, 2, 3, 8, 7, 2};
 	float y[6] = {9, 8, 7, 6, 1, 3};
-	printf("Distanza: %f\n", distance(x, y, 5) );
+/*	printf("Distanza: %f\n", distance(x, y, 5) );
 
 	centroid_of_point = alloc_matrix(input->n,2);	//forse la metto dentro la funzione next
 
@@ -673,8 +673,11 @@ void testIndex(params* input2){
 
 	*/
 
+  int* q = quantize( x, input->k, input->m, d_star, centroids);
+  print_quantizer(input->m, q);
+
 //---------------------------Test completo---------------------------
-	calculate_centroids(input->n, input->d, input->k,
-		input->ds, input->eps, input->m);
+//	calculate_centroids(input->n, input->d, input->k,
+//		input->ds, input->eps, input->m);
 
 }

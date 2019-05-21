@@ -79,9 +79,8 @@ void dealloc_matrix(MATRIX mat) {
 
 //----------Stampa tutti i punti-----------
 void print_matrix(int rows, int cols, int k, MATRIX data, char c){
-	int i, j;
   printf("Numero punti: %d\nDimensione di ogni punto: %d\n", rows, cols);
-  for (i = 0; i < rows; i++) {
+  for (int i = 0; i < rows; i++) {
 		if( c=='c'){
 			if( i%k == 0) printf("Gruppo %d\n", i/k);
     	printf("Centroide n %d:\t", i%k);
@@ -95,11 +94,10 @@ void print_matrix(int rows, int cols, int k, MATRIX data, char c){
 	printf("\n\n");
 }
 
-// Funzione che stampa una matrice di interi
+//----------Stampa tutti i punti interi-----------
 void print_matrix_int(int rows, int cols, int k, int* data, char c){
-	int i,j;
   printf("Numero punti: %d\nDimensione di ogni punto: %d\n", rows, cols);
-  for (i = 0; i < rows; i++) {
+  for (int i = 0; i < rows; i++) {
 		if( c=='c'){
 			if( i%k == 0) printf("Gruppo %d\n", i/k);
     	printf("Centroide n %d:\t", i%k);
@@ -112,6 +110,19 @@ void print_matrix_int(int rows, int cols, int k, int* data, char c){
 	}
 	printf("\n\n");
 }
+
+//----------Stampa il quantizzatore-----------
+void print_quantizer(int m, int* data){
+	printf("Ogni numero rapresenta l'indice del centroide più vicino per quel gruppo.\n");
+  printf("Quantizzatore: [");
+  for (int j = 0; j < m; j++){
+      printf("%3d", data[j] );
+			if( j!=m-1 )
+				printf(",", data[j] );
+	}
+	printf("]\n\n");
+}
+
 
 /** Funzione che calcola la distanza
   * Costo: O(d)
@@ -172,36 +183,48 @@ VECTOR residual(VECTOR x,VECTOR centroid,int d){
 */
 
 /** Funzione che effettua la quantizzazione della query
-	* COSTO: =(d_star)
+  * x = punto di cui restituire il quantizzatore
+	* k = centroidi per ciascun sottogruppo
+	* m = numero totale di gruppi
+	* d_star = dimensione di ogni gruppo
+	* La funzione concatena i quantizzatori di ogni sottogruppo
+	* Esegue: q(x) = ( q1(u1(x)), q2(u2(x)), ....)
+	* COSTO: = g*k*(d_star)
 	*/
-/*int* quantize(int x, int m, int d_star){
-	// Centroidi che quantizzano ciascuna porzione
-	int* cents = (int*) malloc(m,sizeof(int));
-	int centr,j;
+int* quantize(VECTOR x, int k, int m, int d_star, VECTOR centroids){
+	// Indice dei centroidi che quantizzano ciascuna porzione
+	int* cents = (int*) malloc(m*sizeof(int));
+	int centr;
 	float min,dist;
 
-	// Calcoliamo il centroide di ciascun sottogruppo
-	for(int g=0;g<m;g++){
-		// Calcoliamo il centroide più vicino del sottogruppo
-		centr = 0;
-		min = distance(&x[m*d_star],&centroids[m*k*d_star],d_star);
+	for(int g=0; g<m; g++){ //per ogni sottogruppo calcolo il centroide più vicino
 
-		//Considero tutti i punti del codeboock del sottogruppo prendendo quello a
+		centr = 0;
+		//		min = distance(&x[m*d_star],&centroids[m*k*d_star],d_star);
+		min = distance(&x[g*d_star],&centroids[g*k*d_star],d_star);
+
+		// centroids = [riga->(i+group*k)*d_star,colonna->j]
+		// dataset = [riga->number*d,colonna->d_star*g+j]
+
+		//Considero tutti i punti del codebook del sottogruppo prendendo quello a
 		//dimensione minima
-		for(j=1;j<k;j++){
-			tmp = distance(&x[m*d_star],&centroids[(m*k+i)*d_star],d_star);
+		for(int i=1; i<k; i++){
+		//		tmp = distance(&x[m*d_star],&centroids[(m*k+i)*d_star],d_star);
+			dist = distance(&x[g*d_star],&centroids[(g*k+i)*d_star],d_star);
+			printf("Distanza tra il punto e il centroide %d del gruppo %d : %d\n", i, g, dist);
 			if(dist < min){
-				centr = j;
+				centr = i;
 				min = dist;
 			}
 
-			// Abbiamo trovato il centroide della porzione
-			cents[i] = centr;
-		}
-	}
+
+		}//for centroide del gruppo g
+		// Abbiamo trovato il centroide del gruppo g
+		cents[g] = centr;
+	}//for gruppo
+
 	return cents;
-}
-*/
-// Funzione che calcola i residui
+}//quantize
+
 
 #endif
