@@ -1,5 +1,6 @@
 //Necessario per poter utilizzare la struttura params definita dal prof
 #include "datatypes.h"
+#include <float.h>
 
 
 #define min(a, b) (((a) < (b)) ? (a) : (b))
@@ -24,56 +25,65 @@ params *input;
 	* qs = query set
   * d_star = numero di dimensioni per ogni sottogruppo
 	*/
-/*/
-void calNearExtS(int n, int k, int m, int knn, int nq, int d_star, MATRIX qs,
-				int* ANN, int* centroid_of_point, MATRIX  distances_between_centroids){
+
+void calNearExtS(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
+				int* ANN, int* centroid_of_point, MATRIX  distances_between_centroids, MATRIX centroids){
+
+  // Vettore che contiene la quantizzazione del punto
+  int* quant;
+  int j, l, min, max;
+	float dist;
+  int d_star = d/m;
+
 	// RICORDA:
 	// ANN = (int*) malloc(knn*nq*sizeof(int))
-	VECTOR distances; //double?
+	VECTOR distances = (VECTOR) malloc(knn*sizeof(float)); //double?
 
-	// Vettore che contiene la quantizzazione del punto
-	int* quantizzation;
-	float distance;
-	int j,l;
 
 	for(int i=0;i<nq;i++){
 
 		if(input->symmetric==1){
 			// Calcoliamo la quantizzazione del punto
-			quantizzation = quantize(&qs[i*d], m, d_star);
+			quant = quantize(&qs[i*d], k, m, d, centroids);
 		}
 
 		// Inizializziamo i primi knn punti ordinandoli in ordine decrescente
 		// Così se è > del primo elemento è inutile fare i confronti
-		memset(distances,0,knn*sizeof(float));
+
+		//memset(distances, FLT_MAX, knn*sizeof(float)); momentaneamente non funziona
+                                                  // sistemare
+
+    for(j=0;j<knn;j++){
+      distances[j] = FLT_MAX;
+    }
 
 		// Vediamo quali sono i punti del dataset più vicini
 		for(j=0;j<n;j++){
 			// Calcoliamo la distanza tra le due quantizzazioni
-			distance = 0;
-
+			dist = 0;
+      //printf("OK punto\n");
 			if(input->symmetric==1){
 				for(l=0;l<m;l++){
 					// Prendere il massimo ed il minimo mi serve per potermi muovere sulla
 					// triangolare superiore che contiene le distanze
-					min = min(centroids[j*m+l],quantizzation[l]);
-					max = max(centroids[j*m+l],quantizzation[l]);
-					distance += distances_between_centroids[min*(min+1)/2+g*(k*(k+1)/2)+max];
+					min = min(centroids[j*m+l],quant[l]);
+					max = max(centroids[j*m+l],quant[l]);
+					dist += dfloat get_distance(int a, int b, int k, int g);
 				}// for l
 			}else{
 				for(l=0;l<m;l++){
-					distance += distance(&qs[i*d+l*d_star],&centroids[centroid_of_point[j*m+l]],d_star)
+					dist += distance(&qs[i*d+l*d_star],&centroids[centroid_of_point[j*m+l]],d_star);
 				}// for l
 			}
 
-			if(distances[0]>distance){
+			if(distances[0]>dist){
 				l = 0;
-				while(l<knn-1 && distances[l+1]>distance){
+				while(l<knn-1 && distances[l+1]>dist){
 					distances[l] = distances [l+1];
 					ANN[i*knn+l] = ANN[i*knn+l];
 					l++;
 				}// while
-				distances[l] = distance;
+				distances[l] = dist;
 				ANN[i*knn+l] = j;
 			}// if
 
@@ -82,7 +92,7 @@ void calNearExtS(int n, int k, int m, int knn, int nq, int d_star, MATRIX qs,
 		// Una volta terminato questo ciclo in ANN[i] ci saranno i knn punti del
 		// dataset più vicini alla query
 
-		free(quantizzation);
+		free(quant);
 
 	}// for i
 
@@ -216,27 +226,48 @@ void testSearch(params* input2){
   input = input2;
 
 	//---------------------------Dati piccoli per il test---------------------------
-/*
-		for(int i=0; i<12; i++)
-			for( int j=0; j<4; j++)
-	 			input->ds[i*4+j] = i+j*2.5+rand()%20;
+
+  //	for(int i=0; i<12; i++)
+	//		for( int j=0; j<4; j++)
+	// 			input->ds[i*4+j] = i+j*2.5+rand()%20;
 
 	//Prendo un sottoinsieme del dataset
-		input->n = 12;
-		input->d = 4;
-		input->k = 4; //2
-		input->m = 2;
-		input->eps = 15;
+	//	input->n = 12;
+	//	input->d = 4;
+	//	input->k = 4; //2
+	//	input->m = 2;
+	//	input->eps = 15;
 
 		d_star = (input->d)/(input->m);
 
 		printf("Dataset Iniziale\n");
 		print_matrix(input->n, input->d, input->n , input->ds, 'p');
-*/
+
 	//---------------------------Test singole funzioni---------------------------
 
+  // Prendo un sottoinsieme del query set originale
+  input->nq = 2;
+  input->knn = 2;
+
+  int nq = input->nq;
+  int knn = input-> knn;
+  int k = input->k;
+  int n = input->n;
+  int d = input->d;
+  int m = input->m;
 
 
+  printf("Queryset Iniziale\n");
+  print_matrix(input->nq, input->d, input->nq , input->qs, 'p');
+
+  input->symmetric=1;
+
+  input->ANN = (int*) malloc(nq*knn*sizeof(int));
+  memset(input->ANN, -1, nq*knn*sizeof(int));
+
+  calNearExtS(n, d, k, m, knn, nq, input->qs, input->ANN, input->centroid_of_point, input->distances_between_centroids, input->centroids);
+
+  print_matrix_int(nq,knn,knn,input->ANN,'p');
 	//---------------------------Test completo---------------------------
 
 

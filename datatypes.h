@@ -234,7 +234,7 @@ int* quantize(VECTOR x, int k, int m, int d, VECTOR centroids){
 		centr = 0;
 		//		min = distance(&x[m*d_star],&centroids[m*k*d_star],d_star);
 		min = distance(&x[g*d_star],&centroids[g*k*d_star],d_star);
-		printf("Distanza tra il punto e il centroide %d del gruppo %d : %f\n", 0, g, min);
+		//printf("Distanza tra il punto e il centroide %d del gruppo %d : %f\n", 0, g, min);
 
 		// centroids = [riga->(i+group*k)*d_star,colonna->j]
 		// dataset = [riga->number*d,colonna->d_star*g+j]
@@ -244,7 +244,7 @@ int* quantize(VECTOR x, int k, int m, int d, VECTOR centroids){
 		for(int i=1; i<k; i++){
 		//		tmp = distance(&x[m*d_star],&centroids[(m*k+i)*d_star],d_star);
 			dist = distance(&x[g*d_star],&centroids[(g*k+i)*d_star],d_star);
-			printf("Distanza tra il punto e il centroide %d del gruppo %d : %f\n", i, g, dist);
+			//printf("Distanza tra il punto e il centroide %d del gruppo %d : %f\n", i, g, dist);
 			if(dist < min){
 				centr = i;
 				min = dist;

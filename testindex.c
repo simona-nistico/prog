@@ -619,6 +619,7 @@ void testIndex(params* input2){
 		input->ds, input->eps, m, input->centroids, input->centroid_of_point,
        input->distances_between_centroids);
 
+
 //    get_distance(2, 3, input->k, 0);
 
 }
