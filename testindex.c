@@ -57,7 +57,7 @@ int* centroids_coarse; //matrice dei centroidi del quantizzatore grossolano
  * ds = data set
  * m = numero di sottoquantizzatori
  */
- void generate_centroids(int n, int d, int k, MATRIX ds, int m){
+ void generate_centroids(int n, int d, int k, MATRIX ds, int m, MATRIX centroids){
  		int d_star = d/m;
 
  		// Alloco la matrice dei centroidi
@@ -96,7 +96,7 @@ int* centroids_coarse; //matrice dei centroidi del quantizzatore grossolano
 	* ds = data set
 	* m = numero di sottoquantizzatori
   */
-void points_of_centroid(int n, int d, int k, MATRIX ds, int m){
+void points_of_centroid(int n, int d, int k, MATRIX ds, int m, int* centroid_of_point, VECTOR distances_from_centroids){
 		int d_star = d/m;
 
 		double distanza;
@@ -155,7 +155,7 @@ void points_of_centroid(int n, int d, int k, MATRIX ds, int m){
 	* ds = data set
   * TODO: parallelizzare la somma in assembly
   */
-void update_centroids(int n, int d, int k, MATRIX ds, int m){
+void update_centroids(int n, int d, int k, MATRIX ds, int m, MATRIX centroids){
 		int d_star = d/m;
     int i,j;
 
@@ -163,14 +163,6 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m){
     MATRIX tmp = alloc_matrix(k,d_star);
     memset(tmp, 0, k*d_star*sizeof(float));
 
-    // Ciclo per azzerare la matrice
-/*    for(i=0;i<k;i++){
-      for(j=0;j<d_star;j++){
-        tmp[i*d_star+j] = 0;
-        //printf(" %f ", tmp[i*d_star+j] );// = 0;
-      }
-    }
-*/
     //Vettore che, per ogni centroide, conta quanti punti appartengono alla sua cella
     int* cont = (int*) calloc(k,sizeof(int)); //usare calloc per inizializzare a 0?
 
