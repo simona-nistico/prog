@@ -11,7 +11,7 @@
 //Matrice che ogni riga rappresenta un punto e ogni colonna il gruppo
 //L'elemento m[i][j] rappresenta la distanza del punto i dal centroide più vicino del
 //sottogruppo j
-MATRIX distances_from_centroids;
+//MATRIX distances_from_centroids;
 
 //Per ogni punto (riga) viene indicato il centroide prodotto più vicino e la distanza da esso
 //centroid_of_point[i][j] = centroide a minima distanza dap punti i del sottogruppo j
@@ -305,57 +305,6 @@ double objective_function(int n,int m){
 
 // ---------- RICERCA NON ESAUSIVA -----------------
 
-/*________________________________DEPRECATED?________________________________
-
-// la matrice distances deve essere creata una volta sola visto che il metodo seguente deve stare dentro un ciclo
-void compute_distances_from_centroids(MATRIX points,MATRIX centroids,MATRIX centroid_of_point, int num_points,int num_centroids, int dimensions){
-
-	VECTOR punto = alloc_matrix(1,dimensions);	// Alloco il vettore che conterrà di volta in volta il punto
-  VECTOR centroide = alloc_matrix(1,dimensions); // Alloco il vettore che conterrà di volta in volta il centroide
-	double minDist,distanza;
-	int minCentr;
-	int i,j,l;
-
-	for(i=0;i<num_points;i++){
-
-		for(l=0;l<dimensions;l++){
-			punto[l] = points[dimensions*i+l];	// Sto supponendo che il dataset sia memorizzato per righe
-		}
-
-		for(l=0;l<dimensions;l++){
-			centroide[l] = centroids[dimensions*0+l];	// Sto supponendo che il dataset sia memorizzato per righe
-		}
-
-		minDist = distance(punto, centroide);
-		minCentr = 0;
-
-		for(j=1;j<num_centroids;j++){ //Verificare la sintassi, l'obiettivo è passare l'indirizzo di partenza
-					//del punto i-esimo
-
-			for(l=0;l<dimensions;l++){
-				centroide[l] = centroids[dimensions*j+l];	// Sto supponendo che il dataset sia memorizzato per righe
-			}
-
-			distanza=distance(punto, centroide);
-
-			if(distanza < minDist){
-				minDist = distanza;
-				minCentr = j;
-			}
-
-		}
-
-		centroid_of_point[i*2] = minCentr;
-		centroid_of_point[i*2+1] = minDist;
-	}
-
-	// Liberiamo lo spazio (verificare se si può utilizzare la stessa funzione della matrice)
-	dealloc_matrix(punto);
-	dealloc_matrix(centroide);
-
-}
-________________________________END DEPRECATED?________________________________
-*/
 /*
 void update_coarse_centroids(MATRIX points, MATRIX centroids, MATRIX centroid_of_point, int num_points, int num_centroids, int dimensions){
 		// Creiamo una matrice che ci consenta di effettuare l'aggiornamento dei centroidi
@@ -381,54 +330,10 @@ void update_coarse_centroids(MATRIX points, MATRIX centroids, MATRIX centroid_of
 		free(c);
 }
 
-// genera un vettore di length numeri casuali compresi tra 0 e last_index
-// diversi tra loro
-void generate_random_index(int* indexes, int last_index, int length){
-
-		int number,old_number,i,j;
-    srand(time(NULL));
-		old_number=rand()%(num_points/num_centroids);
-		indexes[0]=old_number;
-
-	  for(i=1;i<num_centroids;i++){
-
-			range = (last_index-old_number)/(length-i);
-			number=old_number+rand()%range+1;
-			indexes[i]=number;
-			old_number=number;
-
-		}
-}
 
 
-// mette result_rows righe di source (che ha dimensions colonne e num_rows righe)
-// nella matrice result (entrambe le matrici di float)
-void extract_casual_rows(int num_rows, int result_rows, int dimensions, MATRIX result, MATRIX source){
 
-	int* indexes = malloc(result_rows*sizeof(int))
-	generate_random_index(indexes,num_rows,result_rows)
 
-	for(i=0;i<result_rows;i++){
-		for(j=0;j<dimensions;j++){
-				result[i*dimensions+j]=source[indexes[i]*dimensions+j];
-		}
-	}
-
-}
-*/
-/**________________________________DEPRECATED?________________________________
-double sumOfDistances(MATRIX centroid_of_point){
-
-		int i;
-		double sum=0;
-
-		for(i=0;i<n;i++){    // per ogni punto i, aggiunge distanza(i,q(i))^2
-			sum+=centroid_of_point[i*2+1]*centroid_of_point[i*2+1];
-		}
-		return sum;
-}
-
-________________________________END DEPRECATED?________________________________*/
 /*
 
 void calculate_coarse_quantizer(num_points,num_points_reduced,dimensions,num_centroids,MATRIX dataset,MATRIX coarse_centroids,MATRIX coarse_centroid_of_point){
@@ -582,7 +487,7 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m){
 	generate_centroids(n, d, k, ds, m);
 
 	centroid_of_point = (int*) malloc(n*m*sizeof(int));	//la matrice va aggiornata
-	distances_from_centroids = (float*) malloc(n*m*sizeof(float));	//la matrice va aggiornata
+	MATRIX distances_from_centroids = (float*) malloc(n*m*sizeof(float));	//la matrice va aggiornata
 
 	printf("############################ ITERAZIONE %d ############################\n", 0);
 	//Divide lo spazio in celle di Voronoi
@@ -623,6 +528,8 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m){
         printf("La funzione obiettivo è costante.\n");
 
   }//while
+
+	free(distances_from_centroids);
 
   printf("\nCentroidi ottimi finali:\n");
 	print_matrix(k*m,d_star, k, centroids, 'c');

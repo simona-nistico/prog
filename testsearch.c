@@ -1,6 +1,7 @@
 //Necessario per poter utilizzare la struttura params definita dal prof
 #include "datatypes.h"
 
+
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 
@@ -23,12 +24,12 @@ params *input;
 	* qs = query set
   * d_star = numero di dimensioni per ogni sottogruppo
 	*/
-	/*
+
 void calNearExtS(int n, int k, int m, int knn, int nq, int d_star, MATRIX qs,
 				int* ANN, int* centroid_of_point, MATRIX  distances_between_centroids){
 	// RICORDA:
 	// ANN = (int*) malloc(knn*nq*sizeof(int))
-	VECTOR distances = (VECTOR) malloc(knn*sizeof(float)); //double?
+	VECTOR distances; //double?
 
 	// Vettore che contiene la quantizzazione del punto
 	int* quantizzation;
@@ -44,9 +45,7 @@ void calNearExtS(int n, int k, int m, int knn, int nq, int d_star, MATRIX qs,
 
 		// Inizializziamo i primi knn punti ordinandoli in ordine decrescente
 		// Così se è > del primo elemento è inutile fare i confronti
-		for(j=0;j<knn;j++){
-			distances[j] = FLT_MAX;
-		}// for j
+		memset(distances,0,knn*sizeof(float));
 
 		// Vediamo quali sono i punti del dataset più vicini
 		for(j=0;j<n;j++){
@@ -110,7 +109,7 @@ void NoExaSearch(MATRIX ds,MATRIX centroids_coarse,int* ANN, int d, int knn,int 
 			dist[j] = FLT_MAX;
 		}// for j
 
-		// Vediamo quali sono i centroidi coarse pi� vicini
+		// Vediamo quali sono i centroidi coarse più vicini
 		for(j=0;j<kc;j++){
 			// Calcoliamo la distanza tra le due quantizzazioni
 			distance = 0;
@@ -174,7 +173,7 @@ void NoExaSearch(MATRIX ds,MATRIX centroids_coarse,int* ANN, int d, int knn,int 
 					}
 				}else{
 					for(l=0;l<m;l++){
-						distance += distance(res,&centroids[lista_invertita[inizio+p*(m+1)+l]],d_star);
+						distance += distance(res,&centroids[lista_invertita[inizio+p*(m+1)+l+1]],d_star);
 					}// for l
 				}
 
@@ -186,7 +185,7 @@ void NoExaSearch(MATRIX ds,MATRIX centroids_coarse,int* ANN, int d, int knn,int 
 						l++;
 					}// while
 					dist[l] = distance;
-					ANN[i*m+l] = lista_invertita[inizio+p*(m+1)+l+1];
+					ANN[i*m+l] = lista_invertita[inizio+p*(m+1)];
 				}// if
 
 
@@ -205,7 +204,7 @@ void NoExaSearch(MATRIX ds,MATRIX centroids_coarse,int* ANN, int d, int knn,int 
 	dealloc_matrix(res);
 
 } // NoExaSearch
-*/
+
 
 void testSearch(params* input2){
   printf("\n###########Chiamata a Funzione TestSearch############\n");

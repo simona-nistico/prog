@@ -35,12 +35,21 @@ typedef struct {
 	int* ANN;
 	//
 	// Inserire qui i campi necessari a memorizzare i Quantizzatori
+	MATRIX centroids;
+  MATRIX coarse_centroids;
+  int* lista_invertita;
 	//
 	// ...
 	// ...
 	// ...
 	//
 } params;
+
+MATRIX coarse_centroid_of_point;
+int* punti_caricati; // Ha kc celle e memorizza il numero di punti in ogni
+                     //centroide coarse
+int* celle_prima;    // Ha kc celle e memorizza la posizione di inizio per
+                     // la lista relativa al centroide i
 
 
 /*
@@ -209,10 +218,11 @@ VECTOR residual(VECTOR x,VECTOR centroid,int d){
 	* Esegue: q(x) = ( q1(u1(x)), q2(u2(x)), ....)
 	* COSTO: = g*k*(d_star)
 	*/
-int* quantize(VECTOR x, int k, int m, int d_star, VECTOR centroids){
+int* quantize(VECTOR x, int k, int m, int d, VECTOR centroids){
 	// Indice dei centroidi che quantizzano ciascuna porzione
 	int* cents = (int*) malloc(m*sizeof(int));
 	int centr;
+	int d_star = d/m;
 	float min,dist;
 
 	for(int g=0; g<m; g++){ //per ogni sottogruppo calcolo il centroide più vicino
