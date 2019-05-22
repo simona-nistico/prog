@@ -24,7 +24,7 @@ params *input;
 	* qs = query set
   * d_star = numero di dimensioni per ogni sottogruppo
 	*/
-
+/*/
 void calNearExtS(int n, int k, int m, int knn, int nq, int d_star, MATRIX qs,
 				int* ANN, int* centroid_of_point, MATRIX  distances_between_centroids){
 	// RICORDA:
@@ -204,7 +204,7 @@ void NoExaSearch(MATRIX ds,MATRIX centroids_coarse,int* ANN, int d, int knn,int 
 	dealloc_matrix(res);
 
 } // NoExaSearch
-
+*/
 
 void testSearch(params* input2){
   printf("\n###########Chiamata a Funzione TestSearch############\n");

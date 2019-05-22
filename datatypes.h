@@ -37,6 +37,9 @@ typedef struct {
 	// Inserire qui i campi necessari a memorizzare i Quantizzatori
 	MATRIX centroids;
   MATRIX coarse_centroids;
+	int* centroid_of_point;
+	VECTOR distances_between_centroids;
+
   int* lista_invertita;
 	//
 	// ...
@@ -50,6 +53,7 @@ int* punti_caricati; // Ha kc celle e memorizza il numero di punti in ogni
                      //centroide coarse
 int* celle_prima;    // Ha kc celle e memorizza la posizione di inizio per
                      // la lista relativa al centroide i
+
 
 
 /*
