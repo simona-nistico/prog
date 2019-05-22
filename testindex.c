@@ -374,72 +374,87 @@ void calculate_accurate_quantizer(int num_points, int num_centroids, int subgrou
 // in forma quantizzata è q(y), accompagnato dal relativo residuo che però
 // non è memorizzato esplicitamente bensì c'è un secondo quantizzatore prodotto
 
+*/
+
 void non_exhaustive_indexing(MATRIX dataset, int num_points, int num_points_reduced, int num_centroids, int dimensions, int dim_star, int subgroups){
 
-	MATRIX coarse_centroids = alloc_matrix(num_centroids,dimensions);
-	MATRIX coarse_centroid_of_point = alloc_matrix(num_points,2)
+  coarse_centroids = alloc_matrix(kc,d);
+  coarse_centroid_of_point = (int*) malloc(n*sizeof(int));
 
- // Costruzione dei Centroidi Coarse
-	calculate_coarse_quantizer(num_points,num_points_reduced,dimensions,num_centroids,dataset,coarse_centroids,coarse_centroid_of_point); // viene realizzato il quantizzatore vettoriale
+  // ponendo m=1 si fa degenerare il quantizzatore prodotto
+  // in un quantizzatore coarse
+  calculate_centroids(n_r, d, kc, ds, eps, 1, coarse_centroids,coarse_centroid_of_point, distances_between_centroids,false);
 
-	residuals=alloc_matrix(num_points,dimensions); //matrice dei residui
+  // i centroidi vengono CALCOLATI su n_r punti del Dataset
+  // Ora è necessario calcolare il centroide di tutti i punti restanti
+  // Distances from centroids è una matrice che non serve a niente in realtà
+  // se non a poter eseguire points_of_centroids (verrà infatti liberata subito dopo)
+  MATRIX distances_from_centroids=alloc_matrix(n,1);
+  points_of_centroid(n, d, kc, ds, 1, coarse_centroids, coarse_centroid_of_point, distances_from_centroids);
+  free(distances_from_centroids);
 
-	for(i=0;i<num_points;i++){ // La matrice dei residui viene riempita
-		for(j=0;j<dimensions;j++){
-			residuals[i*dimensions+j]=dataset[i*dimensions+j]-coarse_centroids[coarse_centroid_of_point[i*2]*d + j]
-		}
-	}
+  residuals=alloc_matrix(n,d); //matrice dei residui
+  // La matrice dei residui viene riempita
+  for(i=0;i<n;i++){
+	   for(j=0;j<d;j++){
+		     residuals[i*d+j]=ds[i*d+j]-coarse_centroids[coarse_centroid_of_point[i]*d + j];
+	   }
+  }
 
-	MATRIX residual_centroids=alloc_matrix(subgroups*num_centroids*d_star);
-	distances_from_centroids=alloc_matrix(num_points*subgroups);
-	int* centroid_of_residual=(int*) malloc(num_points*subgroups*sizeof(int));
+  // vengono inizializzate le matrici dei centroidi (prodotto)
+  // e vengono calcolate con calculate_centroids (che stavolta farà anche lo storage delle distanze)
+  centroids=alloc_matrix(m*kc,d_star);
+  centroid_of_point=(int*) malloc(n_r*m*sizeof(int));
+  distances_between_centroids=alloc_matrix(m,(kc*(kc-1)/2));
+  calculate_centroids(n_r, d, kc, residuals, eps, m, centroids,centroid_of_point, distances_between_centroids, true);
 
-	calculate_accurate_quantizer(num_points, num_centroids, subgroups, dimensions);
+  // Anche in questo caso bisogna calcolare i quantizzatori di tutti i punti
+  // rimasti fuori.
+  points_of_centroid(n, d, kc, residuals,m, centroids, centroid_of_point, distances_between_centroids);
 
-	store_distances(subgroups,num_centroids,residual_centroids); // vengono salvate le distanze
-
-	int* punti_quantizzatore_coarse=(int*) calloc(num_centroids*sizeof(int)); //contiene in posizione i il numero di punti y
+  int* punti_quantizzatore_coarse=(int*) calloc(kc,sizeof(int)); //contiene in posizione i il numero di punti y
 	                                                       //tali che qc(y)=i
-	int* celle_prima= (int*) malloc(num_centroids*sizeof(int)); // contiene in posizione i il numero di celle occupate
-	                                        // nella lista invertita prima che inizi la sottolista
-																					// relativa al centroide grossolano i
-	int* punti_caricati= (int*) calloc(num_centroids*sizeof(int)); //contiene in posizione i il numero di punti y
-	                                           //tali che qc(y)=i (parte da 0 e viene calcolato man mano)
-	int* lista_invertita= (int*) malloc(num_points*(subgroups+1)*sizeof(int)); // ha m + 1 celle per ogni punto i
-	                                                  // quindi tra lista_invertita[celle_prima[coarse_centroid_of_point[i*2]]]
-																										// e lista_invertita[celle_prima[coarse_centroid_of_point[i*2]+(m+1)*punti_quantizzatore_coarse[coarse_centroid_of_point[i*2]]]]
-																										// si trovano listati, ogni (m+1) posizioni, gli m quantizzatori dei residui rispetto
-																										// al quantizzatore coarse e nella cella (m+1)-esima l'indice del punto del dataset in questione
-																										// questo coerentemente col fatto che si tratti di liste, non c'è una struttura che permetta di risalire
-																										// dal punto alla quantizzazione del suo residuo, ma non è importante, ciò che è importante è avere per ogni
-																										// centroide la lista dei punti che ne vengono quantizzati con i residui quantizzati.
-	int i,sommapunti;
+  celle_prima=(int*) malloc(kc*sizeof(int)); // contiene in posizione i il numero di celle occupate
+	                                           // nella lista invertita prima che inizi la sottolista
+		  	 																		// relativa al centroide grossolano i
+  punti_caricati=(int*) calloc(kc,sizeof(int)); //contiene in posizione i il numero di punti y
+	                                             //tali che qc(y)=i (parte da 0 e viene calcolato man mano)
+  lista_invertita=(int*) malloc(n*(m+1)*sizeof(int)); // ha m + 1 celle per ogni punto i
+	                                                    // quindi tra lista_invertita[celle_prima[coarse_centroid_of_point[i*2]]]
+				  																						// e lista_invertita[celle_prima[coarse_centroid_of_point[i*2]+(m+1)*punti_quantizzatore_coarse[coarse_centroid_of_point[i*2]]]]
+										  																// si trovano listati, ogni (m+1) posizioni, gli m quantizzatori dei residui rispetto
+											  															// al quantizzatore coarse e nella cella (m+1)-esima l'indice del punto del dataset in questione
+											  															// questo coerentemente col fatto che si tratti di liste, non c'è una struttura che permetta di risalire
+										  																// dal punto alla quantizzazione del suo residuo, ma non è importante, ciò che è importante è avere per ogni
+										  																// centroide la lista dei punti che ne vengono quantizzati con i residui quantizzati.
+  int sommapunti,inizio;
 
-	for(i=0;i<num_points;i++){ // per ogni punto i, si incrementa di 1 il numero
-		                // di punti del quantizzatore coarse
-		punti_quantizzatore_coarse[coarse_centroid_of_point[i*2]]++;
-	}
+  for(i=0;i<n;i++){ // per ogni punto i, si incrementa di 1 il numero
+  		                // di punti del quantizzatore coarse
+  	punti_quantizzatore_coarse[coarse_centroid_of_point[i]]++;
+  }
 
-	celle_prima[0]=0;
+  celle_prima[0]=0;
 
-	for(i=1;i<num_centroids;i++){ //si conta quante posizioni nella lista invertita ci sono
-                    //prima che inizi la sottolista del centroide i utilizzando
-										//un vettore celle_prima
-		celle_prima[i]=celle_prima[i-1]+punti_quantizzatore_coarse[i-1]*subgroups;
-	}
+  for(i=1;i<n;i++){ //si conta quante posizioni nella lista invertita ci sono
+                      //prima che inizi la sottolista del centroide i utilizzando
+					  					//un vettore celle_prima
+	  celle_prima[i]=celle_prima[i-1]+punti_quantizzatore_coarse[i-1]*(m+1);
+  }
 
+  for(i=0;i<n;i++){ // si vanno a riempire le sottoliste della lista lista_invertita
+	  	                // inizio è appunto il punto del vettore da cui inizia la sottolista
+		  								// ad
+	  	inizio=celle_prima[coarse_centroid_of_point[i]];
+	  	lista_invertita[inizio+punti_caricati[coarse_centroid_of_point[i]]*(m+1)]=i;
+ 		  for(j=1;j<m+1;j++){
+		    	lista_invertita[inizio+punti_caricati[coarse_centroid_of_point[i]]*(m+1)+j]=centroid_of_point[i*m+j-1]; //il -1 in centroid_of_residual[..] serve a compensare il fatto che j parta da 1 (ma io in realtà devo partire da 0 per fare questo calcolo)
+		    }
+  		//centroid_of_point[i*2+1]=punti_caricati[centroid_of_point[i*2]];
+	   	punti_caricati[coarse_centroid_of_point[i]]++; //
+  }
 
-	for(i=0;i<num_points;i++){ // si vanno a riempire le sottoliste della lista lista_invertita
-		                // inizio è appunto il punto del vettore da cui inizia la sottolista
-										// ad
-		inizio=celle_prima[coarse_centroid_of_point[i*2]];
-		lista_invertita[inizio+punti_caricati[coarse_centroid_of_point[i*2]]*subgroups]=i;
-		for(j=1;j<subgroups+1;j++){
-			lista_invertita[inizio+punti_caricati[coarse_centroid_of_point[i*2]]*subgroups+j]=accurate_centroid_of_point[i*num_points+j];
-		}
-		coarse_centroid_of_point[i*2+1]=punti_caricati[coarse_centroid_of_point[i*2]];
-		punti_caricati[coarse_centroid_of_point[i*2]]++; //
-	}
+  free(punti_quantizzatore_coarse);
 
 }
 */
@@ -457,9 +472,9 @@ void non_exhaustive_indexing(MATRIX dataset, int num_points, int num_points_redu
 	* m = numero di gruppi del quantizzatore prodotto
   */
 void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
-          MATRIX centroids, int* centroid_of_point, VECTOR distances_between_centroids){
+          MATRIX centroids, int* centroid_of_point, VECTOR distances_between_centroids, int store){
 	int iter = 1;
-	int d_start = d/m;
+	int d_star = d/m;
 
 	//Genera Centroidi casuali
 	//COSTO: d+k*d
@@ -529,10 +544,11 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
   printf("\nCentroidi ottimi finali:\n");
 	print_matrix(k*m,d_star, k, centroids, 'c');
 
-  store_distances(m,k, centroids, distances_between_centroids);
-  printf("\nDistanze tra centroidi AL QUADRATO:\n");
-  print_centroids_distances(k, m, distances_between_centroids);
-
+  if (store==true) {
+    store_distances(m,k, centroids, distances_between_centroids);
+    printf("\nDistanze tra centroidi AL QUADRATO:\n");
+    print_centroids_distances(k, m, distances_between_centroids);
+  }
 
 }//calculate_centroids
 
