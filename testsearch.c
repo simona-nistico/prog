@@ -112,17 +112,16 @@ void calNearExtS(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 
 
 //-------------------------- RICERCA NON ESAUSTIVA ---------------------------
-/*
+
 void NoExaSearch(MATRIX ds,MATRIX centroids_coarse,int* ANN, int d, int knn,int m,int nq, int d_star){
 	// Per ogni punto cerchiamo i w centroidi coarse più vicini
 	int* c_coarse = (int*) malloc(w*sizeof(int));
 	int* quantization;
-	VECTOR dist,res;
+	VECTOR dist = alloc_matrix(1,w);
+	VECTOR res;
 	int j,l,p,inizio,centroide;
 
 	for(int i=0;i<nq,i++){
-
-		dist= alloc_matrix(1,w);
 
 		// Settiamo il vettore delle distanze al massimo float rappresentabile
 		for(j=0;j<w;j++){
@@ -140,7 +139,7 @@ void NoExaSearch(MATRIX ds,MATRIX centroids_coarse,int* ANN, int d, int knn,int 
 
 			if(distances[0]>distance){
 				l = 0;
-				while(distances[l+1]>distance && l<knn-1){
+				while(l<knn-1 && distances[l+1]>distance){
 					dist[l] = distances [l+1];
 					c_coarse[l] = c_coarse[l+1];
 					l++;
@@ -153,7 +152,8 @@ void NoExaSearch(MATRIX ds,MATRIX centroids_coarse,int* ANN, int d, int knn,int 
 		// Ora sappiamo in quali insiemi di punti dobbiamo cercare, ciascuna
 		// distanza rappresenta il residuo al quadrato
 
-		// Iniziamo la ricerca tra i punti che si trovano tra i w centroidi coarse
+		// Iniziamo la ricerca tra i punti che si trovano nelle celli di Voronoi
+		// dei w centroidi coarse
 
 		dealloc_matrix(dist);
 		dist = alloc_matrix(knn*sizeof(int));
@@ -163,7 +163,7 @@ void NoExaSearch(MATRIX ds,MATRIX centroids_coarse,int* ANN, int d, int knn,int 
 		}// for j
 
 		for(j=0;j<w,j++){
-			centroide = c_coarse[j]
+			centroide = c_coarse[j];
 
 			// Calcoliamo il residuo del punto del queryset considerato
 			res = residual(&ds[i*d],&coarse_centroids[centroide],d);
