@@ -34,12 +34,31 @@ typedef struct {
 	//
 	int* ANN;
 	//
+
 	// Inserire qui i campi necessari a memorizzare i Quantizzatori
-	MATRIX centroids;
-  MATRIX coarse_centroids;
+
+	//Per ogni punto (riga) viene indicato il centroide prodotto più vicino e la distanza da esso
+	//centroid_of_point[i][j] = centroide a minima distanza dap punti i del sottogruppo j
+	//Corrisponde alla funzione q(x) := dato il punto, restituisce l'indice del suo centroide
 	int* centroid_of_point;
+
+
+	//Codebooks dei vari sottogruppi
+	//Dimensione: m*k righe, d_star cioè d/m colonne
+	//Per andare da un sottogruppo all'altro bisgna avanzare di m righe
+	//Le colonne sono d_start cioè d/m
+	MATRIX centroids;
+
+
+	//Struttura dati che contiene le distanze tra i centroidi finali
+	//Triangolo superiore della matrice delle distanze che è simmetrica
 	VECTOR distances_between_centroids;
 
+
+	//TEST
+  MATRIX coarse_centroids;
+
+//TEST
   int* lista_invertita;
 	//
 	// ...

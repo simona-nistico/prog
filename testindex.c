@@ -7,44 +7,20 @@
 #include "datatypes.h"
 
 
-
-//Matrice che ogni riga rappresenta un punto e ogni colonna il gruppo
-//L'elemento m[i][j] rappresenta la distanza del punto i dal centroide più vicino del
-//sottogruppo j
-//MATRIX distances_from_centroids;
-
-//Per ogni punto (riga) viene indicato il centroide prodotto più vicino e la distanza da esso
-//centroid_of_point[i][j] = centroide a minima distanza dap punti i del sottogruppo j
-//Corrisponde alla funzione q(x) := dato il punto, restituisce l'indice del suo centroide
-int* centroid_of_point;
-
-
-//Codebooks dei vari sottogruppi
-//Dimensione: m*k righe, d_star cioè d/m colonne
-//Per andare da un sottogruppo all'altro bisgna avanzare di m righe
-//Le colonne sono d_start cioè d/m
-MATRIX centroids;
-
 //Parametri ottenuti in input
 params *input;
-
-//Struttura dati che contiene le distanze tra i centroidi finali
-//Triangolo superiore della matrice delle distanze che è simmetrica
-VECTOR distances_between_centroids;
-
-//Numero di elementi per sottovettore
-int d_star;
 
 
 int* centroids_coarse; //matrice dei centroidi del quantizzatore grossolano
                       //di dimensione nxd
 
+//TESTARE
 //int* coarse_centroid_of_point; // matrice di dimensione nx2 che contiene
                                  // in m[i][0] il centroide del punto
 																 //e in m[i][1] la posizione del punto
 																 //all'interno della sottolista della lista
 																 //invertita relativa al centroide
-
+//TESTSRE
 //MATRIX residuals;
 
 //------------------------------------METODI------------------------------------
@@ -246,8 +222,8 @@ float get_distance(int a, int b, int k, int g){
    *dove voglio arrivare - da dove parto - 1 visto che la diagonale non la metto
    */
   printf("Gruppo %d, distanza da %d a %d: %f\n",g,min,max,
-    distances_between_centroids[g*k*(k-1)/2 + min*k - min*(min+1)/2 +max -min-1] );
-  return distances_between_centroids[g*k*(k-1)/2 + min*k - min*(min+1)/2 +max -min-1];
+    input->distances_between_centroids[g*k*(k-1)/2 + min*k - min*(min+1)/2 +max -min-1] );
+  return input->distances_between_centroids[g*k*(k-1)/2 + min*k - min*(min+1)/2 +max -min-1];
   //TESTATO
 }//get_distance
 
@@ -569,7 +545,7 @@ void testIndex(params* input2){
 	input->m = 2;
 	input->eps = 15;
 
-	d_star = (input->d)/(input->m);
+	int d_star = (input->d)/(input->m);
 
 	printf("Dataset Iniziale\n");
 	print_matrix(input->n, input->d, input->n , input->ds, 'p');

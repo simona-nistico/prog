@@ -63,12 +63,12 @@ void calNearExtS(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 			dist = 0;
       //printf("OK punto\n");
 			if(input->symmetric==1){
-				for(l=0;l<m;l++){
+				for(int g=0;g<m;g++){
 					// Prendere il massimo ed il minimo mi serve per potermi muovere sulla
 					// triangolare superiore che contiene le distanze
-					min = min(centroids[j*m+l],quant[l]);
-					max = max(centroids[j*m+l],quant[l]);
-					dist += dfloat get_distance(int a, int b, int k, int g);
+					//min = min(centroids[j*m+g],quant[g]);
+					//max = max(centroids[j*m+g],quant[g]);
+					dist += get_distance(j*m+g,g,k,g);
 				}// for l
 			}else{
 				for(l=0;l<m;l++){
@@ -237,8 +237,6 @@ void testSearch(params* input2){
 	//	input->k = 4; //2
 	//	input->m = 2;
 	//	input->eps = 15;
-
-		d_star = (input->d)/(input->m);
 
 		printf("Dataset Iniziale\n");
 		print_matrix(input->n, input->d, input->n , input->ds, 'p');
