@@ -62,18 +62,26 @@ typedef struct {
 
 //TEST
   int* lista_invertita;
+
+	// Test
+	// Struttura dati che memorizza il centroide coarse di ciascun punto
+	int* coarse_centroid_of_point;
 	//
+	// TEST
+	int* punti_caricati; // Ha kc celle e memorizza il numero di punti in ogni
+	                     //centroide coarse
+	// TEST
+	int* celle_prima;    // Ha kc celle e memorizza la posizione di inizio per
+	                     // la lista relativa al centroide i
+	// TEST
+	// Matrice che tiene memoria dei residui
+	MATRIX residuals;
 	// ...
 	// ...
 	// ...
 	//
 } params;
 
-int* coarse_centroid_of_point;
-int* punti_caricati; // Ha kc celle e memorizza il numero di punti in ogni
-                     //centroide coarse
-int* celle_prima;    // Ha kc celle e memorizza la posizione di inizio per
-                     // la lista relativa al centroide i
 
 
 
@@ -103,7 +111,7 @@ void free_block(void* p) {
 
 
 MATRIX alloc_matrix(int rows, int cols) {
-	return (MATRIX) get_block(sizeof(double),rows*cols);
+	return (MATRIX) get_block(sizeof(float),rows*cols);
 }
 
 
