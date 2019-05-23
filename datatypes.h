@@ -7,6 +7,8 @@
 
 #define	MATRIX float*
 #define	VECTOR float*
+#define true 1
+#define false 0
 
 
 typedef struct {
@@ -67,7 +69,7 @@ typedef struct {
 	//
 } params;
 
-MATRIX coarse_centroid_of_point;
+int* coarse_centroid_of_point;
 int* punti_caricati; // Ha kc celle e memorizza il numero di punti in ogni
                      //centroide coarse
 int* celle_prima;    // Ha kc celle e memorizza la posizione di inizio per
