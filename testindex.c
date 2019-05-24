@@ -334,8 +334,8 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
 
   if (store==1) {
     store_distances(m,k, centroids, input->distances_between_centroids);
-//    printf("\nDistanze tra centroidi AL QUADRATO:\n");
-//    print_centroids_distances(k, m, distances_between_centroids);
+    printf("\nDistanze tra centroidi AL QUADRATO:\n");
+    print_centroids_distances(k, m, input->distances_between_centroids);
   }
 
 }//calculate_centroids
@@ -410,7 +410,7 @@ void non_exhaustive_indexing(MATRIX ds, MATRIX coarse_centroids,
 
   printf("\nCalcolo centroidi accurati:\n");
 
-  calculate_centroids(n_r, d, k, residuals, eps, m, centroids,centroid_of_point, 0);
+  calculate_centroids(n_r, d, k, residuals, eps, m, centroids,centroid_of_point, input->symmetric);
 
   // Anche in questo caso bisogna calcolare i quantizzatori di tutti i punti
   // rimasti fuori.
@@ -492,7 +492,7 @@ void testIndex(params* input2){
 */
 
 //---------------------------Dati piccoli per il test---------------------------
-
+/*
 	for(int i=0; i<12; i++)
 		for( int j=0; j<4; j++)
  			input->ds[i*4+j] = i+j*2.5+rand()%20;
@@ -502,7 +502,7 @@ void testIndex(params* input2){
 	input->d = 4;
 	input->k = 4; //2
 	input->m = 2;
-	input->eps = 700;
+	*/input->eps = 700;
 
 	int d_star = (input->d)/(input->m);
 /*
@@ -559,10 +559,6 @@ void testIndex(params* input2){
   input->symmetric=0;
 
 
-//  calculate_centroids(n, d, k,
-//		input->ds, input->eps, m, input->centroids, input->centroid_of_point,
-//       input->distances_between_centroids,1);
-
   input->centroids=alloc_matrix(m*k,d_star);
   input->centroid_of_point=(int*) malloc(n*m*sizeof(int));
 
@@ -571,7 +567,8 @@ void testIndex(params* input2){
   }
 
   if(input->exaustive==1){
-
+    calculate_centroids(n, d, k, input->ds, input->eps, m, input->centroids,
+                        input->centroid_of_point, input->symmetric);
   } else {
     input->coarse_centroids = alloc_matrix(kc,d);
     input->coarse_centroid_of_point = (int*) malloc(n*sizeof(int));

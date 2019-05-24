@@ -217,7 +217,7 @@ float distance(VECTOR x1,VECTOR x2,int d){
 
 	// TESTATA
 }//distance
-/*
+
 
 // Funzione che calcola il residuo, versione ottimizzata
 VECTOR residual(VECTOR x,VECTOR centroid,int d){
@@ -226,20 +226,23 @@ VECTOR residual(VECTOR x,VECTOR centroid,int d){
 	int p=10; //Che cos'è p?
 
 	for(i=0;i<=d-p;i+=p){
-		res[i] = x[x+i]-centroid[x+i];
-		res[i+1] = x[x+i+1]-centroid[x+i+1];
-		res[i+2] = x[x+i+2]-centroid[x+i+2];
-		res[i+3] = x[x+i+3]-centroid[x+i+3];
+		res[i] = x[i]-centroid[i];
+		res[i+1] = x[i+1]-centroid[i+1];
+		res[i+2] = x[i+2]-centroid[i+2];
+		res[i+3] = x[i+3]-centroid[i+3];
 	}
 
 	// Ciclo per eventuali cicli residui
 	for(i;i<d;i++){
-		res[i] = x[x+i]-centroid[x+i];
+		res[i] = x[i]-centroid[i];
 	}
 
 	return res;
+
+	// TESTATA: OK!
+	
 }//residual
-*/
+
 
 
 /** Funzione che effettua la quantizzazione della query
