@@ -496,6 +496,8 @@ void non_exhaustive_indexing(MATRIX ds, MATRIX coarse_centroids,
 
 }
 
+//_____________________Funzioni esterne scritte in assembly_____________________
+extern float test_distance(VECTOR x1, VECTOR x2, float d);
 
 void testIndex(params* input2){
   printf("\n###########Chiamata a Funzione TestIndex############\n");
@@ -516,7 +518,7 @@ void testIndex(params* input2){
 */
 
 //---------------------------Dati piccoli per il test---------------------------
-
+/*
 	for(int i=0; i<12; i++)
 		for( int j=0; j<4; j++)
  			input->ds[i*4+j] = i+j*2.5+rand()%20;
@@ -538,11 +540,12 @@ void testIndex(params* input2){
   generate_centroids(input->n, input->d, input->k, input->ds, input->m);
   //generate_centroids(100, 128, 10);	//Test
 
-
+*/
 	float x[6] = {1, 2, 3, 8, 7, 2};
 	float y[6] = {9, 8, 7, 6, 1, 3};
-	printf("Distanza: %f\n", distance(x, y, 5) );
-
+  printf("Distanza Assembly: %f\n", test_distance(x, y, 5.5) );
+	printf("Distanza C       : %f\n", distance(x, y, 5) );
+/*
 	centroid_of_point = alloc_matrix(input->n,2);	//forse la metto dentro la funzione next
 
 
@@ -566,7 +569,7 @@ void testIndex(params* input2){
 
 //---------------------------Test completo---------------------------
 //_______________________Setting parametri input_____________________
-  int n = input->n;
+/*  int n = input->n;
   int d = input->d;
   int k = input->k;
   int m = input->m;
@@ -604,7 +607,7 @@ void testIndex(params* input2){
                             input->centroid_of_point,
                             n, nr, k, kc, d, input->eps, m);
   }
-
+*/
 
 //    get_distance(2, 3, input->k, 0);
 
