@@ -497,7 +497,7 @@ void non_exhaustive_indexing(MATRIX ds, MATRIX coarse_centroids,
 }
 
 //_____________________Funzioni esterne scritte in assembly_____________________
-extern float test_distance(VECTOR x1, VECTOR x2, float d);
+extern float test_distance(VECTOR x1, VECTOR x2, int d);
 
 void testIndex(params* input2){
   printf("\n###########Chiamata a Funzione TestIndex############\n");
@@ -541,10 +541,19 @@ void testIndex(params* input2){
   //generate_centroids(100, 128, 10);	//Test
 
 */
-	float x[6] = {1, 2, 3, 8, 7, 2};
-	float y[6] = {9, 8, 7, 6, 1, 3};
-  printf("Distanza Assembly: %f\n", test_distance(x, y, 5.5) );
-	printf("Distanza C       : %f\n", distance(x, y, 5) );
+  VECTOR x = alloc_matrix(1, 8);
+  x[0] = 1; x[1] = 2; x[2] = 3; x[3] = 4; x[4] = 5; x[5] = 6; x[6] = 7; x[7] = 8;
+  VECTOR y = alloc_matrix(1, 8);
+  y[0] = 9; y[1] = 8; y[2] = 7; y[3] = 6; y[4] = 5; y[5] = 4; y[6] = 3; y[7] = 2;
+
+/*
+void dealloc_matrix(MATRIX mat) {
+	free_block(mat);
+}*/
+	//float x[8] = {0, 1, 2, 3, 8, 7, 2, 1};
+	//float y[8] = {0, 9, 8, 7, 6, 1, 3, 5};
+  printf("Distanza Assembly: %f\n", test_distance(x, y, 8) );
+	printf("Distanza C       : %f\n", distance(x, y, 8) );
 /*
 	centroid_of_point = alloc_matrix(input->n,2);	//forse la metto dentro la funzione next
 
