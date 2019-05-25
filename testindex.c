@@ -257,7 +257,7 @@ float objective_function(int n,int m, MATRIX distances_from_centroids){
 	* m = numero di gruppi del quantizzatore prodotto
   */
 void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
-          MATRIX centroids, int* centroid_of_point, int store){
+          MATRIX centroids, int* centroid_of_point, int store, VECTOR distances_between_centroids){
 	int iter = 1;
 	int d_star = d/m;
 
@@ -333,9 +333,9 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
 //  print_matrix_int(n,m, k, centroid_of_point, 'p');
 
   if (store==1) {
-    store_distances(m,k, centroids, input->distances_between_centroids);
+    store_distances(m,k, centroids, distances_between_centroids);
     printf("\nDistanze tra centroidi AL QUADRATO:\n");
-    print_centroids_distances(k, m, input->distances_between_centroids);
+    print_centroids_distances(k, m, distances_between_centroids);
   }
 
 }//calculate_centroids
@@ -346,7 +346,6 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
 // ---------- RICERCA NON ESAUSIVA -----------------
 
 
-
 //La funzione seguente realizza l'indicizzazione non esaustiva dei punti del
 //dataset. Come specificato sull'articolo, il primo passo è realizzare
 //un quantizzatore vettoriale dei punti del dataset. Questo sostanzialmente
@@ -355,48 +354,63 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
 // struttura che per ogni centroide q(y) contenga ogni punto y che
 // in forma quantizzata è q(y), accompagnato dal relativo residuo che però
 // non è memorizzato esplicitamente bensì c'è un secondo quantizzatore prodotto
-
+/*
+ * ds = data set
+ * coarse_centroids = ....Matrice kc*d
+ * residuals =  ...Matrice n*d
+ * centroids = ..Matrice (m*k)*d_star in famiglia
+ * coarse_centroid_of_point = ....vettore n*sizeof(int)
+ * celle_prima =
+ * punti_caricati =
+ * lista_invertita =
+ * centroid_of_point = ...vettore n*m*sizeof(int)
+ * n = numero di punti del data set
+ * n_r = dimensione del campione dei residui nel caso di ricerca non esaustiva
+ * k = numero di centroidi di ogni sotto-quantizzatore
+ * kc = numero di centroidi del quantizzatore coarse
+ * d = numero di dimensioni del data/query set
+ * m = numero di gruppi del quantizzatore prodotto
+ */
 void non_exhaustive_indexing(MATRIX ds, MATRIX coarse_centroids,
                              MATRIX residuals, MATRIX centroids, int* coarse_centroid_of_point,
                              int* celle_prima, int* punti_caricati, int* lista_invertita,
                              int* centroid_of_point,
                              int n, int n_r, int k, int kc, int d, int eps, int m){
 
-//  coarse_centroids = alloc_matrix(kc,d);
-//  coarse_centroid_of_point = (int*) malloc(n*sizeof(int));
   MATRIX distances_from_centroids;
   int d_star = d/m;
 
-
-  // ponendo m=1 si fa degenerare il quantizzatore prodotto
-  // in un quantizzatore coarse
-
-  printf("\nCalcolo centroidi coarse: \n");
-
-  calculate_centroids(n_r, d, kc, ds, eps, 1, coarse_centroids,coarse_centroid_of_point, 0);
-
-  // i centroidi vengono CALCOLATI su n_r punti del Dataset
+  // I centroidi vengono CALCOLATI su n_r punti del Dataset
   // Ora è necessario calcolare il centroide di tutti i punti restanti
   // Distances from centroids è una matrice che non serve a niente in realtà
   // se non a poter eseguire points_of_centroids (verrà infatti liberata subito dopo)
   distances_from_centroids=alloc_matrix(n,1);
 
+
+  // ponendo m=1 si fa degenerare il quantizzatore prodotto
+  // in un quantizzatore coarse
+  printf("\nCalcolo centroidi coarse: \n");
+
+  calculate_centroids(n_r, d, kc, ds, eps, 1,
+            coarse_centroids,coarse_centroid_of_point, 0, distances_from_centroids);
+
+
   points_of_centroid(n, d, kc, ds, 1, coarse_centroids, coarse_centroid_of_point, distances_from_centroids);
-  printf("\nDistanze dai centroidi coarse:\n");
+
+  printf("\nDistanza AL QUADRATO del centroide COARSE più vicino ai punti (m=1)\n");
   print_matrix(n,1,1,distances_from_centroids,'p');
+  printf("\nIndici del vettore 'centroids' indicante i centroidi COARSE più vicini al punto (m=1) \n");
   print_matrix_int(n,1,1,coarse_centroid_of_point,'p');
+  printf("Centroidi COARSE:\n");
   print_matrix(kc,d,d,coarse_centroids,'c');
   free(distances_from_centroids);
 
-//  residuals=alloc_matrix(n,d); //matrice dei residui
 
-  int i,j;
-  // La matrice dei residui viene riempita
-  for(i=0;i<n;i++){
-	   for(j=0;j<d;j++){
+// La matrice dei residui viene riempita
+  for(int i=0;i<n;i++)
+	   for(int j=0;j<d;j++)
 		     residuals[i*d+j]=ds[i*d+j]-coarse_centroids[coarse_centroid_of_point[i]*d + j];
-	   }
-  }
+
 
   printf("\nResidui: \n");
   print_matrix(n,d,d,residuals,'p');
@@ -406,21 +420,31 @@ void non_exhaustive_indexing(MATRIX ds, MATRIX coarse_centroids,
   //centroids=alloc_matrix(m*k,d_star);
 
   //centroid_of_point=(int*) malloc(n*m*sizeof(int));
-  //distances_between_centroids=alloc_matrix(m,(k*(k-1)/2));
 
-  printf("\nCalcolo centroidi accurati:\n");
+  //------------------ATTENZIONE-----------------
+  //Se la ricerca è simmetrica e non ESAUSTIVA
+  //siccome input->symmetric = 1 e quindi in 'calculate_centroids' la variabile
+  // 'store' = 1, vengono memorizzate le distanze tra centroids quindi ci vuole
+  // 'distances_between_centroids' inizializzata.
+  //E' CORRETTO?
+  VECTOR distances_between_centroids=alloc_matrix(m,(k*(k-1)/2));
 
-  calculate_centroids(n_r, d, k, residuals, eps, m, centroids,centroid_of_point, input->symmetric);
+  printf("\n---------Calcolo centroidi accurati---------\n");
+
+  calculate_centroids(n_r, d, k, residuals, eps, m,
+      centroids,centroid_of_point, input->symmetric, distances_between_centroids);
 
   // Anche in questo caso bisogna calcolare i quantizzatori di tutti i punti
   // rimasti fuori.
-  printf("\nOK");
+
   distances_from_centroids=alloc_matrix(n,m);
   points_of_centroid(n, d, k, residuals,m, centroids, centroid_of_point, distances_from_centroids);
 
-  printf("\nDistanze dai centroidi:\n");
+  printf("\nDistanza AL QUADRATO del centroide ACCURATO più vicino ai punti (m=1)\n");
   print_matrix(n,1,1,distances_from_centroids,'p');
+  printf("\nIndici del vettore 'centroids' indicante i centroidi ACCURATI più vicini al punto (m=1) \n");
   print_matrix_int(n,1,1,centroid_of_point,'p');
+  printf("Centroidi ACCURATI:\n");
   print_matrix(k*m,d_star,m,centroids,'c');
 
   // Costruzione lista invertita
@@ -442,26 +466,26 @@ void non_exhaustive_indexing(MATRIX ds, MATRIX coarse_centroids,
 										  																// centroide la lista dei punti che ne vengono quantizzati con i residui quantizzati.
   int sommapunti,inizio;
 
-  for(i=0;i<n;i++){ // per ogni punto i, si incrementa di 1 il numero
+  for(int i=0;i<n;i++){ // per ogni punto i, si incrementa di 1 il numero
   		                // di punti del quantizzatore coarse
   	punti_quantizzatore_coarse[coarse_centroid_of_point[i]]++;
   }
 
   celle_prima[0]=0;
 
-  for(i=1;i<kc;i++){ //si conta quante posizioni nella lista invertita ci sono
+  for(int i=1;i<kc;i++){ //si conta quante posizioni nella lista invertita ci sono
                       //prima che inizi la sottolista del centroide i utilizzando
 					  					//un vettore celle_prima
 	  celle_prima[i]=celle_prima[i-1]+punti_quantizzatore_coarse[i-1]*(m+1);
   }
 
-  for(i=0;i<n;i++){ // si vanno a riempire le sottoliste della lista lista_invertita
+  for(int i=0;i<n;i++){ // si vanno a riempire le sottoliste della lista lista_invertita
 	  	                // inizio è appunto il punto del vettore da cui inizia la sottolista
 		  								// ad
 	  	inizio=celle_prima[coarse_centroid_of_point[i]];
       // All'inizio si ha il punto del dataset, a seguire la quantizzazione dei suoi residui
 	  	lista_invertita[inizio+punti_caricati[coarse_centroid_of_point[i]]*(m+1)]=i;
- 		  for(j=1;j<m+1;j++){
+ 		  for(int j=1;j<m+1;j++){
 		    	lista_invertita[inizio+punti_caricati[coarse_centroid_of_point[i]]*(m+1)+j]=centroid_of_point[i*m+j-1]; //il -1 in centroid_of_residual[..] serve a compensare il fatto che j parta da 1 (ma io in realtà devo partire da 0 per fare questo calcolo)
 		    }
   		//centroid_of_point[i*2+1]=punti_caricati[centroid_of_point[i*2]];
@@ -492,7 +516,7 @@ void testIndex(params* input2){
 */
 
 //---------------------------Dati piccoli per il test---------------------------
-/*
+
 	for(int i=0; i<12; i++)
 		for( int j=0; j<4; j++)
  			input->ds[i*4+j] = i+j*2.5+rand()%20;
@@ -502,10 +526,10 @@ void testIndex(params* input2){
 	input->d = 4;
 	input->k = 4; //2
 	input->m = 2;
-	*/input->eps = 700;
+	input->eps = 20;
 
 	int d_star = (input->d)/(input->m);
-/*
+
 	printf("Dataset Iniziale\n");
 	print_matrix(input->n, input->d, input->n , input->ds, 'p');
 
@@ -541,14 +565,11 @@ void testIndex(params* input2){
   */
 
 //---------------------------Test completo---------------------------
+//_______________________Setting parametri input_____________________
   int n = input->n;
   int d = input->d;
   int k = input->k;
   int m = input->m;
-
-//  input->centroids = alloc_matrix(k*m,d_star);
-//  input->centroid_of_point = (int*) malloc(n*m*sizeof(int));	//la matrice va aggiornata
-//  input->distances_between_centroids = (VECTOR) malloc(m*(k*(k-1)/2)*sizeof(float));
 
   input->nr = 12;
   input->kc = 2;
@@ -558,7 +579,6 @@ void testIndex(params* input2){
   input->exaustive=0;
   input->symmetric=0;
 
-
   input->centroids=alloc_matrix(m*k,d_star);
   input->centroid_of_point=(int*) malloc(n*m*sizeof(int));
 
@@ -566,9 +586,11 @@ void testIndex(params* input2){
     input->distances_between_centroids=alloc_matrix(m,(k*(k-1)/2));
   }
 
+//_______________________Starting Algorithms_____________________
+
   if(input->exaustive==1){
     calculate_centroids(n, d, k, input->ds, input->eps, m, input->centroids,
-                        input->centroid_of_point, input->symmetric);
+                        input->centroid_of_point, input->symmetric, input->distances_between_centroids);
   } else {
     input->coarse_centroids = alloc_matrix(kc,d);
     input->coarse_centroid_of_point = (int*) malloc(n*sizeof(int));

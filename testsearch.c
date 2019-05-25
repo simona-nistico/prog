@@ -37,7 +37,7 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 
 	// RICORDA:
 	// ANN = (int*) malloc(knn*nq*sizeof(int))
-	VECTOR distances = (VECTOR) malloc(knn*sizeof(float)); //float?
+	VECTOR distances = (VECTOR) malloc(knn*sizeof(float));
 
 
 	for(int i=0;i<nq;i++){
@@ -52,18 +52,16 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 		// Inizializziamo i primi knn punti ordinandoli in ordine decrescente
 		// Così se è > del primo elemento è inutile fare i confronti
 
-		//memset(distances, FLT_MAX, knn*sizeof(float)); momentaneamente non funziona
-                                                  // sistemare
+
 		float test = 0;
-    for(j=0;j<knn;j++){
-      distances[j] = FLT_MAX;
-    }
+    for(j=0;j<knn;j++)  distances[j] = FLT_MAX;
+
 
 		// Vediamo quali sono i punti del dataset più vicini
 		for(j=0;j<n;j++){
 			// Calcoliamo la distanza tra le due quantizzazioni
 			dist = 0.0;
-      //printf("OK punto\n");
+
 			if(input->symmetric==1){
 				for(g=0;g<m;g++){
 					// Prendere il massimo ed il minimo mi serve per potermi muovere sulla
@@ -107,7 +105,6 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 	dealloc_matrix(distances);
 
 	// TESTATA! :D
-
 }// calNearExtS
 
 
@@ -233,7 +230,7 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 
 			}//for p
 
-			printf("\nk centroidi più vicii: \n");
+			printf("\nk centroidi più vicini: \n");
 			print_matrix_int(nq,knn,knn,ANN,'p');
 
 			// A questo punto abbiamo ottenuto i knn punti del queryset pi� vicini
@@ -299,22 +296,23 @@ void testSearch(params* input2){
 //  printf("Queryset Iniziale\n");
 //  print_matrix(input->nq, input->d, input->nq , input->qs, 'p');
 
+	//---------------------------Test completo---------------------------
   input->ANN = (int*) malloc(nq*knn*sizeof(int));
   memset(input->ANN, -1, nq*knn*sizeof(int));
-	print_matrix_int(nq,knn,knn, input->ANN,'p');
+//	print_matrix_int(nq,knn,knn, input->ANN,'p');
 
 	if(input->exaustive == 1){
 		calNearExt(n, d, k, m, knn, nq,
 								input->qs, input->ANN, input->centroid_of_point,
 								input->distances_between_centroids, input->centroids);
 	} else {
-		NoExaSearch(input->ds, input->qs, input->centroids, input->coarse_centroids,
+/*		NoExaSearch(input->ds, input->qs, input->centroids, input->coarse_centroids,
 								input->lista_invertita, input->celle_prima, input->punti_caricati,
 								input->ANN, d, w, k, kc, knn, m, nq);
-	}
+*/	}
 
-  print_matrix_int(nq,knn,knn,input->ANN,'p');
-	//---------------------------Test completo---------------------------
+//  print_matrix_int(nq,knn,knn,input->ANN,'p');
+
 
 
 }

@@ -37,7 +37,7 @@ typedef struct {
 	int* ANN;
 	//
 
-	// Inserire qui i campi necessari a memorizzare i Quantizzatori
+	//_______Inserire qui i campi necessari a memorizzare i Quantizzatori_______
 
 	//Per ogni punto (riga) viene indicato il centroide prodotto più vicino e la distanza da esso
 	//centroid_of_point[i][j] = centroide a minima distanza dap punti i del sottogruppo j
@@ -220,12 +220,11 @@ float distance(VECTOR x1,VECTOR x2,int d){
 
 
 // Funzione che calcola il residuo, versione ottimizzata
+// Esegue il calcolo: r(x) = x-q_c(x)
 VECTOR residual(VECTOR x,VECTOR centroid,int d){
 	VECTOR res = alloc_matrix(1,d);
-	int i;
-	int p=10; //Che cos'è p?
 
-	for(i=0;i<=d-p;i+=p){
+	for(int i=0;i<=d-4;i+=4){
 		res[i] = x[i]-centroid[i];
 		res[i+1] = x[i+1]-centroid[i+1];
 		res[i+2] = x[i+2]-centroid[i+2];
@@ -233,14 +232,12 @@ VECTOR residual(VECTOR x,VECTOR centroid,int d){
 	}
 
 	// Ciclo per eventuali cicli residui
-	for(i;i<d;i++){
+	for(int i;i<d;i++)
 		res[i] = x[i]-centroid[i];
-	}
 
 	return res;
 
 	// TESTATA: OK!
-	
 }//residual
 
 
