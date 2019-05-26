@@ -223,8 +223,8 @@ float distance(VECTOR x1,VECTOR x2,int d){
 // Esegue il calcolo: r(x) = x-q_c(x)
 VECTOR residual(VECTOR x,VECTOR centroid,int d){
 	VECTOR res = alloc_matrix(1,d);
-
-	for(int i=0;i<=d-4;i+=4){
+	int i;
+	for(i=0;i<=d-4;i+=4){
 		res[i] = x[i]-centroid[i];
 		res[i+1] = x[i+1]-centroid[i+1];
 		res[i+2] = x[i+2]-centroid[i+2];
@@ -232,7 +232,7 @@ VECTOR residual(VECTOR x,VECTOR centroid,int d){
 	}
 
 	// Ciclo per eventuali cicli residui
-	for(int i;i<d;i++)
+	for(i;i<d;i++)
 		res[i] = x[i]-centroid[i];
 
 	return res;

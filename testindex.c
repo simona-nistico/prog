@@ -498,6 +498,7 @@ void non_exhaustive_indexing(MATRIX ds, MATRIX coarse_centroids,
 
 //_____________________Funzioni esterne scritte in assembly_____________________
 extern float test_distance(VECTOR x1, VECTOR x2, int d);
+extern VECTOR test_residual(VECTOR x,VECTOR centroid,int d);
 
 void testIndex(params* input2){
   printf("\n###########Chiamata a Funzione TestIndex############\n");
@@ -540,19 +541,6 @@ void testIndex(params* input2){
   generate_centroids(input->n, input->d, input->k, input->ds, input->m);
   //generate_centroids(100, 128, 10);	//Test
 
-*/
-  VECTOR x = alloc_matrix(1, 23);
-  VECTOR y = alloc_matrix(1, 23);
-  for(int i=0; i<23; i++){
-    x[i] = rand()%20;
-    y[i] = rand()%20;
-  }
-
-  for( int i=1; i<23; i++){
-    printf("Distanza Assembly: %f\n", test_distance(x, y, i) );
-	   printf("Distanza C       : %f\n\n", distance(x, y, i) );
-   }
-/*
 	centroid_of_point = alloc_matrix(input->n,2);	//forse la metto dentro la funzione next
 
 
@@ -573,6 +561,34 @@ void testIndex(params* input2){
   print_quantizer(input->m, q);
 
   */
+
+//---------------------------Test Assembly---------------------------
+  VECTOR x = alloc_matrix(1, 23);
+  VECTOR y = alloc_matrix(1, 23);
+  for(int i=0; i<23; i++){
+    x[i] = rand()%20;
+    y[i] = rand()%20;
+  }
+/*
+  printf("Vettore X       : \n");
+  print_matrix(1, 23, 1, x, 'p');
+  printf("Vettore Y       : \n");
+  print_matrix(1, 23, 1, y, 'p');
+
+  for( int i=1; i<23; i++){
+    printf("Distanza Assembly: %f\n", test_distance(x, y, i) );
+    printf("Distanza C       : %f\n\n", distance(x, y, i) );
+   }
+*/
+   VECTOR res = residual(x, y, 23);
+   printf("Residual C       : \n");
+   print_matrix(1, 23, 1, res, 'p');
+
+   VECTOR res2 = test_residual(x, y, 23);
+   printf("Residual Assembly: \n");
+   print_matrix(1, 23, 1, res2, 'p');
+
+printf("ok\n");
 
 //---------------------------Test completo---------------------------
 //_______________________Setting parametri input_____________________

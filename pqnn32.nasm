@@ -11,8 +11,8 @@
 ;     NASM (www.nasm.us)
 ;     GCC (gcc.gnu.org)
 ;
-; entrambi sono disponibili come pacchetti software 
-; installabili mediante il packaging tool del sistema 
+; entrambi sono disponibili come pacchetti software
+; installabili mediante il packaging tool del sistema
 ; operativo; per esempio, su Ubuntu, mediante i comandi:
 ;
 ;     sudo apt-get install nasm
@@ -25,7 +25,7 @@
 ;
 ; Per generare file oggetto:
 ;
-;     nasm -f elf32 pqnn32.nasm 
+;     nasm -f elf32 pqnn32.nasm
 ;
 
 ; %include "sseutils.nasm"
@@ -118,8 +118,8 @@ pqnn32_index:
 		pop	ebp									; ripristina il Base Pointer
 		ret										; torna alla funzione C chiamante
 
-		
-		
+
+
 pqnn32_search:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
@@ -145,4 +145,3 @@ pqnn32_search:
 		mov	esp, ebp							; ripristina lo Stack Pointer
 		pop	ebp									; ripristina il Base Pointer
 		ret										; torna alla funzione C chiamante
-		
