@@ -433,6 +433,7 @@ void non_exhaustive_indexing(MATRIX ds, MATRIX coarse_centroids,
 
   // Se la ricerca è simmetrica allora bisogna allocare distances_between_centroids
   // per memorizzare le distanze tra centroidi da utilizzare nelle query
+  // ANDRA' ELIMINATO DA QUI?
   if(input->symmetric == 1){
     input->distances_between_centroids=alloc_matrix(m,(k*(k-1)/2));
   }
