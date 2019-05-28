@@ -10,6 +10,10 @@
 //Parametri ottenuti in input
 params *input;
 
+//_____________________Funzioni esterne scritte in assembly_____________________
+extern float test_distance(VECTOR x1, VECTOR x2, int d);
+extern VECTOR test_residual(VECTOR x,VECTOR centroid,int d);
+extern float test_objective(int n,int m, MATRIX distances_from_centroids);
 
 //------------------------------------METODI------------------------------------
 
@@ -285,8 +289,10 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
 	//Verifica l'ottimalità dei Punti
 	//COSTO: n
 	float obiettivo = objective_function(n,m, distances_from_centroids);
+  float obiettivoAss = test_objective(n,m, distances_from_centroids);
 	float obiettivoPrev = 0.0;
-  printf("Funzione obiettivo: %lf\n\n", obiettivo );
+  printf("Funzione obiettivo C       : %lf\n\n", obiettivo );
+  printf("Funzione obiettivo Assembly: %lf\n\n", obiettivoAss );
 
 
 
@@ -313,8 +319,10 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
 		//COSTO: n
 		obiettivoPrev = obiettivo;
     obiettivo = objective_function(n,m, distances_from_centroids);
+    obiettivoAss = test_objective(n,m, distances_from_centroids);
 		iter++;
-    printf("Funzione obiettivo: %lf\n\n", obiettivo );
+    printf("Funzione obiettivo C       : %lf\n\n", obiettivo );
+    printf("Funzione obiettivo Assembly: %lf\n\n", obiettivoAss );
 
     printf("Obiettivo vecchio: %14.2f\nObiettivo corrent: %14.2f\n", obiettivoPrev, obiettivo);
 		printf("Variazione obiett: %14.2f\n", (obiettivoPrev - obiettivo) );
@@ -506,9 +514,6 @@ void non_exhaustive_indexing(MATRIX ds, MATRIX coarse_centroids,
 
 }
 
-//_____________________Funzioni esterne scritte in assembly_____________________
-extern float test_distance(VECTOR x1, VECTOR x2, int d);
-extern VECTOR test_residual(VECTOR x,VECTOR centroid,int d);
 
 void testIndex(params* input2){
   printf("\n###########Chiamata a Funzione TestIndex############\n");
@@ -529,7 +534,7 @@ void testIndex(params* input2){
 */
 
 //---------------------------Dati piccoli per il test---------------------------
-/*
+
 	for(int i=0; i<12; i++)
 		for( int j=0; j<4; j++)
  			input->ds[i*4+j] = i+j*2.5+rand()%20;
@@ -539,25 +544,28 @@ void testIndex(params* input2){
 	input->d = 4;
 	input->k = 4; //2
 	input->m = 2;
-	input->eps = 20;
-*/
+	input->eps = 10;
+
 	int d_star = (input->d)/(input->m);
-/*
+
 	printf("Dataset Iniziale\n");
 	print_matrix(input->n, input->d, input->n , input->ds, 'p');
 
 //---------------------------Test singole funzioni---------------------------
 /*
-  generate_centroids(input->n, input->d, input->k, input->ds, input->m);
-  //generate_centroids(100, 128, 10);	//Test
+  input->centroids=alloc_matrix(m*k,d_star);
+  input->centroid_of_point=(int*) malloc(n*m*sizeof(int));
 
-	centroid_of_point = alloc_matrix(input->n,2);	//forse la metto dentro la funzione next
+  generate_centroids(input->n, input->d, input->k, input->ds, input->m, input->centroids);
+
+	int* centroid_of_point = alloc_matrix(input->n,2);	//forse la metto dentro la funzione next
 
 
-	points_of_centroid(input->n, input->d, input->k, input->ds);
+  float* distances_from_centroids = (float*) malloc(input->m*input->k*sizeof(float));	//la matrice va aggiornata
+  points_of_centroid(input->n, input->d, input->k, input->ds, input->centroids, centroid_of_point, distances_from_centroids);
 
 
-	objective_function(input->n, input->m);
+	objective_function(input->n, input->m, distances_from_centroids);
 
 
 	update_centroids(input->n, input->d, input->k, input->ds);
@@ -573,21 +581,22 @@ void testIndex(params* input2){
   */
 
 //---------------------------Test Assembly---------------------------
-  /*VECTOR x = alloc_matrix(1, 23);
-  VECTOR y = alloc_matrix(1, 23);
-  for(int i=0; i<23; i++){
+/*  VECTOR x = alloc_matrix(1, 37);
+  VECTOR y = alloc_matrix(1, 37);
+  for(int i=0; i<37; i++){
     x[i] = rand()%20;
     y[i] = rand()%20;
   }
-/*
-  printf("Vettore X       : \n");
-  print_matrix(1, 23, 1, x, 'p');
-  printf("Vettore Y       : \n");
-  print_matrix(1, 23, 1, y, 'p');
 
-  for( int i=1; i<23; i++){
+  printf("Vettore X       : \n");
+  print_matrix(1, 37, 1, x, 'p');
+  printf("Vettore Y       : \n");
+  print_matrix(1, 37, 1, y, 'p');
+
+  for( int i=1; i<37; i++){
     printf("Distanza Assembly: %f\n", test_distance(x, y, i) );
     printf("Distanza C       : %f\n\n", distance(x, y, i) );
+    if( test_distance(x, y, i) !=  distance(x, y, i) ) printf("ERRORE\n");
    }
 
    VECTOR res = residual(x, y, 23);
@@ -599,8 +608,8 @@ void testIndex(params* input2){
    print_matrix(1, 23, 1, res2, 'p');
 
 printf("ok\n");
-*/
 
+*/
 //---------------------------Test completo---------------------------
 //_______________________Setting parametri input_____________________
   int n = input->n;
@@ -613,7 +622,7 @@ printf("ok\n");
 
   int nr = input->nr;
   int kc = input->kc;
-  input->exaustive=0;
+  input->exaustive=1;
   input->symmetric=1;
 
   input->centroids=alloc_matrix(m*k,d_star);
