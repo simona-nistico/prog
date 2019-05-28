@@ -34,7 +34,7 @@ test_objective:
 
 		xorps xmm0, xmm0          ;azzero xmm0 dove terrò la somma
 
-		imul ebx, [ebp+m]		;ebx = n*m cioè num_punti*num_gruppi
+		imul ebx, ecx		;ebx = n*m cioè num_punti*num_gruppi
 
     cmp ebx, 8	    ; Confronto n*m < 8 ?
     jl for_4    ; Se edx è strettamente minore di 8, gestisco il residuo
@@ -74,7 +74,7 @@ end:
     haddps xmm0, xmm0     ;sommo i secondi due valori del registro
 
     sub esp, 4            ;sposo nel registro in cima allo stack FPU il risultato
-    movss [esp], xmm2     ;al fine di prenderlo da c
+    movss [esp], xmm0     ;al fine di prenderlo da c
     fld dword [esp]
     add esp, 4
 

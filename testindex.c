@@ -234,7 +234,7 @@ float get_distance(int a, int b, int k, int g){
   * TODO: parallelizzare la somma in assembly
   */
 float objective_function(int n,int m, MATRIX distances_from_centroids){
-		float sum = 0, dist = 0;
+		double sum = 0, dist = 0;
 
 		for(int g=0;g<m;g++){		// per ogni gruppo
 
@@ -245,7 +245,14 @@ float objective_function(int n,int m, MATRIX distances_from_centroids){
 
 		}// per ogni gruppo
 
-		return sum;
+    double sum2 = 0;
+    for( int i=0; i<n*m; i++){
+      sum2+=distances_from_centroids[i];
+    }
+    printf("Altra modalità DOUBLE      : %lf\n", sum);
+    printf("Altra modalità di calcolo  : %lf\n", sum2);
+
+		return (float)sum;
 
 		// Controllare se corretto -> sembra di si
 }//objective_function
@@ -291,7 +298,7 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
 	float obiettivo = objective_function(n,m, distances_from_centroids);
   float obiettivoAss = test_objective(n,m, distances_from_centroids);
 	float obiettivoPrev = 0.0;
-  printf("Funzione obiettivo C       : %lf\n\n", obiettivo );
+  printf("Funzione obiettivo C       : %lf\n", obiettivo );
   printf("Funzione obiettivo Assembly: %lf\n\n", obiettivoAss );
 
 
@@ -321,7 +328,7 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
     obiettivo = objective_function(n,m, distances_from_centroids);
     obiettivoAss = test_objective(n,m, distances_from_centroids);
 		iter++;
-    printf("Funzione obiettivo C       : %lf\n\n", obiettivo );
+    printf("Funzione obiettivo C       : %lf\n", obiettivo );
     printf("Funzione obiettivo Assembly: %lf\n\n", obiettivoAss );
 
     printf("Obiettivo vecchio: %14.2f\nObiettivo corrent: %14.2f\n", obiettivoPrev, obiettivo);
@@ -535,22 +542,25 @@ void testIndex(params* input2){
 
 //---------------------------Dati piccoli per il test---------------------------
 
-	for(int i=0; i<12; i++)
-		for( int j=0; j<4; j++)
- 			input->ds[i*4+j] = i+j*2.5+rand()%20;
 
 //Prendo un sottoinsieme del dataset
-	input->n = 12;
-	input->d = 4;
-	input->k = 4; //2
+	input->n = 500;
+	input->d = 128;
+	input->k = 8; //2
 	input->m = 2;
 	input->eps = 10;
+/*
+	for(int i=0; i<input->n; i++)
+		for( int j=0; j<input->d; j++)
+ 			input->ds[i*input->d+j] = i+j*2.5+rand()%20;
+
+*/
 
 	int d_star = (input->d)/(input->m);
-
+/*
 	printf("Dataset Iniziale\n");
 	print_matrix(input->n, input->d, input->n , input->ds, 'p');
-
+*/
 //---------------------------Test singole funzioni---------------------------
 /*
   input->centroids=alloc_matrix(m*k,d_star);
@@ -616,6 +626,7 @@ printf("ok\n");
   int d = input->d;
   int k = input->k;
   int m = input->m;
+//  int d_star = d/m;
 
 //  input->nr = 12;
 //  input->kc = 2;
