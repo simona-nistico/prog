@@ -1,0 +1,228 @@
+n--------------------KNN: 1-----------------------------n
+Usage: ./pqnn32c <data_name> [-d][-s][-exaustive|-noexaustive][-sdc|-adc][...]
+
+Parameters:
+	-d : display ANNs
+	-s : silent
+	-m: PQ groups
+	-k: PQ centroids
+	-kc: coarse VQ centroids
+	-w: coarse VQ centroids to be selected
+	-nr: residual sample size
+	-eps: k-means termination threshold
+	-tmin: min k-means iterations
+	-tmax: max k-means iterations
+
+Input file name: 'prova'
+Data set size [n]: 8000
+Number of dimensions [d]: 128
+Query set size [nq]: 2000
+Number of ANN [knn]: 1
+PQ groups [m]: 8
+PQ centroids [k]: 256
+K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 1, Simmetrica: 0
+
+Indexing time = 28.841 secs
+
+###########Chiamata a Funzione TestSearch############
+
+Searching time = 5.735 secs
+
+Done.
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 1, Simmetrica: 1
+28.793
+
+###########Chiamata a Funzione TestSearch############
+1.602
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 0, Simmetrica: 0
+1.187
+
+###########Chiamata a Funzione TestSearch############
+3.591
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 0, Simmetrica: 1
+1.201
+
+###########Chiamata a Funzione TestSearch############
+3.352
+n--------------------KNN: 2-----------------------------n
+Usage: ./pqnn32c <data_name> [-d][-s][-exaustive|-noexaustive][-sdc|-adc][...]
+
+Parameters:
+	-d : display ANNs
+	-s : silent
+	-m: PQ groups
+	-k: PQ centroids
+	-kc: coarse VQ centroids
+	-w: coarse VQ centroids to be selected
+	-nr: residual sample size
+	-eps: k-means termination threshold
+	-tmin: min k-means iterations
+	-tmax: max k-means iterations
+
+Input file name: 'prova'
+Data set size [n]: 8000
+Number of dimensions [d]: 128
+Query set size [nq]: 2000
+Number of ANN [knn]: 2
+PQ groups [m]: 8
+PQ centroids [k]: 256
+K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 1, Simmetrica: 0
+
+Indexing time = 28.481 secs
+
+###########Chiamata a Funzione TestSearch############
+
+Searching time = 5.648 secs
+
+Done.
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 1, Simmetrica: 1
+28.516
+
+###########Chiamata a Funzione TestSearch############
+1.566
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 0, Simmetrica: 0
+1.189
+
+###########Chiamata a Funzione TestSearch############
+3.740
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 0, Simmetrica: 1
+1.187
+
+###########Chiamata a Funzione TestSearch############
+3.231
+n--------------------KNN: 4-----------------------------n
+Usage: ./pqnn32c <data_name> [-d][-s][-exaustive|-noexaustive][-sdc|-adc][...]
+
+Parameters:
+	-d : display ANNs
+	-s : silent
+	-m: PQ groups
+	-k: PQ centroids
+	-kc: coarse VQ centroids
+	-w: coarse VQ centroids to be selected
+	-nr: residual sample size
+	-eps: k-means termination threshold
+	-tmin: min k-means iterations
+	-tmax: max k-means iterations
+
+Input file name: 'prova'
+Data set size [n]: 8000
+Number of dimensions [d]: 128
+Query set size [nq]: 2000
+Number of ANN [knn]: 4
+PQ groups [m]: 8
+PQ centroids [k]: 256
+K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 1, Simmetrica: 0
+
+Indexing time = 28.118 secs
+
+###########Chiamata a Funzione TestSearch############
+
+Searching time = 6.543 secs
+
+Done.
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 1, Simmetrica: 1
+28.498
+
+###########Chiamata a Funzione TestSearch############
+1.464
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 0, Simmetrica: 0
+1.153
+
+###########Chiamata a Funzione TestSearch############
+3.534
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 0, Simmetrica: 1
+1.168
+
+###########Chiamata a Funzione TestSearch############
+3.171
+n--------------------KNN: 8-----------------------------n
+Usage: ./pqnn32c <data_name> [-d][-s][-exaustive|-noexaustive][-sdc|-adc][...]
+
+Parameters:
+	-d : display ANNs
+	-s : silent
+	-m: PQ groups
+	-k: PQ centroids
+	-kc: coarse VQ centroids
+	-w: coarse VQ centroids to be selected
+	-nr: residual sample size
+	-eps: k-means termination threshold
+	-tmin: min k-means iterations
+	-tmax: max k-means iterations
+
+Input file name: 'prova'
+Data set size [n]: 8000
+Number of dimensions [d]: 128
+Query set size [nq]: 2000
+Number of ANN [knn]: 8
+PQ groups [m]: 8
+PQ centroids [k]: 256
+K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 1, Simmetrica: 0
+
+Indexing time = 27.703 secs
+
+###########Chiamata a Funzione TestSearch############
+
+Searching time = 5.485 secs
+
+Done.
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 1, Simmetrica: 1
+27.927
+
+###########Chiamata a Funzione TestSearch############
+1.473
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 0, Simmetrica: 0
+1.159
+
+###########Chiamata a Funzione TestSearch############
+3.540
+
+###########Chiamata a Funzione TestIndex############
+Esaustiva: 0, Simmetrica: 1
+1.167
+
+###########Chiamata a Funzione TestSearch############
+3.172
+n--------------------KNN: 1-----------------------------n
+n--------------------KNN: 2-----------------------------n
+n--------------------KNN: 4-----------------------------n
+n--------------------KNN: 8-----------------------------n
+n--------------------KNN: 1-----------------------------n
+n--------------------KNN: 2-----------------------------n
+n--------------------KNN: 4-----------------------------n
+n--------------------KNN: 8-----------------------------n

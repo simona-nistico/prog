@@ -2,6 +2,7 @@
 #include <time.h>
 #include <math.h>
 #include <stdlib.h>
+#include <float.h>
 
 //Necessario per poter utilizzare la struttura params definita dal prof
 #include "datatypes.h"
@@ -234,8 +235,9 @@ float get_distance(int a, int b, int k, int g){
   * TODO: parallelizzare la somma in assembly
   */
 float objective_function(int n,int m, MATRIX distances_from_centroids){
-		double sum = 0, dist = 0;
-
+	   float sum = 0;
+     int i;
+/*
 		for(int g=0;g<m;g++){		// per ogni gruppo
 
 			for(int i=0;i<n;i++){    // per ogni punto i, aggiunge distanza(i,q(i))^2
@@ -244,15 +246,21 @@ float objective_function(int n,int m, MATRIX distances_from_centroids){
 			}
 
 		}// per ogni gruppo
-
-    double sum2 = 0;
-    for( int i=0; i<n*m; i++){
-      sum2+=distances_from_centroids[i];
+*/
+/*
+    for(i=0; i<n*m-4; i+=4){
+      sum+=distances_from_centroids[i];
+      sum+=distances_from_centroids[i+1];
+      sum+=distances_from_centroids[i+2];
+      sum+=distances_from_centroids[i+3];
     }
-    printf("Altra modalità DOUBLE      : %lf\n", sum);
-    printf("Altra modalità di calcolo  : %lf\n", sum2);
+*/
+    for(i=0;i<n;i++){
+      sum += distances_from_centroids[i];
+    }
 
-		return (float)sum;
+		return sum;
+
 
 		// Controllare se corretto -> sembra di si
 }//objective_function
@@ -283,7 +291,7 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
 
 	MATRIX distances_from_centroids = (float*) malloc(n*m*sizeof(float));	//la matrice va aggiornata
 
-	printf("############################ ITERAZIONE %d ############################\n", 0);
+//	printf("############################ ITERAZIONE %d ############################\n", 0);
 	//Divide lo spazio in celle di Voronoi
 	//COSTO: n*k* O(distance)[cioè d] = n*k*d
 	points_of_centroid(n, d, k, ds, m, centroids, centroid_of_point, distances_from_centroids);
@@ -296,16 +304,19 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
 	//Verifica l'ottimalità dei Punti
 	//COSTO: n
 	float obiettivo = objective_function(n,m, distances_from_centroids);
-  float obiettivoAss = test_objective(n,m, distances_from_centroids);
-	float obiettivoPrev = 0.0;
-  printf("Funzione obiettivo C       : %lf\n", obiettivo );
-  printf("Funzione obiettivo Assembly: %lf\n\n", obiettivoAss );
+//  float obiettivoAss = test_objective(n,m, distances_from_centroids);
+	float obiettivoPrev = FLT_MAX;
+//  printf("Funzione obiettivo C       : %lf\n", obiettivo );
+//  printf("Funzione obiettivo Assembly: %lf\n\n", obiettivoAss );
 
+  int tmin = input->tmin;
+  int tmax = input->tmax;
 
 
 //Per la formula della terminazione il prof deve aggiornare le specifiche di progetto sul sito
-	while( (obiettivoPrev - obiettivo ) > eps || iter == 1) {
-		printf("############################ ITERAZIONE %d ############################\n", iter);
+//	while( ( (obiettivoPrev - obiettivo ) > eps || iter<=tmin) && iter<=tmax) {
+	while( iter<=tmax && ( iter<=tmin || (obiettivoPrev - obiettivo ) > eps ) ){
+//		printf("############################ ITERAZIONE %d ############################\n", iter);
 
 		//Trova i nuovi centroidi facendo la media dei punti delle celle di Voronoi
 		//COSTO: n*d+k*d
@@ -326,19 +337,19 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
 		//COSTO: n
 		obiettivoPrev = obiettivo;
     obiettivo = objective_function(n,m, distances_from_centroids);
-    obiettivoAss = test_objective(n,m, distances_from_centroids);
+//    obiettivoAss = test_objective(n,m, distances_from_centroids);
 		iter++;
-    printf("Funzione obiettivo C       : %lf\n", obiettivo );
-    printf("Funzione obiettivo Assembly: %lf\n\n", obiettivoAss );
+//    printf("Funzione obiettivo C       : %lf\n", obiettivo );
+//    printf("Funzione obiettivo Assembly: %lf\n\n", obiettivoAss );
 
-    printf("Obiettivo vecchio: %14.2f\nObiettivo corrent: %14.2f\n", obiettivoPrev, obiettivo);
+/*    printf("Obiettivo vecchio: %14.2f\nObiettivo corrent: %14.2f\n", obiettivoPrev, obiettivo);
 		printf("Variazione obiett: %14.2f\n", (obiettivoPrev - obiettivo) );
-		printf("CONDIZIONE DEL WHILE: %d\n", (obiettivoPrev - obiettivo > eps) );
+//		printf("CONDIZIONE DEL WHILE: %d\n", (obiettivoPrev - obiettivo > eps) );
 		if( obiettivoPrev - obiettivo < 0 )
 			printf("La funzione obiettivo sta salendo.\n");
     else if( obiettivoPrev - obiettivo == 0 )
         printf("La funzione obiettivo è costante.\n");
-
+*/
   }//while
 
 	free(distances_from_centroids);
@@ -542,10 +553,10 @@ void testIndex(params* input2){
 
 //---------------------------Dati piccoli per il test---------------------------
 
-
+/*
 //Prendo un sottoinsieme del dataset
-	input->n = 500;
-	input->d = 128;
+	input->n = 100;
+	input->d = 12;
 	input->k = 8; //2
 	input->m = 2;
 	input->eps = 10;
@@ -555,6 +566,11 @@ void testIndex(params* input2){
  			input->ds[i*input->d+j] = i+j*2.5+rand()%20;
 
 */
+
+
+  if((input->kc)>(input->nr)){
+    input->kc = input->nr/16;
+  }
 
 	int d_star = (input->d)/(input->m);
 /*
@@ -633,9 +649,7 @@ printf("ok\n");
 
   int nr = input->nr;
   int kc = input->kc;
-  input->exaustive=1;
-  input->symmetric=1;
-
+  printf("Esaustiva: %d, Simmetrica: %d\n", input->exaustive, input->symmetric);
   input->centroids=alloc_matrix(m*k,d_star);
   input->centroid_of_point=(int*) malloc(n*m*sizeof(int));
 

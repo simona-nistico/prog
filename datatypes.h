@@ -194,7 +194,7 @@ float distance(VECTOR x1,VECTOR x2,int d){
 	// Per ridurre l'overhead dovuto ad ogni passo del ciclo effettuiamo al suo
 	// interno più operazioni (assumiamo che la dimensione d sia divisibile per
   // due)
-
+/*
 	// Si lavora su gruppi di 4
 	for(i=0; i<=d-4; i+=4){
 		diff = x1[i]-x2[i];
@@ -206,9 +206,10 @@ float distance(VECTOR x1,VECTOR x2,int d){
 		diff = x1[i+3]-x2[i+3];
 		sum += diff*diff;
 	}
+*/
 
 	// Processiamo un eventuale residual_centroids
-	for(i;i<d;i++){
+	for(i=0;i<d;i++){
 		diff = x1[i]-x2[i];
 		sum += diff*diff;
 	}
@@ -224,15 +225,17 @@ float distance(VECTOR x1,VECTOR x2,int d){
 VECTOR residual(VECTOR x,VECTOR centroid,int d){
 	VECTOR res = alloc_matrix(1,d);
 	int i;
+/*
 	for(i=0;i<=d-4;i+=4){
 		res[i] = x[i]-centroid[i];
 		res[i+1] = x[i+1]-centroid[i+1];
 		res[i+2] = x[i+2]-centroid[i+2];
 		res[i+3] = x[i+3]-centroid[i+3];
 	}
+*/
 
 	// Ciclo per eventuali cicli residui
-	for(i;i<d;i++)
+	for(i=0;i<d;i++)
 		res[i] = x[i]-centroid[i];
 
 	return res;

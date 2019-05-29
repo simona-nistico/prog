@@ -296,7 +296,7 @@ void testSearch(params* input2){
 //  printf("Queryset Iniziale\n");
 //  print_matrix(input->nq, input->d, input->nq , input->qs, 'p');
 
-/*
+
 	//---------------------------Test completo---------------------------
   input->ANN = (int*) malloc(nq*knn*sizeof(int));
   memset(input->ANN, -1, nq*knn*sizeof(int));
@@ -312,8 +312,8 @@ void testSearch(params* input2){
 								input->ANN, d, w, k, kc, knn, m, nq);
 	}
 
-  print_matrix_int(nq,knn,knn,input->ANN,'p');
+//  print_matrix_int(nq,knn,knn,input->ANN,'p');
 
-*/
+
 
 }
