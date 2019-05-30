@@ -7,7 +7,7 @@ iterazioni_UCR:	resd	1
 
 section .text			; Sezione contenente il codice macchina
 
-global distanza
+global distance_avx
 
 x	equ	8
 y	equ	12
@@ -15,7 +15,7 @@ dim	equ	16
 
 UNR	equ	8
 
-distanza:
+distance_avx:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------
@@ -90,14 +90,14 @@ distanza:
    		  vaddps ymm2, ymm0      ; ymm2 = ymm2+ymm0           sum += diff*diff
 
 
-   		  sub edx, 32      ;sottraggo i 32 elementi già presi
-   		  add eax, 128     ;mi sposto di 32 elementi (128 posizioni)
-   		  add ecx, 128
+   		  sub rdx, 32      ;sottraggo i 32 elementi già presi
+   		  add rax, 128     ;mi sposto di 32 elementi (128 posizioni)
+   		  add rcx, 128
 
-  		  cmp edx, 32	    ; Confronto edx >= 32 ? repeat
+  		  cmp rdx, 32	    ; Confronto edx >= 32 ? repeat
 		  jge for_32   ; Se edx è più grande o uguale a 32, salto al for
 
-;100
+
 	    for_8:
     		  cmp rdx, 8	    ; Confronto edx < 8 ? salta al for4
 		  jl for_4   ; Se mancano meno di 8 elementi vai alla gestione residuo
@@ -109,9 +109,9 @@ distanza:
     		  vmulps ymm0, ymm0      ; ymm0 = ymm0*ymm0           diff*diff;
     		  vaddps ymm2, ymm0      ; ymm2 = ymm2+ymm0           sum += diff*diff
 
-    		  sub edx, 8      ;sottraggo gli 8 elementi già presi
-    		  add eax, 32     ;mi sposto di 8 elementi (32 posizioni)
-    		  add ecx, 32
+    		  sub rdx, 8      ;sottraggo gli 8 elementi già presi
+    		  add rax, 32     ;mi sposto di 8 elementi (32 posizioni)
+    		  add rcx, 32
 
 		  jmp for_8    ; salto incondizionato tanto la condizione la vedo dopo
 
