@@ -2,7 +2,6 @@
 #include "datatypes.h"
 #include <float.h>
 
-
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 
@@ -10,6 +9,11 @@
 //Parametri ottenuti in input
 params *input;
 
+//_____________________Funzioni esterne scritte in assembly_____________________
+extern float test_distance(VECTOR x1, VECTOR x2, int d);
+extern VECTOR test_residual(VECTOR x,VECTOR centroid,int d);
+extern float test_objective(int n,int m, MATRIX distances_from_centroids);
+extern void memset_float(float* array, float val, int dim );
 
 //---------------------------RICERCA ESAUSTIVA--------------------------------
 
@@ -54,7 +58,8 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 
 
 		float test = 0;
-    for(j=0;j<knn;j++)  distances[j] = FLT_MAX;
+//    for(j=0;j<knn;j++)  distances[j] = FLT_MAX;
+		memset_float( distances, FLT_MAX, knn);
 
 
 		// Vediamo quali sono i punti del dataset più vicini
@@ -79,7 +84,7 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 			}
 
 //			printf("Distanza del punto %d del queryset dal punto %d del dataset: %f \n",i,j,dist);
-			//printf("%10.2f,\t", dist);
+//			printf("%10.2f,\t", dist);
 
 			if(distances[0]>dist){
 				l = 0;
@@ -131,9 +136,9 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 		dist = alloc_matrix(1,w);
 
 		// Settiamo il vettore delle distanze al massimo float rappresentabile
-		for(j=0;j<w;j++){
-			dist[j] = FLT_MAX;
-		}// for j
+//		for(j=0;j<w;j++){		dist[j] = FLT_MAX; 	}// for j
+		memset_float( dist, FLT_MAX, w);
+
 
 		// Vediamo quali sono i centroidi coarse più vicini
 		for(j=0;j<kc;j++){
@@ -171,9 +176,8 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 
 		dist = alloc_matrix(1,knn);
 
-		for(j=0;j<knn;j++){
-			dist[j] = FLT_MAX;
-		}// for j
+//		for(j=0;j<knn;j++){		dist[j] = FLT_MAX;	}// for j
+		memset_float( dist, FLT_MAX, knn);
 
 //		print_matrix(1,knn,knn,dist,'p');
 
@@ -312,7 +316,7 @@ void testSearch(params* input2){
 								input->ANN, d, w, k, kc, knn, m, nq);
 	}
 
-//  print_matrix_int(nq,knn,knn,input->ANN,'p');
+  print_matrix_int(nq,knn,knn,input->ANN,'p');
 
 
 

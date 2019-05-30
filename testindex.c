@@ -40,9 +40,12 @@ extern void memset_float(float* array, float val, int dim );
 // 				printf("Gruppo %d centroide %d scelto il punto numero: %d\n", g, i, number);
 
  				// Inseriamo il centroide nella matrice
- 				for(int j=0;j<d_star;j++)
+ /*				for(int j=0;j<d_star;j++)
  					//[riga->(i+group*k)*d_star,colonna->j]     [riga->number*d,colonna->d_star*g+j]
  					centroids[(i+g*k)*d_star+j] = ds[number*d+d_star*g+j];
+*/
+        memcpy( &centroids[(i+g*k)*d_star], &ds[number*d+d_star*g], d_star*sizeof(float) );
+
  				number ++;
   			}//for i
 				number = 0;
@@ -637,7 +640,7 @@ void testIndex(params* input2){
 printf("ok\n");
 
 */
-/*
+
 //---------------------------Test completo---------------------------
 //_______________________Setting parametri input_____________________
   int n = input->n;
@@ -651,6 +654,10 @@ printf("ok\n");
 
   int nr = input->nr;
   int kc = input->kc;
+
+  input->exaustive = 1;
+  input->symmetric = 1;
+
   printf("Esaustiva: %d, Simmetrica: %d\n", input->exaustive, input->symmetric);
   input->centroids=alloc_matrix(m*k,d_star);
   input->centroid_of_point=(int*) malloc(n*m*sizeof(int));
@@ -675,12 +682,16 @@ printf("ok\n");
                             n, nr, k, kc, d, input->eps, m);
   }
 
-*/
+/*
   int d = 47;
   VECTOR test = malloc(d*sizeof(float) );
   print_matrix(1, d, 1, test, 'p');
   memset_float(test, 5.1, d);
   print_matrix(1, d, 1, test, 'p');
 //    get_distance(2, 3, input->k, 0);
-
+  VECTOR test2 = malloc(d*sizeof(float) );
+    print_matrix(1, d, 1, test2, 'p');
+    memcpy(test2, test, d*sizeof(float) );
+  print_matrix(1, d, 1, test2, 'p');
+  */
 }
