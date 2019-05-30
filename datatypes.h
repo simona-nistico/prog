@@ -83,6 +83,12 @@ typedef struct {
 } params;
 
 
+//_____________________Funzioni esterne scritte in assembly_____________________
+extern float distance(VECTOR x1, VECTOR x2, int d);
+extern VECTOR residual(VECTOR x,VECTOR centroid,int d);
+extern float objective_function(int n,int m, MATRIX distances_from_centroids);
+extern void memset_float(float* array, float val, int dim );
+
 
 
 /*
@@ -183,11 +189,50 @@ void print_centroids_distances(int k, int m, float* data){
 }
 
 
+/** La funzione seguente calcola il valore della funzione obiettivo
+  * che deve essere minimizzata al fine avere un buon insieme di centroidi
+	* C = min   sum[ dist^2(y, centroide(y) )  ]
+	* COSTO: n
+  * n =  numero di punti del data set
+  * TODO: parallelizzare la somma in assembly
+  */
+/*float objective_function(int n,int m, MATRIX distances_from_centroids){
+	   float sum = 0;
+     int i;
+/*
+		for(int g=0;g<m;g++){		// per ogni gruppo
+
+			for(int i=0;i<n;i++){    // per ogni punto i, aggiunge distanza(i,q(i))^2
+				dist = distances_from_centroids[i*m+g];	//verificare se questo valore è aggiornato
+				sum += dist;//*dist; //E' gia al quadrato la distanza restituita
+			}
+
+		}// per ogni gruppo
+*/
+/*
+    for(i=0; i<n*m-4; i+=4){
+      sum+=distances_from_centroids[i];
+      sum+=distances_from_centroids[i+1];
+      sum+=distances_from_centroids[i+2];
+      sum+=distances_from_centroids[i+3];
+    }
+*/
+/*    for(i=0;i<n;i++){
+      sum += distances_from_centroids[i];
+    }
+
+		return sum;
+
+
+		// Controllare se corretto -> sembra di si
+}//objective_function
+
+
 /** Funzione che calcola la distanza
   * Costo: O(d)
   * versione ottimizzata
   */
-float distance(VECTOR x1,VECTOR x2,int d){
+/*float distance(VECTOR x1,VECTOR x2,int d){
 	float diff,sum = 0;
 	int i;
 
@@ -209,7 +254,7 @@ float distance(VECTOR x1,VECTOR x2,int d){
 */
 
 	// Processiamo un eventuale residual_centroids
-	for(i=0;i<d;i++){
+/*	for(i=0;i<d;i++){
 		diff = x1[i]-x2[i];
 		sum += diff*diff;
 	}
@@ -235,7 +280,7 @@ VECTOR residual(VECTOR x,VECTOR centroid,int d){
 */
 
 	// Ciclo per eventuali cicli residui
-	for(i=0;i<d;i++)
+/*	for(i=0;i<d;i++)
 		res[i] = x[i]-centroid[i];
 
 	return res;

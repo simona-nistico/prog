@@ -10,9 +10,9 @@
 params *input;
 
 //_____________________Funzioni esterne scritte in assembly_____________________
-extern float test_distance(VECTOR x1, VECTOR x2, int d);
-extern VECTOR test_residual(VECTOR x,VECTOR centroid,int d);
-extern float test_objective(int n,int m, MATRIX distances_from_centroids);
+extern float distance(VECTOR x1, VECTOR x2, int d);
+extern VECTOR residual(VECTOR x,VECTOR centroid,int d);
+extern float objective_function(int n,int m, MATRIX distances_from_centroids);
 extern void memset_float(float* array, float val, int dim );
 
 //---------------------------RICERCA ESAUSTIVA--------------------------------
@@ -58,8 +58,8 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 
 
 		float test = 0;
-//    for(j=0;j<knn;j++)  distances[j] = FLT_MAX;
-		memset_float( distances, FLT_MAX, knn);
+    for(j=0;j<knn;j++)  distances[j] = FLT_MAX;
+//		memset_float( distances, FLT_MAX, knn);
 
 
 		// Vediamo quali sono i punti del dataset più vicini
@@ -120,7 +120,8 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 	int* lista_invertita, int* celle_prima, int* punti_caricati,
 	int* ANN, int d, int w, int k, int kc, int knn,int m,int nq){
 	// Per ogni punto cerchiamo i w centroidi coarse più vicini
-	int* c_coarse = (int*) malloc(w*sizeof(int));
+	int* c_coarse = (int*) calloc(w, sizeof(int));
+
 	int* quantization;
 	VECTOR dist;
 	VECTOR res;
@@ -136,17 +137,21 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 		dist = alloc_matrix(1,w);
 
 		// Settiamo il vettore delle distanze al massimo float rappresentabile
-//		for(j=0;j<w;j++){		dist[j] = FLT_MAX; 	}// for j
-		memset_float( dist, FLT_MAX, w);
+		for(j=0;j<w;j++){		dist[j] = FLT_MAX; 	}// for j
+//		memset_float( dist, FLT_MAX, w);
 
 
 		// Vediamo quali sono i centroidi coarse più vicini
 		for(j=0;j<kc;j++){
 			// Calcoliamo la distanza tra le due quantizzazioni
 			distanza = 0;
-
 			for(l=0;l<m;l++){
-				distanza += distance(&qs[i*d+l*d_star],&coarse_centroids[j],d);
+	//			printf("Queryset: %p\n", &qs[i*d+l*d_star] );
+//				printf("CoarseCe: %p\n\n", &coarse_centroids[j] );
+				distanza += distance(&qs[i*d+l*d_star],&coarse_centroids[j*d],d);
+				/**ATTENZIONE: ho smadonnato tutta una sera per capire
+				che il vettore andava di 1 cella alla volta e non di 128 |!!!111!!1!1!!1!1
+				PER FAORE CONTROLLATE SE é GIUSTO IL RISULTATO*/
 			}// for l
 
 //			printf("\nDistanza dal centroide coarse: %f\n", distanza);
@@ -158,6 +163,7 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 					c_coarse[l] = c_coarse[l+1];
 					l++;
 				}// while
+
 				dist[l] = distanza;
 				c_coarse[l] = j;
 			}// if
@@ -176,18 +182,21 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 
 		dist = alloc_matrix(1,knn);
 
-//		for(j=0;j<knn;j++){		dist[j] = FLT_MAX;	}// for j
-		memset_float( dist, FLT_MAX, knn);
+
+		for(j=0;j<knn;j++){		dist[j] = FLT_MAX;	}// for j
+//		memset_float( dist, FLT_MAX, knn);
 
 //		print_matrix(1,knn,knn,dist,'p');
+
 
 		for(j=0;j<w;j++){
 			centroide = c_coarse[j];
 //			printf("\nCentroide coarse: %d\n", centroide);
 
 			// Calcoliamo il residuo del punto del queryset considerato
-			res = residual(&ds[i*d],&coarse_centroids[centroide],d);
-
+			res = residual(&ds[i*d],&coarse_centroids[centroide*d],d);
+			/**ATTENZIONE: anche qui stesso errore di prima, per favore Controllare
+			*/
 			// Delimitiamo il nostro vettore per poterlo scandire
 			inizio = celle_prima[centroide];
 
@@ -213,7 +222,8 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 					for(g=0;g<m;g++){
 						// Nel primo elemento c'è il punto, quindi si shifta di 1
 						l = lista_invertita[inizio+p*(m+1)+g+1];
-						distanza += distance(res,&centroids[l],d_star);
+						distanza += distance(res,&centroids[l*d_star],d_star);
+						/**ATTENZIONE: stesso errore di prima? controllare*/
 					}// for l
 				}
 
@@ -247,6 +257,7 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 	if(input->symmetric==1){
 		free(quantization);
 	}
+
 
 	free(c_coarse);
 	dealloc_matrix(dist);

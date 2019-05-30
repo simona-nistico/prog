@@ -31,7 +31,8 @@ extern free_block
 
 ;________________________Funzione________________________
 ;VECTOR residual(VECTOR x,VECTOR centroid,int d)
-global test_residual      ; rende la funzione visibile all’esterno
+;global residual      ; rende la funzione visibile all’esterno
+global residual
 
 ; Posizione dei parametri nel Recordi di Attivazione della funzione
 ; (i primi 8 bytes sono occupati dall’indirizzo di ritorno e da EBP)
@@ -39,7 +40,7 @@ x       equ   8     ; puntatore a float x, occupa 32 bit (4 bytes)
 centr   equ   12    ; puntatore a float centr, occupa 32 bit (4 bytes)
 d       equ   16    ; intero a 32 bit rappresenta la dimensione
 
-test_residual:
+residual:
 ;------------------salva i parametri base------------------
     push    ebp       ; salva il Base Pointer
     mov     ebp, esp  ; il Base Pointer punta al Record di Attivazione corrente
@@ -63,10 +64,10 @@ test_residual:
 		mov     ecx, [ebp+centr]   ;in edx ho l'indirizzo di partenza del centroide
 		mov 	  esi, 0					 	 ;i=0
 
-		cmp edi, 8	    ; Confronto edi < 8 ?
-		jl for_4       ; Se edi è strettamente minore di 8, gestisco il residuo
 
 for_8:
+		cmp edi, 8	    ; Confronto edi < 8 ?
+		jl for_4       ; Se edi è strettamente minore di 8, gestisco il residuo
 
 		movaps xmm0, [ebx]    ; in xmm0 metto i primi 4 valori di x
 		movaps xmm1, [ecx]    ; in xmm1 metto i primi 4 valori di centr
@@ -85,8 +86,7 @@ for_8:
 		add ecx, 32
 		add eax, 32			;mi sposto anche come indice
 
-		cmp edi, 8	    ; Confronto edi >= 8 ? repeat
-		jge for_8       ; Se ebx è più grande o uguale a 8, salto al for
+		jmp for_8       ; Se ebx è più grande o uguale a 8, salto al for
 
 for_4:
 		cmp edi, 4	    ; Confronto edi < 4 ? salta al residuo
