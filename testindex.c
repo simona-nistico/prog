@@ -15,6 +15,7 @@ params *input;
 extern float test_distance(VECTOR x1, VECTOR x2, int d);
 extern VECTOR test_residual(VECTOR x,VECTOR centroid,int d);
 extern float test_objective(int n,int m, MATRIX distances_from_centroids);
+extern void memset_float(float* array, float val, int dim );
 
 //------------------------------------METODI------------------------------------
 
@@ -636,6 +637,7 @@ void testIndex(params* input2){
 printf("ok\n");
 
 */
+/*
 //---------------------------Test completo---------------------------
 //_______________________Setting parametri input_____________________
   int n = input->n;
@@ -673,7 +675,12 @@ printf("ok\n");
                             n, nr, k, kc, d, input->eps, m);
   }
 
-
+*/
+  int d = 47;
+  VECTOR test = malloc(d*sizeof(float) );
+  print_matrix(1, d, 1, test, 'p');
+  memset_float(test, 5.1, d);
+  print_matrix(1, d, 1, test, 'p');
 //    get_distance(2, 3, input->k, 0);
 
 }
