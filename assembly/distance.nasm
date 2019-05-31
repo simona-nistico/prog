@@ -8,7 +8,7 @@ section .text			; Sezione contenente il codice macchina
 
 ;________________________Funzione________________________
 ;float test_distance(VECTOR x1, VECTOR x2, int d);
-global distance      ; rende la funzione visibile all’esterno
+global distance2      ; rende la funzione visibile all’esterno
 
 ; Posizione dei parametri nel Recordi di Attivazione della funzione
 ; (i primi 8 bytes sono occupati dall’indirizzo di ritorno e da EBP)
@@ -16,7 +16,7 @@ x1   equ   8     ; puntatore a float x1, occupa 32 bit (4 bytes)
 x2   equ   12    ; puntatore a float x2, occupa 32 bit (4 bytes)
 d    equ   16    ; intero a 32 bit rappresenta la dimensione
 
-distance:
+distance2:
 ;------------------salva i parametri base------------------
     push    ebp       ; salva il Base Pointer
     mov     ebp, esp  ; il Base Pointer punta al Record di Attivazione corrente

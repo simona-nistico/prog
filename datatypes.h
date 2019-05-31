@@ -84,9 +84,9 @@ typedef struct {
 
 
 //_____________________Funzioni esterne scritte in assembly_____________________
-extern float distance(VECTOR x1, VECTOR x2, int d);
+//extern float distance(VECTOR x1, VECTOR x2, int d);
 extern VECTOR residual(VECTOR x,VECTOR centroid,int d);
-extern float objective_function(int n,int m, MATRIX distances_from_centroids);
+//extern float objective_function(int n,int m, MATRIX distances_from_centroids);
 extern void memset_float(float* array, float val, int dim );
 
 
@@ -232,7 +232,7 @@ void print_centroids_distances(int k, int m, float* data){
   * Costo: O(d)
   * versione ottimizzata
   */
-/*float distance(VECTOR x1,VECTOR x2,int d){
+float distance(VECTOR x1,VECTOR x2,int d){
 	float diff,sum = 0;
 	int i=0;
 
@@ -254,11 +254,7 @@ void print_centroids_distances(int k, int m, float* data){
 
 
 	// Processiamo un eventuale residual_centroids
-<<<<<<< HEAD
 	for(i;i<d;i++){
-=======
-/*	for(i=0;i<d;i++){
->>>>>>> bbefcb37e361f8e58feeb0208e63647fddac0bd7
 		diff = x1[i]-x2[i];
 		sum += diff*diff;
 	}
@@ -268,7 +264,7 @@ void print_centroids_distances(int k, int m, float* data){
 	// TESTATA
 }//distance
 
-
+/*
 // Funzione che calcola il residuo, versione ottimizzata
 // Esegue il calcolo: r(x) = x-q_c(x)
 VECTOR residual(VECTOR x,VECTOR centroid,int d){
@@ -282,15 +278,9 @@ VECTOR residual(VECTOR x,VECTOR centroid,int d){
 		res[i+3] = x[i+3]-centroid[i+3];
 	}
 
-
 	// Ciclo per eventuali cicli residui
-<<<<<<< HEAD
 	for(i;i<d;i++)
-=======
-/*	for(i=0;i<d;i++)
->>>>>>> bbefcb37e361f8e58feeb0208e63647fddac0bd7
 		res[i] = x[i]-centroid[i];
-
 	return res;
 
 	// TESTATA: OK!

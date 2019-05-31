@@ -10,9 +10,9 @@
 params *input;
 
 //_____________________Funzioni esterne scritte in assembly_____________________
-extern float distance(VECTOR x1, VECTOR x2, int d);
+//extern float distance(VECTOR x1, VECTOR x2, int d);
 extern VECTOR residual(VECTOR x,VECTOR centroid,int d);
-extern float objective_function(int n,int m, MATRIX distances_from_centroids);
+//extern float objective_function(int n,int m, MATRIX distances_from_centroids);
 extern void memset_float(float* array, float val, int dim );
 
 //---------------------------RICERCA ESAUSTIVA--------------------------------
@@ -58,8 +58,8 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 
 
 		float test = 0;
-    for(j=0;j<knn;j++)  distances[j] = FLT_MAX;
-//		memset_float( distances, FLT_MAX, knn);
+//    for(j=0;j<knn;j++)  distances[j] = FLT_MAX;
+		memset_float( distances, FLT_MAX, knn);
 
 
 		// Vediamo quali sono i punti del dataset più vicini
@@ -133,8 +133,8 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 		dist = alloc_matrix(1,w);
 
 		// Settiamo il vettore delle distanze al massimo float rappresentabile
-		for(j=0;j<w;j++){		dist[j] = FLT_MAX; 	}// for j
-//		memset_float( dist, FLT_MAX, w);
+//		for(j=0;j<w;j++){		dist[j] = FLT_MAX; 	}// for j
+		memset_float( dist, FLT_MAX, w);
 
 
 		// Vediamo quali sono i centroidi coarse più vicini
@@ -179,8 +179,8 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 		dist = alloc_matrix(1,knn);
 
 
-		for(j=0;j<knn;j++){		dist[j] = FLT_MAX;	}// for j
-//		memset_float( dist, FLT_MAX, knn);
+//		for(j=0;j<knn;j++){		dist[j] = FLT_MAX;	}// for j
+		memset_float( dist, FLT_MAX, knn);
 
 //		print_matrix(1,knn,knn,dist,'p');
 
@@ -323,7 +323,7 @@ void testSearch(params* input2){
 								input->ANN, d, w, k, kc, knn, m, nq);
 	}
 
-<<<<<<< HEAD
+
 //	print_matrix_int(nq,knn,knn,input->ANN,'p');
 
 	for(int i=0;i<nq;i++){
@@ -333,9 +333,9 @@ void testSearch(params* input2){
 		}
 		printf("\n");
 	}
-=======
+
   print_matrix_int(nq,knn,knn,input->ANN,'p');
->>>>>>> bbefcb37e361f8e58feeb0208e63647fddac0bd7
+
 
 
 

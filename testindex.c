@@ -12,9 +12,9 @@
 params *input;
 
 //_____________________Funzioni esterne scritte in assembly_____________________
-extern float test_distance(VECTOR x1, VECTOR x2, int d);
+//extern float test_distance(VECTOR x1, VECTOR x2, int d);
 extern VECTOR test_residual(VECTOR x,VECTOR centroid,int d);
-extern float test_objective(int n,int m, MATRIX distances_from_centroids);
+//extern float test_objective(int n,int m, MATRIX distances_from_centroids);
 extern void memset_float(float* array, float val, int dim );
 
 
@@ -41,11 +41,11 @@ extern void memset_float(float* array, float val, int dim );
 // 				printf("Gruppo %d centroide %d scelto il punto numero: %d\n", g, i, number);
 
  				// Inseriamo il centroide nella matrice
- 				for(int j=0;j<d_star;j++)
+ //				for(int j=0;j<d_star;j++)
  					//[riga->(i+group*k)*d_star,colonna->j]     [riga->number*d,colonna->d_star*g+j]
- 					centroids[(i+g*k)*d_star+j] = ds[number*d+d_star*g+j];
+// 					centroids[(i+g*k)*d_star+j] = ds[number*d+d_star*g+j];
 
-//        memcpy( &centroids[(i+g*k)*d_star], &ds[number*d+d_star*g], d_star*sizeof(float) );
+        memcpy( &centroids[(i+g*k)*d_star], &ds[number*d+d_star*g], d_star*sizeof(float) );
 
  				number ++;
   			}//for i
@@ -232,7 +232,7 @@ float get_distance(int a, int b, int k, int g){
 //-----------------------------ATTENZIONE-----------------------------
 //Sistemare l'arresto del k-means chiedere al prof
 
-<<<<<<< HEAD
+
 /** La funzione seguente calcola il valore della funzione obiettivo
   * che deve essere minimizzata al fine avere un buon insieme di centroidi
 	* C = min   sum[ dist^2(y, centroide(y) )  ]
@@ -266,8 +266,7 @@ float objective_function(int n,int m, MATRIX distances_from_centroids){
     }
 
 		return sum;
-=======
->>>>>>> bbefcb37e361f8e58feeb0208e63647fddac0bd7
+}
 
 
 /** La funzione seguente calcola i centroidi finali:
@@ -660,8 +659,8 @@ printf("ok\n");
   int nr = input->nr;
   int kc = input->kc;
 
-  input->exaustive = 0;
-  input->symmetric = 0;
+//  input->exaustive = 0;
+//  input->symmetric = 0;
 
   printf("Esaustiva: %d, Simmetrica: %d\n", input->exaustive, input->symmetric);
   input->centroids=alloc_matrix(m*k,d_star);
@@ -702,3 +701,11 @@ printf("ok\n");
   print_matrix(1, d, 1, test2, 'p');
 */
 }
+
+/**ATTEZIONE:
+  ho notato che sia objective.nasm che distance.nasm introducono un ERRORE
+  e quindi un dato diverso da C man mano che la dimensione dei risultati
+  aumenta. Più valori sommo, più aumenta la differenza tra C e Assembly.
+  I KNN finali sono cmq invariati tra le due implementazioni, per ora
+  Attualmente, con le funzione esterne incluse, non c'è alcuna differenza.
+*/

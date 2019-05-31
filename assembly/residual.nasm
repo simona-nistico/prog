@@ -31,8 +31,8 @@ extern free_block
 
 ;________________________Funzione________________________
 ;VECTOR residual(VECTOR x,VECTOR centroid,int d)
-;global residual      ; rende la funzione visibile all’esterno
-global residual
+global residual      ; rende la funzione visibile all’esterno
+
 
 ; Posizione dei parametri nel Recordi di Attivazione della funzione
 ; (i primi 8 bytes sono occupati dall’indirizzo di ritorno e da EBP)
