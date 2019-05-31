@@ -8,7 +8,8 @@ section .text			; Sezione contenente il codice macchina
 
 ;________________________Funzione________________________
 ;float objective_function(int n,int m, MATRIX distances_from_centroids)
-global test_objective      ; rende la funzione visibile all’esterno
+global objective_function      ; rende la funzione visibile all’esterno
+;global test_objective
 
 ; Posizione dei parametri nel Recordi di Attivazione della funzione
 ; (i primi 8 bytes sono occupati dall’indirizzo di ritorno e da EBP)
@@ -16,7 +17,8 @@ n     equ   8     ; intero a 32 bit rappresenta il numero di punti
 m   	equ   12    ; intero a 32 bit rappresenta il numero di gruppi
 dist  equ   16    ; puntatore a distances_from_centroids
 
-test_objective:
+objective_function:
+;test_objective:
 ;------------------salva i parametri base------------------
     push    ebp       ; salva il Base Pointer
     mov     ebp, esp  ; il Base Pointer punta al Record di Attivazione corrente
@@ -36,18 +38,18 @@ test_objective:
 
 		imul ebx, ecx		;ebx = n*m cioè num_punti*num_gruppi
 
+
+for_8:
     cmp ebx, 8	    ; Confronto n*m < 8 ?
     jl for_4    ; Se edx è strettamente minore di 8, gestisco il residuo
 
-for_8:
 		addps xmm0, [edx]		  ;sum += distances_from_centroids 0...4
 		addps xmm0, [edx+16]
 
     sub ebx, 8      ;sottraggo i 8 elementi già presi
     add edx, 32     ;mi sposto di 8 elementi (32 posizioni)
 
-    cmp ebx, 8	    ; Confronto n*m >= 8 ? repeat
-	  jge for_8       ; Se edx è più grande o uguale a 8, salto al for
+	  jmp for_8       ; Se edx è più grande o uguale a 8, salto al for
 
 for_4:
     cmp ebx, 4	    ; Confronto n*m < 4 ? salta al residuo
@@ -57,6 +59,8 @@ for_4:
 
     sub ebx, 4      ;sottraggo i 4 elementi già presi
     add edx, 16     ;mi sposto di 4 elementi (16 posizioni)
+
+    jmp for_4       ; Se edx è più grande o uguale a 8, salto al for
 
 for_remain:
     cmp ebx, 0	    ; n*m == 0? fine
