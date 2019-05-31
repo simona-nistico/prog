@@ -1,5 +1,13 @@
+nasm -f elf32 pqnn32.nasm
+
+for file in $(ls ./assembly | grep .nasm); do
+  nasm -f elf32 ./assembly/$file
+done
+
+gcc -O0 -m32 -msse pqnn32.o assembly/*.o pqnn32c.c -o pqnn32c -lm
+
 let i=1
-v=0
+v=1
 
 rm "./TestTempi/v$v.txt"
 

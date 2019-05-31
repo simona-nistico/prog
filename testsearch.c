@@ -64,10 +64,6 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 
 			if(input->symmetric==1){
 				for(g=0;g<m;g++){
-					// Prendere il massimo ed il minimo mi serve per potermi muovere sulla
-					// triangolare superiore che contiene le distanze
-					//min = min(centroids[j*m+g],quant[g]);
-					//max = max(centroids[j*m+g],quant[g]);
 //					printf("Voglio sapere la distanza tra il centroide %d e il centroide %d\n",quant[g],  centroid_of_point[j*m+g]);
 					dist += get_distance(quant[g], centroid_of_point[j*m+g],k,g);
 //					printf(" Distanza parziale: %f\n", get_distance(quant[g], centroid_of_point[j*m+g],k,g));
@@ -312,7 +308,15 @@ void testSearch(params* input2){
 								input->ANN, d, w, k, kc, knn, m, nq);
 	}
 
-//  print_matrix_int(nq,knn,knn,input->ANN,'p');
+//	print_matrix_int(nq,knn,knn,input->ANN,'p');
+
+	for(int i=0;i<nq;i++){
+		printf("I %d punti più vicini alla query %d sono: ",knn,i);
+		for(int j=0;j<knn;j++){
+			printf("%d\t",input->ANN[i*knn+j]);
+		}
+		printf("\n");
+	}
 
 
 

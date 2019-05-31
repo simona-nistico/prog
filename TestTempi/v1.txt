@@ -25,34 +25,37 @@ K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 0
 
-Indexing time = 28.841 secs
+Indexing time = 29.453 secs
+
+- Loop unrolling in c = 4 in funzione obbiettivo, distanza e residui
+- Nessuna funzione in assembly
 
 ###########Chiamata a Funzione TestSearch############
 
-Searching time = 5.735 secs
+Searching time = 5.506 secs
 
 Done.
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 1
-28.793
+30.621
 
 ###########Chiamata a Funzione TestSearch############
-1.602
+1.607
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 0
-1.187
+1.197
 
 ###########Chiamata a Funzione TestSearch############
-3.591
+4.003
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 1
-1.201
+1.427
 
 ###########Chiamata a Funzione TestSearch############
-3.352
+3.290
 n--------------------KNN: 2-----------------------------n
 Usage: ./pqnn32c <data_name> [-d][-s][-exaustive|-noexaustive][-sdc|-adc][...]
 
@@ -80,34 +83,34 @@ K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 0
 
-Indexing time = 28.481 secs
+Indexing time = 29.081 secs
 
 ###########Chiamata a Funzione TestSearch############
 
-Searching time = 5.648 secs
+Searching time = 5.808 secs
 
 Done.
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 1
-28.516
+29.736
 
 ###########Chiamata a Funzione TestSearch############
-1.566
+1.607
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 0
-1.189
+1.152
 
 ###########Chiamata a Funzione TestSearch############
-3.740
+3.537
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 1
-1.187
+1.183
 
 ###########Chiamata a Funzione TestSearch############
-3.231
+3.319
 n--------------------KNN: 4-----------------------------n
 Usage: ./pqnn32c <data_name> [-d][-s][-exaustive|-noexaustive][-sdc|-adc][...]
 
@@ -135,34 +138,34 @@ K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 0
 
-Indexing time = 28.118 secs
+Indexing time = 28.096 secs
 
 ###########Chiamata a Funzione TestSearch############
 
-Searching time = 6.543 secs
+Searching time = 5.988 secs
 
 Done.
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 1
-28.498
+28.177
 
 ###########Chiamata a Funzione TestSearch############
-1.464
+1.473
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 0
-1.153
+1.151
 
 ###########Chiamata a Funzione TestSearch############
-3.534
+3.498
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 1
-1.168
+1.165
 
 ###########Chiamata a Funzione TestSearch############
-3.171
+3.174
 n--------------------KNN: 8-----------------------------n
 Usage: ./pqnn32c <data_name> [-d][-s][-exaustive|-noexaustive][-sdc|-adc][...]
 
@@ -190,39 +193,31 @@ K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 0
 
-Indexing time = 27.703 secs
+Indexing time = 29.970 secs
 
 ###########Chiamata a Funzione TestSearch############
 
-Searching time = 5.485 secs
+Searching time = 5.771 secs
 
 Done.
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 1
-27.927
+28.128
 
 ###########Chiamata a Funzione TestSearch############
-1.473
+1.461
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 0
-1.159
+1.158
 
 ###########Chiamata a Funzione TestSearch############
-3.540
+3.500
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 1
-1.167
+1.163
 
 ###########Chiamata a Funzione TestSearch############
-3.172
-n--------------------KNN: 1-----------------------------n
-n--------------------KNN: 2-----------------------------n
-n--------------------KNN: 4-----------------------------n
-n--------------------KNN: 8-----------------------------n
-n--------------------KNN: 1-----------------------------n
-n--------------------KNN: 2-----------------------------n
-n--------------------KNN: 4-----------------------------n
-n--------------------KNN: 8-----------------------------n
+3.156

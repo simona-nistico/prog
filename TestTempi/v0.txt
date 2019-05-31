@@ -24,34 +24,34 @@ K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 0
 
-Indexing time = 20.556 secs
+Indexing time = 30.858 secs
 
 ###########Chiamata a Funzione TestSearch############
 
-Searching time = 6.045 secs
+Searching time = 6.081 secs
 
 Done.
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 1
-19.140
+32.001
 
 ###########Chiamata a Funzione TestSearch############
-1.479
+1.484
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 0
-1.270
+1.273
 
 ###########Chiamata a Funzione TestSearch############
-4.034
+3.979
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 1
-1.279
+1.282
 
 ###########Chiamata a Funzione TestSearch############
-3.135
+3.156
 Usage: ./pqnn32c <data_name> [-d][-s][-exaustive|-noexaustive][-sdc|-adc][...]
 
 Parameters:
@@ -78,34 +78,34 @@ K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 0
 
-Indexing time = 19.318 secs
+Indexing time = 32.265 secs
 
 ###########Chiamata a Funzione TestSearch############
 
-Searching time = 6.365 secs
+Searching time = 6.174 secs
 
 Done.
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 1
-19.205
+32.002
 
 ###########Chiamata a Funzione TestSearch############
-1.490
+1.488
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 0
-1.263
+1.269
 
 ###########Chiamata a Funzione TestSearch############
-3.957
+3.965
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 1
-1.276
+1.281
 
 ###########Chiamata a Funzione TestSearch############
-3.138
+3.157
 Usage: ./pqnn32c <data_name> [-d][-s][-exaustive|-noexaustive][-sdc|-adc][...]
 
 Parameters:
@@ -132,34 +132,34 @@ K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 0
 
-Indexing time = 18.702 secs
+Indexing time = 30.960 secs
 
 ###########Chiamata a Funzione TestSearch############
 
-Searching time = 6.094 secs
+Searching time = 6.065 secs
 
 Done.
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 1
-18.683
+32.792
 
 ###########Chiamata a Funzione TestSearch############
-1.473
+1.624
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 0
-1.266
+1.323
 
 ###########Chiamata a Funzione TestSearch############
-3.964
+4.270
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 1
-1.277
+1.344
 
 ###########Chiamata a Funzione TestSearch############
-3.139
+3.136
 Usage: ./pqnn32c <data_name> [-d][-s][-exaustive|-noexaustive][-sdc|-adc][...]
 
 Parameters:
@@ -186,31 +186,31 @@ K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 0
 
-Indexing time = 18.797 secs
+Indexing time = 33.561 secs
 
 ###########Chiamata a Funzione TestSearch############
 
-Searching time = 6.066 secs
+Searching time = 8.294 secs
 
 Done.
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 1
-18.933
+31.798
 
 ###########Chiamata a Funzione TestSearch############
-1.483
+1.692
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 0
-1.270
+1.312
 
 ###########Chiamata a Funzione TestSearch############
-3.976
+4.070
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 1
-1.284
+1.315
 
 ###########Chiamata a Funzione TestSearch############
-3.153
+3.328

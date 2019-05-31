@@ -236,7 +236,7 @@ float get_distance(int a, int b, int k, int g){
   */
 float objective_function(int n,int m, MATRIX distances_from_centroids){
 	   float sum = 0;
-     int i;
+     int i=0;
 /*
 		for(int g=0;g<m;g++){		// per ogni gruppo
 
@@ -247,15 +247,15 @@ float objective_function(int n,int m, MATRIX distances_from_centroids){
 
 		}// per ogni gruppo
 */
-/*
-    for(i=0; i<n*m-4; i+=4){
+
+    for(i; i<n*m-4; i+=4){
       sum+=distances_from_centroids[i];
       sum+=distances_from_centroids[i+1];
       sum+=distances_from_centroids[i+2];
       sum+=distances_from_centroids[i+3];
     }
-*/
-    for(i=0;i<n;i++){
+
+    for(i;i<n*m;i++){
       sum += distances_from_centroids[i];
     }
 
@@ -634,7 +634,7 @@ void testIndex(params* input2){
    print_matrix(1, 23, 1, res2, 'p');
 
 printf("ok\n");
-
+/*
 */
 //---------------------------Test completo---------------------------
 //_______________________Setting parametri input_____________________
