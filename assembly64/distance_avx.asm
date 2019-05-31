@@ -39,7 +39,7 @@ distance_avx:
 		;--------------------------------
 		;PARAMETRI
 		;--------------------------------
-		
+
 		;rdi (r6) = indirizzo di partenza dell'array x1
 		;rsi (r5) = indirizzo di partenza dell'array x2
 		;rdx (r5) = dimensione n degli array x ed y
@@ -51,7 +51,7 @@ distance_avx:
 		mov rax,rdi ; metto in rax l'indirizzo di partenza di x1
 		mov rcx,rsi ; metto in rcx l'indirizzo di partenza di x2
 		;la dimensione n dei vettori si trova già in rdx
-				
+
 		vxorps	ymm2, ymm2 ; azzero ymm2 dove metterò la somma
   		cmp edx, 32	    ; Confronto edx < 32 ?
    	        jl for_8    ; Se edx è strettamente minore di 32, gestisco il residuo
@@ -82,8 +82,8 @@ distance_avx:
    		  vaddps ymm2, ymm0      ; ymm2 = ymm2+ymm0           sum += diff*diff
 
 	 		        ;Loop Unrolling 4: 4 valori
-  		  vmovups ymm0, [rax+92]    ; in ymm0 metto i quarti 8 valori di x1
-   		  vmovups ymm1, [rcx+92]   ; in ymm1 metto i quarti 8 valori di x2
+  		  vmovups ymm0, [rax+96]    ; in ymm0 metto i quarti 8 valori di x1
+   		  vmovups ymm1, [rcx+96]   ; in ymm1 metto i quarti 8 valori di x2
 
     		  vsubps ymm0, ymm1      ; ymm0 = ymm0-ymm1  (x1-x2)  diff = x1[i]-x2[i];
    		  vmulps ymm0, ymm0      ; ymm0 = ymm0*ymm0           diff*diff;
@@ -121,7 +121,7 @@ distance_avx:
 
   		  movaps xmm0, [rax]    ; in xmm0 metto gli ultimi <4 valori di x1
    		  movaps xmm1, [rcx]    ; in xmm1 metto gli ultimi <4 valori di x2
-		
+
    		  subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
    		  mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
    		  addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
@@ -131,7 +131,7 @@ distance_avx:
   		  add rcx, 16
 
 		  jmp for_4    ; salto incondizionato tanto la condizione la vedo dopo
-	
+
 	    for_remain:
 
    		 cmp rdx, 0	    ; edx == 0? fine
