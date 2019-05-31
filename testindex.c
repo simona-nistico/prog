@@ -16,6 +16,7 @@ params *input;
 extern VECTOR test_residual(VECTOR x,VECTOR centroid,int d);
 //extern float test_objective(int n,int m, MATRIX distances_from_centroids);
 extern void memset_float(float* array, float val, int dim );
+extern void accumulate(MATRIX dest, MATRIX source, int dim);
 
 
 //------------------------------------METODI------------------------------------
@@ -144,6 +145,8 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m, MATRIX centroids,in
 
 				for(int j=0;j<d_star;j++)	//sommo tutte le cordinate di punti del centroide
 					tmp[centroide*d_star+j] += ds[i*d+(g*d_star)+j];
+
+//          void accumulate(MATRIX dest, MATRIX source, int dim);
 
 			}//for tutti i punti
 
@@ -609,7 +612,7 @@ void testIndex(params* input2){
   print_quantizer(input->m, q);
 
   */
-/*
+
 //---------------------------Test Assembly---------------------------
   VECTOR x = alloc_matrix(1, 37);
   VECTOR y = alloc_matrix(1, 37);
@@ -622,7 +625,7 @@ void testIndex(params* input2){
   print_matrix(1, 37, 1, x, 'p');
   printf("Vettore Y       : \n");
   print_matrix(1, 37, 1, y, 'p');
-
+/*
   for( int i=1; i<37; i++){
     printf("Distanza Assembly: %f\n", test_distance(x, y, i) );
     printf("Distanza C       : %f\n\n", distance(x, y, i) );
@@ -636,15 +639,28 @@ void testIndex(params* input2){
    VECTOR res2 = test_residual(x, y, 23);
    printf("Residual Assembly: \n");
    print_matrix(1, 23, 1, res2, 'p');
-
-printf("ok\n");
-<<<<<<< HEAD
-/*
-=======
->>>>>>> bbefcb37e361f8e58feeb0208e63647fddac0bd7
 */
 
+  MATRIX tmp = alloc_matrix(1,37);
+  memset(tmp, 0, 37*sizeof(float));
 
+  printf("TEMP AZZERATA:\n" );
+  print_matrix(1, 37, 1, tmp, 'p');
+
+  printf("TEMP ACCUMULATA:\n" );
+  accumulate(tmp, x, 37);
+  print_matrix(1, 37, 1, tmp, 'p');
+
+  printf("TEMP ACCUMULATA2:\n" );
+  accumulate(tmp, y, 37);
+  print_matrix(1, 37, 1, tmp, 'p');
+
+  printf("ok\n");
+
+
+
+
+/*
 //---------------------------Test completo---------------------------
 //_______________________Setting parametri input_____________________
   int n = input->n;
@@ -687,7 +703,7 @@ printf("ok\n");
                             n, nr, k, kc, d, input->eps, m);
 
   }
-
+*/
 /*
   int d = 47;
   VECTOR test = malloc(d*sizeof(float) );
