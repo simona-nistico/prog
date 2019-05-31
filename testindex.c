@@ -17,6 +17,7 @@ extern VECTOR test_residual(VECTOR x,VECTOR centroid,int d);
 //extern float test_objective(int n,int m, MATRIX distances_from_centroids);
 extern void memset_float(float* array, float val, int dim );
 extern void accumulate(MATRIX dest, MATRIX source, int dim);
+extern void divide( MATRIX dest, MATRIX dividendo, float divisore, int dim);
 
 
 //------------------------------------METODI------------------------------------
@@ -143,10 +144,10 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m, MATRIX centroids,in
 				centroide = centroid_of_point[i*m+g]; //prendo il centroide di appartenenza
 				cont[centroide]++;	//conto un punto in più per questo centroide
 
-				for(int j=0;j<d_star;j++)	//sommo tutte le cordinate di punti del centroide
+/*				for(int j=0;j<d_star;j++)	//sommo tutte le cordinate di punti del centroide
 					tmp[centroide*d_star+j] += ds[i*d+(g*d_star)+j];
-
-//          void accumulate(MATRIX dest, MATRIX source, int dim);
+*/
+        accumulate(&tmp[centroide*d_star], &ds[i*d+(g*d_star)], d_star);
 
 			}//for tutti i punti
 
@@ -156,19 +157,29 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m, MATRIX centroids,in
 			//Divido ogni somma di cordinate per il numero di punti e lo inserisco come nuovo centroide
 			for(int i=0;i<k;i++){	//per ogni centroide
 
-				for(int j=0;j<d_star;j++)	//per ogni componente
+        if( cont[i]!=0 ){
+    //      centroids[(i+g*k)*d_star+j] = tmp[i*d_star+j] / (float) cont[i];
+          divide(&centroids[(i+g*k)*d_star], &tmp[i*d_star], cont[i], d_star );
+//          tmp[i*d_star+j] = 0;
+          memset_float(&tmp[i*d_star], 0, d_star);
+        } else
+          memset_float(&centroids[i*d], -1, d_star);
+//      	 centroids[i*d+j] = -1;
+
+
+//        void divide( MATRIX dest, MATRIX num, int* den, ind dim);
+/*				for(int j=0;j<d_star;j++)	//per ogni componente
 					if( cont[i]!=0 ){
 	 					centroids[(i+g*k)*d_star+j] = tmp[i*d_star+j] / (float) cont[i];
 						tmp[i*d_star+j] = 0;
 					}else{
 						centroids[i*d+j] = -1;
 					}
-
-				if( cont[i]==0 ){
+*/
+				if( cont[i]==0 )
 						printf("###############Nessun punto appartiene al centroide %d\n", i);
-        } else {
+         else
 						cont[i] = 0;
-        }
 
 			}//for tutti i centroidi
 
@@ -612,7 +623,7 @@ void testIndex(params* input2){
   print_quantizer(input->m, q);
 
   */
-
+/*
 //---------------------------Test Assembly---------------------------
   VECTOR x = alloc_matrix(1, 37);
   VECTOR y = alloc_matrix(1, 37);
@@ -640,7 +651,7 @@ void testIndex(params* input2){
    printf("Residual Assembly: \n");
    print_matrix(1, 23, 1, res2, 'p');
 */
-
+/*
   MATRIX tmp = alloc_matrix(1,37);
   memset(tmp, 0, 37*sizeof(float));
 
@@ -648,19 +659,23 @@ void testIndex(params* input2){
   print_matrix(1, 37, 1, tmp, 'p');
 
   printf("TEMP ACCUMULATA:\n" );
-  accumulate(tmp, x, 37);
-  print_matrix(1, 37, 1, tmp, 'p');
+  //accumulate(tmp, x, 37);
+  divide(tmp, x, 2, 37);
+//  print_matrix(1, 37, 1, tmp, 'p');
+  for (int i = 0; i < 37; i++) {
+    printf("%f\t", tmp[i]);
+}
 
-  printf("TEMP ACCUMULATA2:\n" );
-  accumulate(tmp, y, 37);
-  print_matrix(1, 37, 1, tmp, 'p');
+//  printf("TEMP ACCUMULATA2:\n" );
+//  accumulate(tmp, y, 37);
+//  print_matrix(1, 37, 1, tmp, 'p');
 
   printf("ok\n");
 
+*/
 
 
 
-/*
 //---------------------------Test completo---------------------------
 //_______________________Setting parametri input_____________________
   int n = input->n;
@@ -703,7 +718,7 @@ void testIndex(params* input2){
                             n, nr, k, kc, d, input->eps, m);
 
   }
-*/
+
 /*
   int d = 47;
   VECTOR test = malloc(d*sizeof(float) );
@@ -724,4 +739,11 @@ void testIndex(params* input2){
   aumenta. Più valori sommo, più aumenta la differenza tra C e Assembly.
   I KNN finali sono cmq invariati tra le due implementazioni, per ora
   Attualmente, con le funzione esterne incluse, non c'è alcuna differenza.
+
+  Testate "accumulate" e "divide" che implementano loop unrolling per
+  il for j=0...d_star
+  Queste due funzioni non generano alcun errore di calcolo e riducono
+  i tempi di calcolo di qualche centinaia di millisecondi
+
+  Trovare altri punti in cui è possibile inserire queste due funzioni
 */
