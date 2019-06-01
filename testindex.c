@@ -12,10 +12,12 @@
 params *input;
 
 //_____________________Funzioni esterne scritte in assembly_____________________
-//extern float test_distance(VECTOR x1, VECTOR x2, int d);
+//extern float distance64(VECTOR x1, VECTOR x2, int d);
 extern VECTOR test_residual(VECTOR x,VECTOR centroid,int d);
 //extern float test_objective(int n,int m, MATRIX distances_from_centroids);
 extern void memset_float(float* array, float val, int dim );
+extern void accumulate(MATRIX dest, MATRIX source, int dim);
+extern void divide( MATRIX dest, MATRIX dividendo, float divisore, int dim);
 
 
 //------------------------------------METODI------------------------------------
@@ -142,8 +144,10 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m, MATRIX centroids,in
 				centroide = centroid_of_point[i*m+g]; //prendo il centroide di appartenenza
 				cont[centroide]++;	//conto un punto in più per questo centroide
 
-				for(int j=0;j<d_star;j++)	//sommo tutte le cordinate di punti del centroide
+/*				for(int j=0;j<d_star;j++)	//sommo tutte le cordinate di punti del centroide
 					tmp[centroide*d_star+j] += ds[i*d+(g*d_star)+j];
+*/
+        accumulate(&tmp[centroide*d_star], &ds[i*d+(g*d_star)], d_star);
 
 			}//for tutti i punti
 
@@ -153,19 +157,30 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m, MATRIX centroids,in
 			//Divido ogni somma di cordinate per il numero di punti e lo inserisco come nuovo centroide
 			for(int i=0;i<k;i++){	//per ogni centroide
 
-				for(int j=0;j<d_star;j++)	//per ogni componente
+        if( cont[i]!=0 ){
+    //      centroids[(i+g*k)*d_star+j] = tmp[i*d_star+j] / (float) cont[i];
+          divide(&centroids[(i+g*k)*d_star], &tmp[i*d_star], cont[i], d_star );
+
+//          tmp[i*d_star+j] = 0;
+          memset_float(&tmp[i*d_star], 0, d_star);
+        } else
+          memset_float(&centroids[i*d], -1, d_star);
+//      	 centroids[i*d+j] = -1;
+
+
+//        void divide( MATRIX dest, MATRIX num, int* den, ind dim);
+/*				for(int j=0;j<d_star;j++)	//per ogni componente
 					if( cont[i]!=0 ){
 	 					centroids[(i+g*k)*d_star+j] = tmp[i*d_star+j] / (float) cont[i];
 						tmp[i*d_star+j] = 0;
 					}else{
 						centroids[i*d+j] = -1;
 					}
-
-				if( cont[i]==0 ){
+*/
+				if( cont[i]==0 )
 						printf("###############Nessun punto appartiene al centroide %d\n", i);
-        } else {
+         else
 						cont[i] = 0;
-        }
 
 			}//for tutti i centroidi
 
@@ -618,17 +633,17 @@ void testIndex(params* input2){
     y[i] = rand()%20;
   }
 
-  printf("Vettore X       : \n");
-  print_matrix(1, 37, 1, x, 'p');
-  printf("Vettore Y       : \n");
-  print_matrix(1, 37, 1, y, 'p');
+//  printf("Vettore X       : \n");
+//  print_matrix(1, 47, 1, x, 'p');
+//  printf("Vettore Y       : \n");
+//  print_matrix(1, 47, 1, y, 'p');
 
-  for( int i=1; i<37; i++){
-    printf("Distanza Assembly: %f\n", test_distance(x, y, i) );
+  for( int i=1; i<47; i++){
+    printf("Distanza Assembly: %f\n", distance64(x, y, i) );
     printf("Distanza C       : %f\n\n", distance(x, y, i) );
-    if( test_distance(x, y, i) !=  distance(x, y, i) ) printf("ERRORE\n");
+    if( distance64(x, y, i) !=  distance(x, y, i) ) printf("ERRORE\n");
    }
-
+/*
    VECTOR res = residual(x, y, 23);
    printf("Residual C       : \n");
    print_matrix(1, 23, 1, res, 'p');
@@ -636,13 +651,31 @@ void testIndex(params* input2){
    VECTOR res2 = test_residual(x, y, 23);
    printf("Residual Assembly: \n");
    print_matrix(1, 23, 1, res2, 'p');
-
-printf("ok\n");
-<<<<<<< HEAD
-/*
-=======
->>>>>>> bbefcb37e361f8e58feeb0208e63647fddac0bd7
 */
+/*
+  MATRIX tmp = alloc_matrix(1,47);
+  memset(tmp, 0, 47*sizeof(float));
+
+  printf("TEMP AZZERATA:\n" );
+  print_matrix(1, 47, 1, tmp, 'p');
+
+  printf("TEMP ACCUMULATA:\n" );
+  //accumulate(tmp, x, 37);
+//  divide(tmp, x, 2, 37);
+  memset_float64(tmp, 87.25, 47);
+  print_matrix(1, 47, 1, tmp, 'p');
+//  for (int i = 0; i < 37; i++)
+//    printf("%f\t", tmp[i]);
+
+
+//  printf("TEMP ACCUMULATA2:\n" );
+//  accumulate(tmp, y, 37);
+//  print_matrix(1, 37, 1, tmp, 'p');
+
+  printf("ok\n");
+
+*/
+
 
 
 //---------------------------Test completo---------------------------
@@ -708,4 +741,11 @@ printf("ok\n");
   aumenta. Più valori sommo, più aumenta la differenza tra C e Assembly.
   I KNN finali sono cmq invariati tra le due implementazioni, per ora
   Attualmente, con le funzione esterne incluse, non c'è alcuna differenza.
+
+  Testate "accumulate" e "divide" che implementano loop unrolling per
+  il for j=0...d_star
+  Queste due funzioni non generano alcun errore di calcolo e riducono
+  i tempi di calcolo di qualche centinaia di millisecondi
+
+  Trovare altri punti in cui è possibile inserire queste due funzioni
 */

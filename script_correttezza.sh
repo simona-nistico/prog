@@ -6,7 +6,7 @@ done
 
 gcc -O0 -m32 -msse pqnn32.o assembly/*.o pqnn32c.c -o pqnn32c -lm
 
-v="Ass_noDist"
+v="Ass_noDist_Divide"
 
 ./pqnn32c prova -exaustive -adc -knn 4 > "./TestCorrettezzaAss/test_Ex_noSim_$v.txt"
 ./pqnn32c prova -s -exaustive -sdc 4 > "./TestCorrettezzaAss/test_Ex_Sim_$v.txt"

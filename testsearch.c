@@ -10,9 +10,9 @@
 params *input;
 
 //_____________________Funzioni esterne scritte in assembly_____________________
-extern float distance(VECTOR x1, VECTOR x2, int d);
+//extern float distance64(VECTOR x1, VECTOR x2, int d);
 extern VECTOR residual(VECTOR x,VECTOR centroid,int d);
-extern float objective_function(int n,int m, MATRIX distances_from_centroids);
+//*extern float objective_function(int n,int m, MATRIX distances_from_centroids);
 extern void memset_float(float* array, float val, int dim );
 
 //---------------------------RICERCA ESAUSTIVA--------------------------------

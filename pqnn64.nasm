@@ -11,8 +11,8 @@
 ;     NASM (www.nasm.us)
 ;     GCC (gcc.gnu.org)
 ;
-; entrambi sono disponibili come pacchetti software 
-; installabili mediante il packaging tool del sistema 
+; entrambi sono disponibili come pacchetti software
+; installabili mediante il packaging tool del sistema
 ; operativo; per esempio, su Ubuntu, mediante i comandi:
 ;
 ;     sudo apt-get install nasm
@@ -25,10 +25,10 @@
 ;
 ; Per generare file oggetto:
 ;
-;     nasm -f elf64 pqnn32.nasm 
+;     nasm -f elf64 pqnn32.nasm
 ;
 
-%include "sseutils64.nasm"
+%include "sseutils.nasm"
 
 section .data			; Sezione contenente dati inizializzati
 
@@ -91,50 +91,49 @@ pqnn64_index:
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------
 		push		rbp				; salva il Base Pointer
-		mov		rbp, rsp			; il Base Pointer punta al Record di Attivazione corrente
-		pushaq						; salva i registri generali
+		mov			rbp, rsp	; il Base Pointer punta al Record di Attivazione corrente
+		pushfq						; salva i registri generali
 
 		; ------------------------------------------------------------
 		; I paramentri sono passati nei registri
 		; ------------------------------------------------------------
 		; rdi = indirizzo della struct input
-		
 
-		
-		
+
+
+
 		; ------------------------------------------------------------
 		; Sequenza di uscita dalla funzione
 		; ------------------------------------------------------------
-		
-		popaq						; ripristina i registri generali
-		mov		rsp, rbp			; ripristina lo Stack Pointer
-		pop		rbp				; ripristina il Base Pointer
-		ret						; torna alla funzione C chiamante
 
-		
-		
+		popfq						; ripristina i registri generali
+		mov		rsp, rbp	; ripristina lo Stack Pointer
+		pop		rbp				; ripristina il Base Pointer
+		ret						  ; torna alla funzione C chiamante
+
+
+
 pqnn64_search:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------
 		push		rbp				; salva il Base Pointer
-		mov		rbp, rsp			; il Base Pointer punta al Record di Attivazione corrente
-		pushaq						; salva i registri generali
+		mov		rbp, rsp	  ; il Base Pointer punta al Record di Attivazione corrente
+		pushfq						; salva i registri generali
 
 		; ------------------------------------------------------------
 		; I paramentri sono passati nei registri
 		; ------------------------------------------------------------
 		; rdi = indirizzo della struct input
-		
 
-		
-		
+
+
+
 		; ------------------------------------------------------------
 		; Sequenza di uscita dalla funzione
 		; ------------------------------------------------------------
-		
-		popaq						; ripristina i registri generali
-		mov		rsp, rbp			; ripristina lo Stack Pointer
+
+		popfq						; ripristina i registri generali
+		mov		rsp, rbp	; ripristina lo Stack Pointer
 		pop		rbp				; ripristina il Base Pointer
-		ret						; torna alla funzione C chiamante
-		
+		ret						  ; torna alla funzione C chiamante
