@@ -60,10 +60,55 @@ global residual64
 		mov rdx,rax		;l'indirizzo di partenza del risultato rax viene salvato in rdx in modo da poterlo recuperare dopo
 		
 
+
+	  for_64:
+
+	        cmp rdi, 64	       ; Confronto n*m < 8 ?
+                jl for_32               ; Se edx è strettamente minore di 8, gestisco il residuo
+
+		vmovaps ymm0,[rbx]     ; i primi 8 elementi di x vanno in ymm0
+		vsubps ymm0,[rcx]      ; sottraggo i primi 8 elementi di cent dai primi 8 elementi di x
+		vmovaps [rax], ymm0    ; salvo la differenza dei primi 8 elementi nel risultato
+
+		vmovaps ymm0,[rbx+32]
+		vsubps ymm0,[rcx+32]
+		vmovaps [rax+32], ymm0
+
+		vmovaps ymm0,[rbx+64]
+		vsubps ymm0,[rcx+64]
+		vmovaps [rax+64], ymm0
+
+		vmovaps ymm0,[rbx+96]
+		vsubps ymm0,[rcx+96]
+		vmovaps [rax+96], ymm0
+
+		vmovaps ymm0,[rbx+128]
+		vsubps ymm0,[rcx+128]
+		vmovaps [rax+128], ymm0
+
+		vmovaps ymm0,[rbx+160]
+		vsubps ymm0,[rcx+160]
+		vmovaps [rax+160], ymm0
+
+		vmovaps ymm0,[rbx+192]
+		vsubps ymm0,[rcx+192]
+		vmovaps [rax+192], ymm0
+
+		vmovaps ymm0,[rbx+224]
+		vsubps ymm0,[rcx+224]
+		vmovaps [rax+224], ymm0
+
+  	        sub rdi, 64            ;sottraggo i 32 elementi già presi
+    		add rax, 256           ;mi sposto di 32 elementi (128 posizioni)
+		add rbx, 256
+		add rcx, 256
+
+		jmp for_64
+
 	  for_32:
 
 	        cmp rdi, 32	       ; Confronto n*m < 8 ?
-                jl for_8               ; Se edx è strettamente minore di 8, gestisco il residuo
+                jl for_16               ; Se edx è strettamente minore di 8, gestisco il residuo
 
 		vmovaps ymm0,[rbx]     ; i primi 8 elementi di x vanno in ymm0
 		vsubps ymm0,[rcx]      ; sottraggo i primi 8 elementi di cent dai primi 8 elementi di x
@@ -87,6 +132,26 @@ global residual64
 		add rcx, 128
 
 		jmp for_32
+
+	  for_16:
+
+	        cmp rdi, 16	       ; Confronto n*m < 8 ?
+                jl for_8               ; Se edx è strettamente minore di 8, gestisco il residuo
+
+		vmovaps ymm0,[rbx]     ; i primi 8 elementi di x vanno in ymm0
+		vsubps ymm0,[rcx]      ; sottraggo i primi 8 elementi di cent dai primi 8 elementi di x
+		vmovaps [rax], ymm0    ; salvo la differenza dei primi 8 elementi nel risultato
+
+		vmovaps ymm0,[rbx+32]
+		vsubps ymm0,[rcx+32]
+		vmovaps [rax+32], ymm0
+
+  	        sub rdi, 16            ;sottraggo i 16 elementi già presi
+    		add rax, 64           ;mi sposto di 16 elementi (64 posizioni)
+		add rbx, 64
+		add rcx, 64
+
+		jmp for_16
 
 	  for_8:
     		cmp rdi, 8	       ; Confronto n*m < 8  ? salta al for4
