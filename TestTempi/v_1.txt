@@ -1,4 +1,3 @@
-n--------------------KNN: 1-----------------------------n
 Usage: ./pqnn32c <data_name> [-d][-s][-exaustive|-noexaustive][-sdc|-adc][...]
 
 Parameters:
@@ -25,7 +24,7 @@ K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 0
 
-Indexing time = 27.666 secs
+Indexing time = 27.680 secs
 
 ###########Chiamata a Funzione TestSearch############
 I 1 punti più vicini alla query 0 sono: 4881	
@@ -2029,13 +2028,13 @@ I 1 punti più vicini alla query 1997 sono: 5358
 I 1 punti più vicini alla query 1998 sono: 6814	
 I 1 punti più vicini alla query 1999 sono: 1590	
 
-Searching time = 0.506 secs
+Searching time = 0.503 secs
 
 Done.
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 1
-27.773
+27.602
 
 ###########Chiamata a Funzione TestSearch############
 I 1 punti più vicini alla query 0 sono: 4881	
@@ -4038,11 +4037,11 @@ I 1 punti più vicini alla query 1996 sono: 2987
 I 1 punti più vicini alla query 1997 sono: 7895	
 I 1 punti più vicini alla query 1998 sono: 3054	
 I 1 punti più vicini alla query 1999 sono: 4403	
-1.456
+1.444
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 0
-1.148
+1.158
 
 ###########Chiamata a Funzione TestSearch############
 I 1 punti più vicini alla query 0 sono: 4881	
@@ -6045,11 +6044,11 @@ I 1 punti più vicini alla query 1996 sono: 4104
 I 1 punti più vicini alla query 1997 sono: 3888	
 I 1 punti più vicini alla query 1998 sono: 7643	
 I 1 punti più vicini alla query 1999 sono: 3389	
-2.883
+2.893
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 1
-1.160
+1.164
 
 ###########Chiamata a Funzione TestSearch############
 I 1 punti più vicini alla query 0 sono: 4881	
@@ -8052,8 +8051,7 @@ I 1 punti più vicini alla query 1996 sono: 6127
 I 1 punti più vicini alla query 1997 sono: 3949	
 I 1 punti più vicini alla query 1998 sono: 2150	
 I 1 punti più vicini alla query 1999 sono: 3389	
-3.561
-n--------------------KNN: 2-----------------------------n
+3.559
 Usage: ./pqnn32c <data_name> [-d][-s][-exaustive|-noexaustive][-sdc|-adc][...]
 
 Parameters:
@@ -8080,7 +8078,7 @@ K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 0
 
-Indexing time = 27.675 secs
+Indexing time = 27.628 secs
 
 ###########Chiamata a Funzione TestSearch############
 I 2 punti più vicini alla query 0 sono: 3827	4881	
@@ -10084,13 +10082,13 @@ I 2 punti più vicini alla query 1997 sono: 2114	5358
 I 2 punti più vicini alla query 1998 sono: 7107	6814	
 I 2 punti più vicini alla query 1999 sono: 1763	1590	
 
-Searching time = 0.505 secs
+Searching time = 0.503 secs
 
 Done.
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 1
-27.574
+27.644
 
 ###########Chiamata a Funzione TestSearch############
 I 2 punti più vicini alla query 0 sono: 250	4881	
@@ -12093,11 +12091,11 @@ I 2 punti più vicini alla query 1996 sono: 329	2987
 I 2 punti più vicini alla query 1997 sono: 2114	7895	
 I 2 punti più vicini alla query 1998 sono: 6814	3054	
 I 2 punti più vicini alla query 1999 sono: 3389	4403	
-1.446
+1.448
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 0
-1.155
+1.148
 
 ###########Chiamata a Funzione TestSearch############
 I 2 punti più vicini alla query 0 sono: 5647	4881	
@@ -14100,11 +14098,11 @@ I 2 punti più vicini alla query 1996 sono: 2987	4104
 I 2 punti più vicini alla query 1997 sono: 2114	3888	
 I 2 punti più vicini alla query 1998 sono: 2150	7643	
 I 2 punti più vicini alla query 1999 sono: 3649	3389	
-2.888
+2.878
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 1
-1.162
+1.160
 
 ###########Chiamata a Funzione TestSearch############
 I 2 punti più vicini alla query 0 sono: 5668	4881	
@@ -16107,8 +16105,7 @@ I 2 punti più vicini alla query 1996 sono: 1396	6127
 I 2 punti più vicini alla query 1997 sono: 5472	3949	
 I 2 punti più vicini alla query 1998 sono: 2909	2150	
 I 2 punti più vicini alla query 1999 sono: 3649	3389	
-3.575
-n--------------------KNN: 4-----------------------------n
+3.538
 Usage: ./pqnn32c <data_name> [-d][-s][-exaustive|-noexaustive][-sdc|-adc][...]
 
 Parameters:
@@ -16135,7 +16132,7 @@ K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 0
 
-Indexing time = 27.665 secs
+Indexing time = 27.623 secs
 
 ###########Chiamata a Funzione TestSearch############
 I 4 punti più vicini alla query 0 sono: 6361	115	3827	4881	
@@ -18139,13 +18136,13 @@ I 4 punti più vicini alla query 1997 sono: 2156	7895	2114	5358
 I 4 punti più vicini alla query 1998 sono: 3054	5136	7107	6814	
 I 4 punti più vicini alla query 1999 sono: 6326	3649	1763	1590	
 
-Searching time = 0.511 secs
+Searching time = 0.505 secs
 
 Done.
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 1
-27.687
+27.602
 
 ###########Chiamata a Funzione TestSearch############
 I 4 punti più vicini alla query 0 sono: 2723	3827	250	4881	
@@ -20148,11 +20145,11 @@ I 4 punti più vicini alla query 1996 sono: 4104	2784	329	2987
 I 4 punti più vicini alla query 1997 sono: 3888	5358	2114	7895	
 I 4 punti più vicini alla query 1998 sono: 5136	7107	6814	3054	
 I 4 punti più vicini alla query 1999 sono: 1590	2801	3389	4403	
-1.461
+1.450
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 0
-1.152
+1.147
 
 ###########Chiamata a Funzione TestSearch############
 I 4 punti più vicini alla query 0 sono: 1116	5886	5647	4881	
@@ -22155,11 +22152,11 @@ I 4 punti più vicini alla query 1996 sono: 1396	5190	2987	4104
 I 4 punti più vicini alla query 1997 sono: 692	2156	2114	3888	
 I 4 punti più vicini alla query 1998 sono: 2603	4879	2150	7643	
 I 4 punti più vicini alla query 1999 sono: 1763	6326	3649	3389	
-2.896
+2.886
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 1
-1.163
+1.159
 
 ###########Chiamata a Funzione TestSearch############
 I 4 punti più vicini alla query 0 sono: 5647	663	5668	4881	
@@ -24162,8 +24159,7 @@ I 4 punti più vicini alla query 1996 sono: 4104	218	1396	6127
 I 4 punti più vicini alla query 1997 sono: 377	3888	5472	3949	
 I 4 punti più vicini alla query 1998 sono: 7940	2759	2909	2150	
 I 4 punti più vicini alla query 1999 sono: 2801	6326	3649	3389	
-3.570
-n--------------------KNN: 8-----------------------------n
+3.541
 Usage: ./pqnn32c <data_name> [-d][-s][-exaustive|-noexaustive][-sdc|-adc][...]
 
 Parameters:
@@ -24190,7 +24186,7 @@ K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 0
 
-Indexing time = 27.673 secs
+Indexing time = 27.658 secs
 
 ###########Chiamata a Funzione TestSearch############
 I 8 punti più vicini alla query 0 sono: 2205	3852	2723	7016	6361	115	3827	4881	
@@ -26194,13 +26190,13 @@ I 8 punti più vicini alla query 1997 sono: 5620	3170	424	3888	2156	7895	2114	53
 I 8 punti più vicini alla query 1998 sono: 1991	559	277	3221	3054	5136	7107	6814	
 I 8 punti più vicini alla query 1999 sono: 2801	4653	3389	4403	6326	3649	1763	1590	
 
-Searching time = 0.509 secs
+Searching time = 0.511 secs
 
 Done.
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 1, Simmetrica: 1
-27.619
+27.815
 
 ###########Chiamata a Funzione TestSearch############
 I 8 punti più vicini alla query 0 sono: 0	4460	6361	115	2723	3827	250	4881	
@@ -28203,11 +28199,11 @@ I 8 punti più vicini alla query 1996 sono: 7184	3461	2633	2262	4104	2784	329	29
 I 8 punti più vicini alla query 1997 sono: 424	4626	7847	2156	3888	5358	2114	7895	
 I 8 punti più vicini alla query 1998 sono: 3946	559	2150	277	5136	7107	6814	3054	
 I 8 punti più vicini alla query 1999 sono: 4653	6326	3649	1763	1590	2801	3389	4403	
-1.456
+1.466
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 0
-1.155
+1.148
 
 ###########Chiamata a Funzione TestSearch############
 I 8 punti più vicini alla query 0 sono: 3827	7382	7823	7016	1116	5886	5647	4881	
@@ -30210,11 +30206,11 @@ I 8 punti più vicini alla query 1996 sono: 218	7549	757	2340	1396	5190	2987	410
 I 8 punti più vicini alla query 1997 sono: 678	497	5358	6499	692	2156	2114	3888	
 I 8 punti più vicini alla query 1998 sono: 5606	3814	7630	2668	2603	4879	2150	7643	
 I 8 punti più vicini alla query 1999 sono: 4653	1624	4403	1809	1763	6326	3649	3389	
-2.891
+2.893
 
 ###########Chiamata a Funzione TestIndex############
 Esaustiva: 0, Simmetrica: 1
-1.163
+1.161
 
 ###########Chiamata a Funzione TestSearch############
 I 8 punti più vicini alla query 0 sono: 3486	7382	5886	5631	5647	663	5668	4881	
@@ -32217,12 +32213,4 @@ I 8 punti più vicini alla query 1996 sono: 2784	2805	957	2987	4104	218	1396	612
 I 8 punti più vicini alla query 1997 sono: 2565	2244	4303	408	377	3888	5472	3949	
 I 8 punti più vicini alla query 1998 sono: 1855	6135	1921	2668	7940	2759	2909	2150	
 I 8 punti più vicini alla query 1999 sono: 1809	4653	1624	1763	2801	6326	3649	3389	
-3.559
-n--------------------KNN: 1-----------------------------n
-n--------------------KNN: 2-----------------------------n
-n--------------------KNN: 4-----------------------------n
-n--------------------KNN: 8-----------------------------n
-n--------------------KNN: 1-----------------------------n
-n--------------------KNN: 2-----------------------------n
-n--------------------KNN: 4-----------------------------n
-n--------------------KNN: 8-----------------------------n
+3.557
