@@ -7,16 +7,16 @@ done
 gcc -O0 -m32 -msse pqnn32.o assembly/*.o pqnn32c.c -o pqnn32c -lm
 
 let i=1
-v=1
+v=_0
 
 rm "./TestTempi/v$v.txt"
 
 for (($i;i<=8;i*=2)); do
   echo \n"--------------------KNN: $i-----------------------------"\n  >> ./TestTempi/v1.txt
   ./pqnn32c prova -exaustive -adc -knn $i >> "./TestTempi/v$v.txt"
-  ./pqnn32c prova -s -exaustive -sdc $i >> "./TestTempi/v$v.txt"
-  ./pqnn32c prova -s -noexaustive -adc $i >> "./TestTempi/v$v.txt"
-  ./pqnn32c prova -s -noexaustive -sdc $i >> "./TestTempi/v$v.txt"
+  ./pqnn32c prova -s -exaustive -sdc -knn $i >> "./TestTempi/v$v.txt"
+  ./pqnn32c prova -s -noexaustive -adc -knn $i >> "./TestTempi/v$v.txt"
+  ./pqnn32c prova -s -noexaustive -sdc -knn $i >> "./TestTempi/v$v.txt"
 done
 
 #inserita la compilazione del file testindex.c e datatypes.c, anzi tolta

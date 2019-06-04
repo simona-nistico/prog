@@ -15,6 +15,31 @@ extern VECTOR residual(VECTOR x,VECTOR centroid,int d);
 //*extern float objective_function(int n,int m, MATRIX distances_from_centroids);
 extern void memset_float(float* array, float val, int dim );
 
+//--------------------------------FUNZIONI------------------------------------
+
+/** La seguente funzione si occupa di precalcolare le distanze tra i sottogruppi
+	* della query ed i centroidi del codebook relativo al sottogruppo
+	* x = query, vettore di dimensione d
+	* centroids = matrice k*m*d_star contenenti i centroidi degli m codebook del
+	*							quantizzatore prodotto
+	* d = dimensione del punto
+	* m = numero di gruppi
+	* k = numero di centroidi per gruppo
+	* distances = matrice m*k in cui vengono salvate le distanze
+	*/
+void computeDistances(VECTOR x, MATRIX centroids, int d, int m, int k, MATRIX distances){
+	int i, d_star = d/m;
+
+	// Considero ogni porzione del punto
+	for(int g=0;g<m;g++){
+		// Per ogni porzione calcolo la distanza da diascun centroide
+		for(i=0;i<k;i++){
+			distances[g*k+i] = distance(&x[g*d_star],&centroids[(g*k+i)*d_star],d_star);
+		}
+	}
+
+}// computeDistances
+
 //---------------------------RICERCA ESAUSTIVA--------------------------------
 
 /** Funzione che trova per ogni punto del queryset i k punti del dataset più vicini
@@ -33,11 +58,16 @@ extern void memset_float(float* array, float val, int dim );
 void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 				int* ANN, int* centroid_of_point, MATRIX  distances_between_centroids, MATRIX centroids){
 
+	MATRIX dist_cent;
   // Vettore che contiene la quantizzazione del punto
   int* quant;
   int j, g, l, min, max;
 	float dist;
   int d_star = d/m;
+
+	if(input->symmetric == 0){
+		dist_cent = alloc_matrix(m,k);
+	}
 
 	// RICORDA:
 	// ANN = (int*) malloc(knn*nq*sizeof(int))
@@ -51,7 +81,12 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 			quant = quantize(&qs[i*d], k, m, d, centroids);
 //			printf("QUANTIZZAZIONE PUNTO:\n");
 //			print_quantizer(m, quant);
+		}else{
+			// Calcoliamo la distanza tra le porzioni del punto ed i centroidi dei
+			// relativi codebook
+			computeDistances(&qs[i*d],centroids,d,m,k,dist_cent);
 		}
+
 
 		// Inizializziamo i primi knn punti ordinandoli in ordine decrescente
 		// Così se è > del primo elemento è inutile fare i confronti
@@ -75,7 +110,9 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 				}// for l
 			}else{
 				for(g=0;g<m;g++){
-					dist+= distance(&qs[i*d+g*d_star],&centroids[(k*g+centroid_of_point[j*m+g])*d_star],d_star);
+					// Prendiamo la distanza tra la porzione g della query ed il centroide
+					// della porzione g del punto del dataset
+					dist+= dist_cent[g*k+centroid_of_point[j*m+g]];
 				}// for l
 			}
 
@@ -103,6 +140,10 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 
 	}// for i
 
+	if(input->symmetric==0){
+		dealloc_matrix(dist_cent);
+	}
+
 	dealloc_matrix(distances);
 
 	// TESTATA! :D
@@ -115,6 +156,8 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids,
 	int* lista_invertita, int* celle_prima, int* punti_caricati,
 	int* ANN, int d, int w, int k, int kc, int knn,int m,int nq){
+
+	MATRIX dist_cent;
 	// Per ogni punto cerchiamo i w centroidi coarse più vicini
 	int* c_coarse = (int*) calloc(w, sizeof(int));
 
@@ -125,6 +168,10 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 	int d_star = d/m;
 	float distanza;
 
+	if(input->symmetric == 0){
+		dist_cent = alloc_matrix(m,k);
+	}
+
 //	printf("\nPunti di ciascun centroide coarse\n");
 //	print_matrix_int(kc,1,1,punti_caricati,'c');
 
@@ -133,7 +180,9 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 		dist = alloc_matrix(1,w);
 
 		// Settiamo il vettore delle distanze al massimo float rappresentabile
-		for(j=0;j<w;j++){		dist[j] = FLT_MAX; 	}// for j
+		for(j=0;j<w;j++){
+			dist[j] = FLT_MAX;
+		}// for j
 //		memset_float( dist, FLT_MAX, w);
 
 
@@ -144,7 +193,6 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 	//			printf("Queryset: %p\n", &qs[i*d+l*d_star] );
 //				printf("CoarseCe: %p\n\n", &coarse_centroids[j] );
 			distanza = distance(&qs[i*d],&coarse_centroids[j*d],d);
-			printf("\nDistanza dal centroide %d: %f\n", j, distanza);
 
 
 //			printf("\nDistanza dal centroide coarse: %f\n", distanza);
@@ -161,12 +209,6 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 				c_coarse[l] = j;
 			}// if
 		}// for j
-
-		printf("\nDistanze centroidi coarse scelti:\n");
-		print_matrix(1,w,w,dist,'c');
-		printf("\nCentroide coarse scelti:\n");
-		print_matrix_int(1,w,w,c_coarse,'c');
-		print_matrix(1,d,d,&coarse_centroids[c_coarse[0]*d],'c');
 
 		// Ora sappiamo in quali insiemi di punti dobbiamo cercare, ciascuna
 		// distanza rappresenta il residuo al quadrato
@@ -194,15 +236,16 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 
 			// Calcoliamo il residuo del punto del queryset considerato
 			res = residual(&qs[i*d],&coarse_centroids[centroide*d],d);
-			printf("\nResiduo della query\n");
-			print_matrix(1,d,d,res,'p');
 
 			// Delimitiamo il nostro vettore per poterlo scandire
 			inizio = celle_prima[centroide];
 
 			if(input->symmetric == 1){
-				quantization = quantize(res,k,m,d_star,coarse_centroids);
-				printf("\nOK\n");
+				quantization = quantize(res,k,m,d,centroids);
+			}else{
+				// Calcoliamo la distanza tra le porzioni del punto ed i centroidi dei
+				// relativi codebook
+				computeDistances(res,centroids,d,m,k,dist_cent);
 			}
 
 			// Calcoliamo i knn punti del queryset i cui residui sono più vicini ai
@@ -213,8 +256,6 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 				// Calcoliamo la distanza tra la quantizzazione del residuo ed il
 				// residuo del punto
 				distanza = 0;
-				printf("\n Punto del dataset %d:\n",lista_invertita[inizio+p*(m+1)]);
-				print_matrix(1,d,d,&ds[lista_invertita[inizio+p*(m+1)]],'p');
 
 				if(input->symmetric == 1){
 					for(g=0;g<m;g++){
@@ -225,21 +266,11 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 					for(g=0;g<m;g++){
 						// Nel primo elemento c'è il punto, quindi si shifta di 1
 						l = lista_invertita[inizio+p*(m+1)+g+1];
-						printf("\nCentroide del gruppo %d: %d\n", g, l);
-						// Si calcola la distanza tra la porzione di residuo relativa al
-						// gruppo ed il centroide del gruppo relativo al residuo del queryset
-						// considerato
-						distanza += distance(&res[g*d_star],&centroids[(l+g*k)*d_star],d_star);
-						printf("Porzione del residuo considerata: %d\n", g);
-						print_matrix(1,d_star,d_star,&res[g*d_star],'p');
-						printf("Centroide: %d\n", l);
-						printf("Distanza %f\n", distance(&res[g*d_star],&centroids[(l+g*k)*d_star],d_star));
-						/**ATTENZIONE: stesso errore di prima? controllare*/
+						// Prendiamo la distanza tra la porzione g della query ed il centroide
+						// della porzione g del punto del dataset
+						distanza += dist_cent[g*k+l];
 					}// for l
 				}
-
-
-				printf("\nDistanza dal punto del dataset %d: %f\n", lista_invertita[inizio+p*(m+1)], distanza);
 
 //				printf("\nDistanza: %f \n",distanza);
 
@@ -270,6 +301,8 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 
 	if(input->symmetric==1){
 		free(quantization);
+	}else{
+		dealloc_matrix(dist_cent);
 	}
 
 
@@ -308,16 +341,16 @@ void testSearch(params* input2){
 	//	input->m = 2;
 	//	input->eps = 15;
 
-		printf("Dataset Iniziale\n");
-		print_matrix(input->n, input->d, input->n , input->ds, 'p');
+	printf("Dataset Iniziale\n");
+	print_matrix(input->n, input->d, input->n , input->ds, 'p');
 
 	//---------------------------Test singole funzioni---------------------------
-/*
+
   // Prendo un sottoinsieme del query set originale
-  input->nq = 1;
-  input->knn = 1;
-	input->w = 1;
-*/
+//  input->nq = 1;
+//  input->knn = 1;
+//	input->w = 1;
+
   int nq = input->nq;
   int knn = input-> knn;
   int k = input->k;
@@ -339,6 +372,7 @@ void testSearch(params* input2){
   memset(input->ANN, -1, nq*knn*sizeof(int));
 //	print_matrix_int(nq,knn,knn, input->ANN,'p');
 
+
 	if(input->exaustive == 1){
 		calNearExt(n, d, k, m, knn, nq,
 								input->qs, input->ANN, input->centroid_of_point,
@@ -349,8 +383,6 @@ void testSearch(params* input2){
 								input->ANN, d, w, k, kc, knn, m, nq);
 	}
 
-	printf("\nQUERY\n");
-	print_matrix(1,d,d,input->qs,'p');
 
 //	print_matrix_int(nq,knn,knn,input->ANN,'p');
 
