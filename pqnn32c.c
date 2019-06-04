@@ -46,12 +46,120 @@
 #include <time.h>
 #include <xmmintrin.h>
 
-#include "datatypes.h" 	//Header che raccoglie struct, dati e tipi comuni
-#include "testindex.c"	//file dove implemento le funzioni prima in c e poi assembly per index
-#include "testsearch.c"	//file dove implemento le funzioni prima in c e poi assembly per search
+//#include "testindex.c"	//file dove implemento le funzioni prima in c e poi assembly per index
+//#include "testsearch.c"	//file dove implemento le funzioni prima in c e poi assembly per search
 
 
-struct params;
+#define	MATRIX  float*
+#define	VECTOR  float*
+
+
+typedef struct {
+	char* filename; //
+	MATRIX ds; // data set
+	MATRIX qs; // query set
+	int n; // numero di punti del data set
+	int d; // numero di dimensioni del data/query set
+	int nq; // numero di punti del query set
+	int knn; // numero di ANN approssimati da restituire per ogni query
+	int m; // numero di gruppi del quantizzatore prodotto
+	int k; // numero di centroidi di ogni sotto-quantizzatore
+	int kc; // numero di centroidi del quantizzatore coarse
+	int w; // numero di centroidi del quantizzatore coarse da selezionare per la ricerca non esaustiva
+	int nr; // dimensione del campione dei residui nel caso di ricerca non esaustiva
+	float eps; //
+	int tmin; //
+	int tmax; //
+	int exaustive; // tipo di ricerca: (0=)non esaustiva o (1=)esaustiva
+	int symmetric; // tipo di distanza: (0=)asimmetrica ADC o (1=)simmetrica SDC
+	int silent;
+	int display;
+	// nns: matrice row major order di interi a 32 bit utilizzata per memorizzare gli ANN
+	// sulla riga i-esima si trovano gli ID (a partire da 0) degli ANN della query i-esima
+	//
+	int* ANN;
+	//
+	//
+  //_______Inserire qui i campi necessari a memorizzare i Quantizzatori_______
+
+	//Per ogni punto (riga) viene indicato il centroide prodotto più vicino e la distanza da esso
+	//centroid_of_point[i][j] = centroide a minima distanza dap punti i del sottogruppo j
+	//Corrisponde alla funzione q(x) := dato il punto, restituisce l'indice del suo centroide
+	int* centroid_of_point;
+
+
+	//Codebooks dei vari sottogruppi
+	//Dimensione: m*k righe, d_star cioè d/m colonne
+	//Per andare da un sottogruppo all'altro bisgna avanzare di m righe
+	//Le colonne sono d_start cioè d/m
+	MATRIX centroids;
+
+
+	//Struttura dati che contiene le distanze tra i centroidi finali
+	//Triangolo superiore della matrice delle distanze che è simmetrica
+	VECTOR distances_between_centroids;
+
+
+	//TEST
+  MATRIX coarse_centroids;
+
+//TEST
+  int* lista_invertita;
+
+	// Test
+	// Struttura dati che memorizza il centroide coarse di ciascun punto
+	int* coarse_centroid_of_point;
+	//
+	// TEST
+	int* punti_caricati; // Ha kc celle e memorizza il numero di punti in ogni
+	                     //centroide coarse
+	// TEST
+	int* celle_prima;    // Ha kc celle e memorizza la posizione di inizio per
+	                     // la lista relativa al centroide i
+	// TEST
+	// Matrice che tiene memoria dei residui
+	MATRIX residuals;
+	// ...
+	// ...
+	// ...
+	// ...
+	//
+} params;
+
+
+/*
+ *
+ *	Le funzioni sono state scritte assumento che le matrici siano memorizzate
+ * 	mediante un array (float*), in modo da occupare un unico blocco
+ * 	di memoria, ma a scelta del candidato possono essere
+ * 	memorizzate mediante array di array (float**).
+ *
+ * 	In entrambi i casi il candidato dovrà inoltre scegliere se memorizzare le
+ * 	matrici per righe (row-major order) o per colonne (column major-order).
+ *
+ * 	L'assunzione corrente è che le matrici siano in row-major order.
+ *
+ */
+
+
+void* get_block(int size, int elements) {
+	return _mm_malloc(elements*size,16);
+}
+
+
+void free_block(void* p) {
+	_mm_free(p);
+}
+
+
+MATRIX alloc_matrix(int rows, int cols) {
+	return (MATRIX) get_block(sizeof(float),rows*cols);
+}
+
+
+void dealloc_matrix(MATRIX mat) {
+	free_block(mat);
+}
 
 
 /*
@@ -94,13 +202,11 @@ MATRIX load_data(char* filename, int *n, int *d) {
 
 	MATRIX data = alloc_matrix(rows,cols);
 	status = fread(data, sizeof(double), rows*cols, fp);
+  //ATTEZIONE: float?
 	fclose(fp);
 
 	*n = rows;
 	*d = cols;
-
-//----------Stampa tutti i punti-----------
-	//print_matrix(rows, cols, data);
 
 	return data;
 }
@@ -126,7 +232,8 @@ extern void pqnn32_index(params* input);
 extern int* pqnn32_search(params* input);
 
 extern void testIndex(params* input2);
-extern void testSearch(params* input2);
+//extern void testSearch(params* input2);
+
 
 /*
  *	pqnn_index
@@ -159,7 +266,7 @@ void pqnn_search(params* input) {
 
     pqnn32_search(input); // Chiamata funzione assembly
 
-		testSearch(input);
+  //    testSearch(input);
 
 	// Restituisce il risultato come una matrice di nq * knn
 	// identificatori associati agli ANN approssimati delle nq query.

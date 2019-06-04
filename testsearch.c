@@ -1,6 +1,19 @@
-//Necessario per poter utilizzare la struttura params definita dal prof
-#include "datatypes.h"
 #include <float.h>
+
+//Necessario per poter utilizzare la struttura params definita dal prof
+//#include "pqnn32c.c"
+//#include "datatypes.h"
+
+#ifndef pqnn32c
+#include "pqnn32c.c"
+#endif
+
+#ifndef datatypes.h
+#include "datatypes.h"
+#endif
+
+#define	MATRIX  float*
+#define	VECTOR  float*
 
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
@@ -11,9 +24,9 @@ params *input;
 
 //_____________________Funzioni esterne scritte in assembly_____________________
 //extern float distance64(VECTOR x1, VECTOR x2, int d);
-extern VECTOR residual(VECTOR x,VECTOR centroid,int d);
+//extern VECTOR residual(VECTOR x,VECTOR centroid,int d);
 //*extern float objective_function(int n,int m, MATRIX distances_from_centroids);
-extern void memset_float(float* array, float val, int dim );
+//extern void memset_float(float* array, float val, int dim );
 
 //--------------------------------FUNZIONI------------------------------------
 
@@ -39,6 +52,54 @@ void computeDistances(VECTOR x, MATRIX centroids, int d, int m, int k, MATRIX di
 	}
 
 }// computeDistances
+
+
+/** Funzione che effettua la quantizzazione della query
+  * x = punto di cui restituire il quantizzatore
+	* k = centroidi per ciascun sottogruppo
+	* m = numero totale di gruppi
+	* d_star = dimensione di ogni gruppo
+	* La funzione concatena i quantizzatori di ogni sottogruppo
+	* Esegue: q(x) = ( q1(u1(x)), q2(u2(x)), ....)
+	* COSTO: = g*k*(d_star)
+	*/
+int* quantize(VECTOR x, int k, int m, int d, VECTOR centroids){
+	// Indice dei centroidi che quantizzano ciascuna porzione
+	int* cents = (int*) malloc(m*sizeof(int));
+	int centr;
+	int d_star = d/m;
+	float min,dist;
+
+	for(int g=0; g<m; g++){ //per ogni sottogruppo calcolo il centroide più vicino
+
+		centr = 0;
+		min = distance(&x[g*d_star],&centroids[g*k*d_star],d_star);
+		//printf("Distanza tra il punto e il centroide %d del gruppo %d : %f\n", 0, g, min);
+
+		// centroids = [riga->(i+group*k)*d_star,colonna->j]
+		// dataset = [riga->number*d,colonna->d_star*g+j]
+
+		//Considero tutti i punti del codebook del sottogruppo prendendo quello a
+		//dimensione minima
+		for(int i=1; i<k; i++){
+			dist = distance(&x[g*d_star],&centroids[(g*k+i)*d_star],d_star);
+			//printf("Distanza tra il punto e il centroide %d del gruppo %d : %f\n", i, g, dist);
+			if(dist < min){
+				centr = i;
+				min = dist;
+			}
+
+		}//for centroide del gruppo g
+
+		// Abbiamo trovato il centroide del gruppo g
+		cents[g] = centr;
+
+	}//for gruppo
+
+	return cents;
+	//TESTATA
+}//quantize
+
 
 //---------------------------RICERCA ESAUSTIVA--------------------------------
 
