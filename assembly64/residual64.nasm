@@ -5,9 +5,9 @@ section .bss			; Sezione contenente dati non inizializzati
 section .text			; Sezione contenente il codice macchina
 
 
-global residual64
+global residual
 
-   residual64:
+   residual:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------
@@ -35,11 +35,6 @@ global residual64
 		;rsi (r5) =  indirizzo di partenza dell'array x
 		;rdx (r3) =  indirizzo di partenza dell'array centroid
 		;rcx (r2) =  in rcx si trova il valore di d
-
-		mov 		eax, [ebp+res]		;mi salvo l'indirizzo di partenza del residuo (risultato)
-		mov     ebx, [ebp+x]       ;in ebx ho l'indirizzo di partenza di x
-		mov     ecx, [ebp+centr]   ;in edx ho l'indirizzo di partenza del centroide
-		mov     edi, [ebp+d]      ;in edi ho la lunghezza dei vettori
 
 
 		mov rax,rdi		;rax = indirizzo di partenza del risultato

@@ -9,7 +9,7 @@ section .text			; Sezione contenente il codice macchina
 
 ;________________________Funzione________________________
 ;VECTOR residual(VECTOR res, VECTOR x,VECTOR centroid, int d)
-global test_residual      ; rende la funzione visibile all’esterno
+global residual      ; rende la funzione visibile all’esterno
 
 
 ; Posizione dei parametri nel Recordi di Attivazione della funzione
@@ -19,7 +19,7 @@ x       equ   12     ; puntatore a float x, occupa 32 bit (4 bytes)
 centr   equ   16    ; puntatore a float centr, occupa 32 bit (4 bytes)
 d       equ   20    ; intero a 32 bit rappresenta la dimensione
 
-test_residual:
+residual:
 ;------------------salva i parametri base------------------
     push    ebp       ; salva il Base Pointer
     mov     ebp, esp  ; il Base Pointer punta al Record di Attivazione corrente

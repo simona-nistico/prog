@@ -7,9 +7,9 @@ section .text			; Sezione contenente il codice macchina
 
 ;TESTATA
 
-global memset_float64
+global memset_float
 
-memset_float64:
+memset_float:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------

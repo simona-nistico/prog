@@ -5,9 +5,9 @@ section .bss			; Sezione contenente dati non inizializzati
 
 section .text			; Sezione contenente il codice macchina
 
-global accumulate64
+global accumulate
 
-accumulate64:
+accumulate:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------
@@ -31,14 +31,14 @@ accumulate64:
 		;--------------------------------
 		;PARAMETRI
 		;--------------------------------
-		
+
 		;rdi (r6) = indirizzo di partenza dell'array dest
 		;rsi (r5) = indirizzo di partenza dell'array source
 		;rdx (r3) = dim
 
 		mov rax,rdi ; rax= dest
 		mov rcx,rsi ; rcx= source
-		;dim è già in rdx 
+		;dim è già in rdx
 
 
 	  for_32:
@@ -139,4 +139,3 @@ accumulate64:
 		mov	rsp, rbp	; ripristina lo Stack Pointer
 		pop	rbp		; ripristina il Base Pointer
 		ret			; torna alla funzione C chiamante
-

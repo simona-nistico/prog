@@ -45,15 +45,10 @@
 #include <string.h>
 #include <time.h>
 #include <xmmintrin.h>
+#include <float.h>
 
-#include "datatypes.h" 	//Header che raccoglie struct, dati e tipi comuni
-#include "testindex.c"	//file dove implemento le funzioni prima in c e poi assembly per index
-#include "testsearch.c"	//file dove implemento le funzioni prima in c e poi assembly per search
-//ATTENZIONE, sistemare dopo
-
-/*
-#define	MATRIX		double*
-#define	VECTOR		double*
+#define	MATRIX		float*
+#define	VECTOR		float*
 
 
 typedef struct {
@@ -81,13 +76,52 @@ typedef struct {
 	//
 	int* ANN;
 	//
-	// Inserire qui i campi necessari a memorizzare i Quantizzatori
+
+	//_______Inserire qui i campi necessari a memorizzare i Quantizzatori_______
+
+	//Per ogni punto (riga) viene indicato il centroide prodotto più vicino e la distanza da esso
+	//centroid_of_point[i][j] = centroide a minima distanza dap punti i del sottogruppo j
+	//Corrisponde alla funzione q(x) := dato il punto, restituisce l'indice del suo centroide
+	int* centroid_of_point;
+
+
+	//Codebooks dei vari sottogruppi
+	//Dimensione: m*k righe, d_star cioè d/m colonne
+	//Per andare da un sottogruppo all'altro bisgna avanzare di m righe
+	//Le colonne sono d_start cioè d/m
+	MATRIX centroids;
+
+
+	//Struttura dati che contiene le distanze tra i centroidi finali
+	//Triangolo superiore della matrice delle distanze che è simmetrica
+	VECTOR distances_between_centroids;
+
+
+	//TEST
+  MATRIX coarse_centroids;
+
+//TEST
+  int* lista_invertita;
+
+	// Test
+	// Struttura dati che memorizza il centroide coarse di ciascun punto
+	int* coarse_centroid_of_point;
 	//
+	// TEST
+	int* punti_caricati; // Ha kc celle e memorizza il numero di punti in ogni
+	                     //centroide coarse
+	// TEST
+	int* celle_prima;    // Ha kc celle e memorizza la posizione di inizio per
+	                     // la lista relativa al centroide i
+	// TEST
+	// Matrice che tiene memoria dei residui
+	MATRIX residuals;
 	// ...
 	// ...
 	// ...
 	//
 } params;
+
 
 
 /*
@@ -104,7 +138,7 @@ typedef struct {
  *
  */
 
-/*
+
 void* get_block(int size, int elements) {
 	return _mm_malloc(elements*size,32);
 }
@@ -123,7 +157,7 @@ MATRIX alloc_matrix(int rows, int cols) {
 void dealloc_matrix(MATRIX mat) {
 	free_block(mat);
 }
-*/
+
 
 /*
  *
@@ -188,8 +222,8 @@ void save_ANN(char* filename, int* ANN, int nq, int knn) {
 extern void pqnn64_index(params* input);
 extern int* pqnn64_search(params* input);
 
-extern void testIndex(params* input2);
-extern void testSearch(params* input2);
+extern void indexing(params* input);
+extern void searching(params* input);
 
 
 /*
@@ -202,9 +236,7 @@ void pqnn_index(params* input) {
     // Codificare qui l'algoritmo di indicizzazione
     // -------------------------------------------------
 
-    pqnn64_index(input); // Chiamata funzione assembly
-
-    testIndex(input);
+		indexing(input);
 
     // -------------------------------------------------
 
@@ -221,9 +253,7 @@ void pqnn_search(params* input) {
     // Codificare qui l'algoritmo di interrogazione
     // -------------------------------------------------
 
-    pqnn64_search(input); // Chiamata funzione assembly
-
-    testSearch(input);
+//		searching(input);
 
 	// Restituisce il risultato come una matrice di nq * knn
 	// identificatori associati agli ANN approssimati delle nq query.

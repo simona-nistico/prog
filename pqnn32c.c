@@ -122,6 +122,22 @@ typedef struct {
 	//
 } params;
 
+
+/*
+ *
+ *	Le funzioni sono state scritte assumento che le matrici siano memorizzate
+ * 	mediante un array (float*), in modo da occupare un unico blocco
+ * 	di memoria, ma a scelta del candidato possono essere
+ * 	memorizzate mediante array di array (float**).
+ *
+ * 	In entrambi i casi il candidato dovrà inoltre scegliere se memorizzare le
+ * 	matrici per righe (row-major order) o per colonne (column major-order).
+ *
+ * 	L'assunzione corrente è che le matrici siano in row-major order.
+ *
+ */
+
+
 void* get_block(int size, int elements) {
 	return _mm_malloc(elements*size,16); //32 nel caso pqnn64
 }
@@ -213,7 +229,7 @@ extern void pqnn32_index(params* input);
 extern int* pqnn32_search(params* input);
 
 extern void indexing(params* input);
-//extern void searching(params* input);
+extern void searching(params* input);
 
 
 
@@ -240,7 +256,7 @@ void pqnn_search(params* input) {
     // Codificare qui l'algoritmo di interrogazione
     // -------------------------------------------------
 
-//		searching(input);
+		searching(input);
 
 	// Restituisce il risultato come una matrice di nq * knn
 	// identificatori associati agli ANN approssimati delle nq query.

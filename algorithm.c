@@ -1,16 +1,10 @@
-# include "pqnn32c.c"
-# include "utils.h"
-
+#include "pqnn64c.c"
+//La riga sopra viene cambiata in automatico a seconda del run che si lancia
+#include "utils.h"
 
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 
-//#define	MATRIX		float*
-//#define	VECTOR		float*
-
-//extern struct params;
-//extern MATRIX alloc_matrix(int rows, int cols);
-//extern void dealloc_matrix(MATRIX mat);
 
 /**La funzione seguente seleziona k punti da usare come centroidi iniziali
  * COSTO: k*(d/m)*m (Per favore Fabio gli dai un'occhiata?)
@@ -524,7 +518,6 @@ void indexing(params* input){
 }
 
 //--------------------------------- SEARCHING ----------------------------------
-//--------------------------------FUNZIONI------------------------------------
 
 /** Funzione che effettua la quantizzazione della query
   * x = punto di cui restituire il quantizzatore
@@ -874,6 +867,7 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 
 void searching(params* input){
 
+  printf("Chiamata a Search\n" );
 	if(input->exaustive==1){
 		calNearExt(input->n, input->d, input->k, input->m, input->knn, input->nq, input->qs,
 							input->ANN, input->centroid_of_point, input->distances_between_centroids,
