@@ -8,11 +8,10 @@
 //_____________________Funzioni esterne scritte in assembly_____________________
 extern void accumulate( MATRIX dest, MATRIX orig, int dim);
 extern float distance(VECTOR x1,VECTOR x2,int d);
-//extern void divide( MATRIX dest, MATRIX dividendo, float divisore, int dim);
+extern void divide( MATRIX dest, MATRIX dividendo, float divisore, int dim);
 extern void memset_float( MATRIX data, float val, int dim);
 extern float objective_function(int n,int m, MATRIX distances_from_centroids);
 extern void residual(VECTOR res,VECTOR x,VECTOR centroid,int d);
-
 
 
 /** La funzione seguente calcola il valore della funzione obiettivo
@@ -22,7 +21,8 @@ extern void residual(VECTOR res,VECTOR x,VECTOR centroid,int d);
   * n =  numero di punti del data set
   * TODO: parallelizzare la somma in assembly
   */
-/*float objective_function(int n,int m, MATRIX distances_from_centroids){
+	/*
+float objective_function(int n,int m, MATRIX distances_from_centroids){
 	  float sum = 0;
     int i=0;
 
@@ -39,6 +39,7 @@ extern void residual(VECTOR res,VECTOR x,VECTOR centroid,int d);
 
 		return sqrt(sum);
 }
+*/
 
 /*
 float distance(VECTOR x1,VECTOR x2,int d){
@@ -74,9 +75,10 @@ float distance(VECTOR x1,VECTOR x2,int d){
 }//distance
 */
 
+/*
 // Funzione che calcola il residuo, versione ottimizzata
 // Esegue il calcolo: r(x) = x-q_c(x)
-/*void residual(VECTOR res,VECTOR x,VECTOR centroid,int d){
+void residual(VECTOR res,VECTOR x,VECTOR centroid,int d){
 	int i=0;
 
 	for(i;i<=d-4;i+=4){
@@ -92,6 +94,7 @@ float distance(VECTOR x1,VECTOR x2,int d){
 
 	// TESTATA: OK!
 }//residual
+*/
 
 /*
 void memset_float( MATRIX data, float val, int dim){
@@ -99,6 +102,7 @@ void memset_float( MATRIX data, float val, int dim){
     data[j] = val;
 }
 */
+
 /*
 void accumulate( MATRIX dest, MATRIX orig, int dim){
   for(int j=0;j<dim;j++)
@@ -106,12 +110,12 @@ void accumulate( MATRIX dest, MATRIX orig, int dim){
 }
 */
 
-
+/*
 void divide( MATRIX dest, MATRIX dividendo, float divisore, int dim){
   for(int j=0;j<dim;j++)
     dest[j] = dividendo[j] / divisore;
 }
-
+*/
 
 //----------Stampa tutti i punti-----------
 void print_matrix(int rows, int cols, int k, MATRIX data, char c){

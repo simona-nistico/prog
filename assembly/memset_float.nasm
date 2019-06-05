@@ -4,6 +4,9 @@ section .bss			; Sezione contenente dati non inizializzati
 
 section .text			; Sezione contenente il codice macchina
 
+;Loop Unrolling 64,16, 4, 1
+;TESTATA
+
 ;________________________Funzione________________________
 ;void *memset(void *array, float f, size_t d)
 global memset_float      ; rende la funzione visibile all’esterno
@@ -29,6 +32,37 @@ memset_float:
 
     movss  xmm0, [ebp+f]       ;prendo nella parte bassa il valore da copiare
     shufps xmm0, xmm0, 0x0     ;copio tale valore dappertutto
+
+for_64:
+    cmp edx, 64	    ; Confronto edx < 64 ?
+    jl for_16    ; Se edx è strettamente minore di 64, gestisco il residuo
+
+		;Loop Unrolling 1: 4 valori
+    movaps [eax], xmm0    ; assegno il valore ai primi 4 elementi di array
+    movaps [eax+16], xmm0    ; assegno il valore ai secondi 4 elementi di array
+    movaps [eax+32], xmm0    ; assegno il valore ai primi 4 elementi di array
+    movaps [eax+48], xmm0    ; assegno il valore ai primi 4 elementi di array
+
+    movaps [eax+64], xmm0    ; assegno il valore ai primi 4 elementi di array
+    movaps [eax+80], xmm0    ; assegno il valore ai secondi 4 elementi di array
+    movaps [eax+96], xmm0    ; assegno il valore ai primi 4 elementi di array
+    movaps [eax+112], xmm0    ; assegno il valore ai primi 4 elementi di array
+
+    movaps [eax+128], xmm0    ; assegno il valore ai primi 4 elementi di array
+    movaps [eax+144], xmm0    ; assegno il valore ai secondi 4 elementi di array
+    movaps [eax+160], xmm0    ; assegno il valore ai primi 4 elementi di array
+    movaps [eax+176], xmm0    ; assegno il valore ai primi 4 elementi di array
+
+    movaps [eax+192], xmm0    ; assegno il valore ai primi 4 elementi di array
+    movaps [eax+208], xmm0    ; assegno il valore ai secondi 4 elementi di array
+    movaps [eax+224], xmm0    ; assegno il valore ai primi 4 elementi di array
+    movaps [eax+240], xmm0    ; assegno il valore ai primi 4 elementi di array
+
+    sub edx, 64      ;sottraggo i 16 elementi già presi
+    add eax, 256     ;mi sposto di 16 elementi (64 posizioni)
+
+    jmp for_64      ;salto incondizionato
+
 
 for_16:
     cmp edx, 16	    ; Confronto edx < 16 ?

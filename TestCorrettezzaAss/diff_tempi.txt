@@ -1,0 +1,33 @@
+Differenze stampe tra assembly e c
+65c65
+< Indexing time = 8.302 secs
+---
+> Indexing time = 34.179 secs
+2072c2072
+< Searching time = 0.439 secs
+---
+> Searching time = 0.598 secs
+42c42
+< 8.299
+---
+> 34.417
+2048c2048
+< 1.117
+---
+> 1.303
+23c23
+< 0.329
+---
+> 1.420
+2029c2029
+< 1.025
+---
+> 3.506
+23c23
+< 0.335
+---
+> 1.431
+2029c2029
+< 1.503
+---
+> 4.099
