@@ -15,15 +15,15 @@
 //Parametri ottenuti in input
 params *input;
 
-/*
+
 //_____________________Funzioni esterne scritte in assembly_____________________
-extern float distance(VECTOR x1, VECTOR x2, int d);
-extern VECTOR residual(VECTOR x,VECTOR centroid,int d);
-extern float objective_function(int n,int m, MATRIX distances_from_centroids);
-extern void memset_float(float* array, float val, int dim );
-extern void accumulate(MATRIX dest, MATRIX source, int dim);
-extern void divide( MATRIX dest, MATRIX dividendo, float divisore, int dim);
-*/
+//extern float distance(VECTOR x1, VECTOR x2, int d);
+extern void test_residual(VECTOR res, VECTOR x,VECTOR centroid,int d);
+extern float test_objective(int n,int m, MATRIX distances_from_centroids);
+//extern void memset_float(float* array, float val, int dim );
+//extern void accumulate(MATRIX dest, MATRIX source, int dim);
+//extern void divide( MATRIX dest, MATRIX dividendo, float divisore, int dim);
+
 
 //------------------------------------METODI------------------------------------
 
@@ -283,17 +283,17 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
 	points_of_centroid(n, d, k, ds, m, centroids, centroid_of_point, distances_from_centroids);
 //  printf("\nIndici del vettore 'centroids' indicante i centroidi più vicini al punto per sottogruppi\n");
 //  print_matrix_int(n,m, k, centroid_of_point, 'p');
-  printf("\nDistanza AL QUADRATO del centroide più vicino ai punti per sottogruppi\n");
-  print_matrix(n,m, k, distances_from_centroids, 'p');
+//  printf("\nDistanza AL QUADRATO del centroide più vicino ai punti per sottogruppi\n");
+//  print_matrix(n,m, k, distances_from_centroids, 'p');
 
 
 	//Verifica l'ottimalità dei Punti
 	//COSTO: n
 	float obiettivo = objective_function(n,m, distances_from_centroids);
-//  float obiettivoAss = test_objective(n,m, distances_from_centroids);
+  float obiettivoAss = test_objective(n,m, distances_from_centroids);
 	float obiettivoPrev = FLT_MAX;
-//  printf("Funzione obiettivo C       : %lf\n", obiettivo );
-//  printf("Funzione obiettivo Assembly: %lf\n\n", obiettivoAss );
+    printf("Funzione obiettivo C       : %lf\n", obiettivo );
+  printf("Funzione obiettivo Assembly: %lf\n\n", obiettivoAss );
 
   int tmin = input->tmin;
   int tmax = input->tmax;
@@ -316,17 +316,17 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m,
     points_of_centroid(n, d, k, ds, m, centroids, centroid_of_point, distances_from_centroids);
 //    printf("\nIndici del vettore 'centroids' indicante i centroidi più vicini al punto per sottogruppi\n");
 //    print_matrix_int(n,m, k, centroid_of_point, 'p');
-    printf("\nDistanza AL QUADRATO del centroide più vicino ai punti per sottogruppi\n");
-    print_matrix(n,m, k, distances_from_centroids, 'p');
+//    printf("\nDistanza AL QUADRATO del centroide più vicino ai punti per sottogruppi\n");
+//    print_matrix(n,m, k, distances_from_centroids, 'p');
 
 		//Verifica l'ottimalità dei Punti
 		//COSTO: n
 		obiettivoPrev = obiettivo;
     obiettivo = objective_function(n,m, distances_from_centroids);
-//    obiettivoAss = test_objective(n,m, distances_from_centroids);
+    obiettivoAss = test_objective(n,m, distances_from_centroids);
 		iter++;
-//    printf("Funzione obiettivo C       : %lf\n", obiettivo );
-//    printf("Funzione obiettivo Assembly: %lf\n\n", obiettivoAss );
+    printf("Funzione obiettivo C       : %lf\n", obiettivo );
+    printf("Funzione obiettivo Assembly: %lf\n\n", obiettivoAss );
 
 /*    printf("Obiettivo vecchio: %14.2f\nObiettivo corrent: %14.2f\n", obiettivoPrev, obiettivo);
 		printf("Variazione obiett: %14.2f\n", (obiettivoPrev - obiettivo) );
@@ -591,7 +591,7 @@ void testIndex(params* input2){
   print_quantizer(input->m, q);
 
   */
-/*
+
 //---------------------------Test Assembly---------------------------
   VECTOR x = alloc_matrix(1, 37);
   VECTOR y = alloc_matrix(1, 37);
@@ -604,21 +604,22 @@ void testIndex(params* input2){
 //  print_matrix(1, 47, 1, x, 'p');
 //  printf("Vettore Y       : \n");
 //  print_matrix(1, 47, 1, y, 'p');
-
+/*
   for( int i=1; i<47; i++){
     printf("Distanza Assembly: %f\n", distance64(x, y, i) );
     printf("Distanza C       : %f\n\n", distance(x, y, i) );
     if( distance64(x, y, i) !=  distance(x, y, i) ) printf("ERRORE\n");
    }
-/*
-   VECTOR res = residual(x, y, 23);
-   printf("Residual C       : \n");
-   print_matrix(1, 23, 1, res, 'p');
-
-   VECTOR res2 = test_residual(x, y, 23);
-   printf("Residual Assembly: \n");
-   print_matrix(1, 23, 1, res2, 'p');
 */
+   VECTOR res = residual(x, y, 37);
+   printf("Residual C       : \n");
+   print_matrix(1, 37, 1, res, 'p');
+
+   VECTOR res2 = alloc_matrix(1, 37);
+   test_residual(res2, x, y, 37);
+   printf("Residual Assembly: \n");
+   print_matrix(1, 37, 1, res2, 'p');
+
 /*
   MATRIX tmp = alloc_matrix(1,47);
   memset(tmp, 0, 47*sizeof(float));
@@ -644,7 +645,7 @@ void testIndex(params* input2){
 */
 
 
-
+/*
 //---------------------------Test completo---------------------------
 //_______________________Setting parametri input_____________________
   int n = input->n;
