@@ -103,7 +103,7 @@ float objective_function(int n,int m, MATRIX distances_from_centroids){
       sum += distances_from_centroids[i];
     }
 */
-		return sum;
+		return sqrt(sum);
 
 
 		// Controllare se corretto -> sembra di si
