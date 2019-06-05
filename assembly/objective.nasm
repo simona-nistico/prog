@@ -8,7 +8,7 @@ section .text			; Sezione contenente il codice macchina
 
 ;________________________Funzione________________________
 ;float objective_function(int n,int m, MATRIX distances_from_centroids)
-global objective_function2      ; rende la funzione visibile all’esterno
+global objective_function      ; rende la funzione visibile all’esterno
 
 ; Posizione dei parametri nel Recordi di Attivazione della funzione
 ; (i primi 8 bytes sono occupati dall’indirizzo di ritorno e da EBP)
@@ -16,7 +16,7 @@ n     equ   8     ; intero a 32 bit rappresenta il numero di punti
 m   	equ   12    ; intero a 32 bit rappresenta il numero di gruppi
 dist  equ   16    ; puntatore a distances_from_centroids
 
-objective_function2:
+objective_function:
 ;------------------salva i parametri base------------------
     push    ebp       ; salva il Base Pointer
     mov     ebp, esp  ; il Base Pointer punta al Record di Attivazione corrente
@@ -75,6 +75,7 @@ end:
     haddps xmm0, xmm0     ;sommo i primi due valori del registro
     haddps xmm0, xmm0     ;sommo i secondi due valori del registro
 
+    sqrtps xmm0, xmm0     ;radice quadrata della funzione obiettivo
     sub esp, 4            ;sposo nel registro in cima allo stack FPU il risultato
     movss [esp], xmm0     ;al fine di prenderlo da c
     fld dword [esp]

@@ -6,9 +6,9 @@ section .text			; Sezione contenente il codice macchina
 
 ;TESTATA
 
-global distance64
+global distance
 
-distance64:
+distance:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------

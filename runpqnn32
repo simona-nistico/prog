@@ -1,14 +1,18 @@
-#nasm -f elf32 -l test_as.nasm pqnn32.nasm
 nasm -f elf32 pqnn32.nasm
+
 for file in $(ls ./assembly | grep .nasm); do
-    nasm -f elf32 ./assembly/$file
+    nasm -f elf ./assembly/$file
 done
-gcc -O0 -m32 -msse pqnn32.o assembly/*.o pqnn32c.c -o pqnn32c -lm
-#gcc -O0 -m32 -msse pqnn32.o test_as.o pqnn32c.c -o pqnn32c -lm
+
+sed -i '1s/.*/#include "pqnn32c.c"/' algorithm.c
+
+a[0]="assembly/accumulate.o"
+a[1]="assembly/distance.o"
+#a[2]="assembly/divide.o"
+a[3]="assembly/memset_float.o"
+a[4]="assembly/objective.o"
+a[5]="assembly/residual.o"
+
+gcc -O0 -m32 -msse pqnn32.o ${a[*]} algorithm.c -o pqnn32c -lm
+
 ./pqnn32c $1 $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12 $13 $14 $15 $16 $17 $18 $19 $20 $21 $22 $23 $24 $25 $26 $27 $28 $29 $30
-
-#inserita la compilazione del file testindex.c e datatypes.c, anzi tolta
-#Inserito comando -lm per  linkare la libreria math.h
-
-#Gestita la compilazione di tutti i file assembly in una volta e
-#Linkati al file di c
