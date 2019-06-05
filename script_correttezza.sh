@@ -1,12 +1,12 @@
-nasm -f elf32 pqnn32.nasm
+#nasm -f elf32 pqnn32.nasm
 
-for file in $(ls ./assembly | grep .nasm); do
-  nasm -f elf32 ./assembly/$file
-done
+#for file in $(ls ./assembly | grep .nasm); do
+#  nasm -f elf32 ./assembly/$file
+#done
 
-gcc -O0 -m32 -msse pqnn32.o assembly/*.o pqnn32c.c -o pqnn32c -lm
+#gcc -O0 -m32 -msse pqnn32.o assembly/*.o pqnn32c.c -o pqnn32c -lm
 
-v="Ass_noDist_Divide"
+v="risultati_Assembly"
 
 ./pqnn32c prova -exaustive -adc -knn 4 > "./TestCorrettezzaAss/test_Ex_noSim_$v.txt"
 ./pqnn32c prova -s -exaustive -sdc 4 > "./TestCorrettezzaAss/test_Ex_Sim_$v.txt"

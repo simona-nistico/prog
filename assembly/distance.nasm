@@ -4,7 +4,9 @@ section .bss			; Sezione contenente dati non inizializzati
 
 section .text			; Sezione contenente il codice macchina
 
-;TESTATO
+
+;Loop Unrolling 64, 16, 4, 1
+;TESTATA
 
 ;________________________Funzione________________________
 ;float test_distance(VECTOR x1, VECTOR x2, int d);
@@ -32,6 +34,145 @@ distance:
     mov     edx, [ebp+d]    ;in edx ho la lunghezza dei vettori
 
     xorps xmm2, xmm2          ;azzero xmm2 dove terrò la somma
+
+for_64:
+    cmp edx, 64	    ; Confronto edx < 64 ?
+    jl for_16    ; Se edx è strettamente minore di 64, gestisco il residuo
+
+		;Loop Unrolling 1: 4 valori
+    movaps xmm0, [eax]    ; in xmm0 metto i primi 4 valori di x1
+    movaps xmm1, [ecx]    ; in xmm1 metto i primi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+		;Loop Unrolling 2: 4 valori
+    movaps xmm0, [eax+16]    ; in xmm0 metto i secondi 4 valori di x1
+    movaps xmm1, [ecx+16]    ; in xmm1 metto i secondi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+		;Loop Unrolling 3: 4 valori
+		movaps xmm0, [eax+32]    ; in xmm0 metto i primi 4 valori di x1
+    movaps xmm1, [ecx+32]    ; in xmm1 metto i primi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+		;Loop Unrolling 4: 4 valori
+    movaps xmm0, [eax+48]    ; in xmm0 metto i secondi 4 valori di x1
+    movaps xmm1, [ecx+48]    ; in xmm1 metto i secondi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+    ;Loop Unrolling 5: 4 valori
+    movaps xmm0, [eax+64]    ; in xmm0 metto i primi 4 valori di x1
+    movaps xmm1, [ecx+64]    ; in xmm1 metto i primi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+    ;Loop Unrolling 6: 4 valori
+    movaps xmm0, [eax+80]    ; in xmm0 metto i secondi 4 valori di x1
+    movaps xmm1, [ecx+80]    ; in xmm1 metto i secondi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+    ;Loop Unrolling 7: 4 valori
+    movaps xmm0, [eax+96]    ; in xmm0 metto i primi 4 valori di x1
+    movaps xmm1, [ecx+96]    ; in xmm1 metto i primi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+    ;Loop Unrolling 8: 4 valori
+    movaps xmm0, [eax+112]    ; in xmm0 metto i secondi 4 valori di x1
+    movaps xmm1, [ecx+112]    ; in xmm1 metto i secondi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+    ;Loop Unrolling 9: 4 valori
+    movaps xmm0, [eax+128]    ; in xmm0 metto i primi 4 valori di x1
+    movaps xmm1, [ecx+128]    ; in xmm1 metto i primi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+    ;Loop Unrolling 10: 4 valori
+    movaps xmm0, [eax+144]    ; in xmm0 metto i secondi 4 valori di x1
+    movaps xmm1, [ecx+144]    ; in xmm1 metto i secondi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+    ;Loop Unrolling 11: 4 valori
+    movaps xmm0, [eax+160]    ; in xmm0 metto i primi 4 valori di x1
+    movaps xmm1, [ecx+160]    ; in xmm1 metto i primi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+    ;Loop Unrolling 12: 4 valori
+    movaps xmm0, [eax+176]    ; in xmm0 metto i secondi 4 valori di x1
+    movaps xmm1, [ecx+176]    ; in xmm1 metto i secondi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+    ;Loop Unrolling 13: 4 valori
+    movaps xmm0, [eax+192]    ; in xmm0 metto i primi 4 valori di x1
+    movaps xmm1, [ecx+192]    ; in xmm1 metto i primi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+    ;Loop Unrolling 14: 4 valori
+    movaps xmm0, [eax+208]    ; in xmm0 metto i secondi 4 valori di x1
+    movaps xmm1, [ecx+208]    ; in xmm1 metto i secondi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+    ;Loop Unrolling 15: 4 valori
+    movaps xmm0, [eax+224]    ; in xmm0 metto i primi 4 valori di x1
+    movaps xmm1, [ecx+224]    ; in xmm1 metto i primi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+    ;Loop Unrolling 16: 4 valori
+    movaps xmm0, [eax+240]    ; in xmm0 metto i secondi 4 valori di x1
+    movaps xmm1, [ecx+240]    ; in xmm1 metto i secondi 4 valori di x2
+
+    subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+    mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+    addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+
+
+    sub edx, 64      ;sottraggo i 16 elementi già presi
+    add eax, 256     ;mi sposto di 16 elementi (64 posizioni)
+    add ecx, 256
+
+	  jmp for_64      ; Salto incondizionato
 
 for_16:
     cmp edx, 16	    ; Confronto edx < 16 ?

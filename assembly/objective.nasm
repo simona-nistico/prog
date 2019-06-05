@@ -4,7 +4,8 @@ section .bss			; Sezione contenente dati non inizializzati
 
 section .text			; Sezione contenente il codice macchina
 
-
+;Loop Unrolling 64, 16, 4, 1
+;TESTATA
 
 ;________________________Funzione________________________
 ;float objective_function(int n,int m, MATRIX distances_from_centroids)
@@ -36,18 +37,47 @@ objective_function:
 
 		imul ebx, ecx		;ebx = n*m cioè num_punti*num_gruppi
 
-
-for_8:
-    cmp ebx, 8	    ; Confronto n*m < 8 ?
-    jl for_4    ; Se edx è strettamente minore di 8, gestisco il residuo
+for_64:
+    cmp ebx, 64	    ; Confronto n*m < 64 ?
+    jl for_16    ; Se edx è strettamente minore di 64, gestisco il residuo
 
 		addps xmm0, [edx]		  ;sum += distances_from_centroids 0...4
 		addps xmm0, [edx+16]
+    addps xmm0, [edx+32]
+		addps xmm0, [edx+48]
+    addps xmm0, [edx+64]
+		addps xmm0, [edx+80]
+    addps xmm0, [edx+96]
+		addps xmm0, [edx+112]
+    addps xmm0, [edx+128]
+		addps xmm0, [edx+144]
+    addps xmm0, [edx+160]
+		addps xmm0, [edx+176]
+    addps xmm0, [edx+192]
+		addps xmm0, [edx+208]
+    addps xmm0, [edx+224]
+		addps xmm0, [edx+240]
 
-    sub ebx, 8      ;sottraggo i 8 elementi già presi
-    add edx, 32     ;mi sposto di 8 elementi (32 posizioni)
+    sub ebx, 64      ;sottraggo i 64 elementi già presi
+    add edx, 256     ;mi sposto di 64 elementi
 
-	  jmp for_8       ; Se edx è più grande o uguale a 8, salto al for
+	  jmp for_64       ; Se edx è più grande o uguale a 8, salto al for
+
+
+
+for_16:
+    cmp ebx, 16	    ; Confronto n*m < 16 ?
+    jl for_4    ; Se edx è strettamente minore di 16, gestisco il residuo
+
+		addps xmm0, [edx]		  ;sum += distances_from_centroids 0...4
+		addps xmm0, [edx+16]
+    addps xmm0, [edx+32]
+		addps xmm0, [edx+48]
+
+    sub ebx, 16      ;sottraggo i 8 elementi già presi
+    add edx, 64     ;mi sposto di 8 elementi (32 posizioni)
+
+	  jmp for_16       ; Se edx è più grande o uguale a 8, salto al for
 
 for_4:
     cmp ebx, 4	    ; Confronto n*m < 4 ? salta al residuo

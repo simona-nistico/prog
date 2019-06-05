@@ -4,6 +4,7 @@ section .bss			; Sezione contenente dati non inizializzati
 
 section .text			; Sezione contenente il codice macchina
 
+;Loop Unrolling 64, 16, 4, 1
 ;TESTATA
 
 ;________________________Funzione________________________
@@ -34,6 +35,97 @@ divide:
 
     movss  xmm1, [ebp+den]  ;prendo nella parte bassa il valore da dividere
     shufps xmm1, xmm1, 0x0  ;copio tale valore dappertutto
+
+for_64:
+    cmp edx, 64	    ; Confronto edx < 64 ?
+    jl for_16     ; Se edx è strettamente minore di 16, gestisco il residuo
+
+		;Loop Unrolling 1: 4 valori
+    movaps xmm0, [ebx]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1      ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+		;Loop Unrolling 2: 4 valori
+    movaps xmm0, [ebx+16]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1         ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+16], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+		;Loop Unrolling 3: 4 valori
+    movaps xmm0, [ebx+32]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1         ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+32], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+		;Loop Unrolling 4: 4 valori
+    movaps xmm0, [ebx+48]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1         ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+48], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+    ;Loop Unrolling 5: 4 valori
+    movaps xmm0, [ebx+64]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1      ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+64], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+    ;Loop Unrolling 6: 4 valori
+    movaps xmm0, [ebx+80]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1         ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+80], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+    ;Loop Unrolling 7: 4 valori
+    movaps xmm0, [ebx+96]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1         ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+96], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+    ;Loop Unrolling 8: 4 valori
+    movaps xmm0, [ebx+112]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1         ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+112], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+    ;Loop Unrolling 9: 4 valori
+    movaps xmm0, [ebx+128]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1      ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+128], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+    ;Loop Unrolling 10: 4 valori
+    movaps xmm0, [ebx+144]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1         ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+144], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+    ;Loop Unrolling 11: 4 valori
+    movaps xmm0, [ebx+160]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1         ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+160], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+    ;Loop Unrolling 12: 4 valori
+    movaps xmm0, [ebx+176]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1         ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+176], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+    ;Loop Unrolling 13: 4 valori
+    movaps xmm0, [ebx+192]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1      ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+192], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+    ;Loop Unrolling 14: 4 valori
+    movaps xmm0, [ebx+208]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1         ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+208], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+    ;Loop Unrolling 15: 4 valori
+    movaps xmm0, [ebx+224]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1         ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+224], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+    ;Loop Unrolling 16: 4 valori
+    movaps xmm0, [ebx+240]    ; xmm0 = tmp[i*d_star]
+    divps xmm0, xmm1         ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+    movaps [eax+240], xmm0    ; centroids[(i+g*k)*d_star] = xmm0
+
+    sub edx, 64      ;sottraggo i 64 elementi già presi
+    add eax, 256     ;mi sposto di 64 elementi
+    add ebx, 256
+
+	  jmp for_64      ; Salto incondizionato
+
 
 for_16:
     cmp edx, 16	    ; Confronto edx < 16 ?

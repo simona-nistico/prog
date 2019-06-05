@@ -1,4 +1,4 @@
-#include "pqnn64c.c"
+#include "pqnn32c.c"
 //La riga sopra viene cambiata in automatico a seconda del run che si lancia
 #include "utils.h"
 
@@ -128,8 +128,9 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m, MATRIX centroids, i
 					divide(&centroids[(i+g*k)*d_star], &tmp[i*d_star], cont[i], d_star);
 					memset(&tmp[i*d_star], 0, d_star*sizeof(float));
 					cont[i] = 0;
-        } else
-					printf("\n######## Nessun punto appartiene al centroide #########");
+        }
+//        else
+//					printf("\n######## Nessun punto appartiene al centroide #########");
 
 			}// for tutti i centroidi
 
@@ -250,7 +251,7 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, MATRI
 	//COSTO: n
 	float obiettivo = objective_function(n,m, distances_from_centroids);
 	float obiettivoPrev = FLT_MAX;
-  printf("Funzione obiettivo C       : %lf\n", obiettivo );
+//  printf("Funzione obiettivo: %lf\n", obiettivo );
 
 //Per la formula della terminazione il prof deve aggiornare le specifiche di progetto sul sito
 //	while( ( (obiettivoPrev - obiettivo ) > eps || iter<=tmin) && iter<=tmax) {
@@ -277,7 +278,7 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, MATRI
 		obiettivoPrev = obiettivo;
     obiettivo = objective_function(n,m, distances_from_centroids);
 		iter++;
-    printf("Funzione obiettivo C       : %lf\n", obiettivo );
+//    printf("Funzione obiettivo: %lf\n", obiettivo );
 
 //    printf("Obiettivo vecchio: %14.2f\nObiettivo corrent: %14.2f\n", obiettivoPrev, obiettivo);
 //		printf("Variazione obiett: %14.2f\n", (obiettivoPrev - obiettivo) );
@@ -867,7 +868,7 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 
 void searching(params* input){
 
-  printf("Chiamata a Search\n" );
+  printf("________________Chiamata a Search________________\n" );
 	if(input->exaustive==1){
 		calNearExt(input->n, input->d, input->k, input->m, input->knn, input->nq, input->qs,
 							input->ANN, input->centroid_of_point, input->distances_between_centroids,
@@ -879,4 +880,5 @@ void searching(params* input){
       input->knn, input->m, input->nq, input->symmetric);
 	}
 
+  print_matrix_int(input->nq, input->knn, input->knn, input->ANN,'p');
 }
