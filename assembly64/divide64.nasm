@@ -47,6 +47,99 @@ divide64:
 		mov rax, rdi
 	        mov rbx, rsi
 
+	  for_128:
+
+	        cmp rdx, 128	       ; Confronto n*m < 8 ?
+                jl for_64               ; Se edx è strettamente minore di 8, gestisco il residuo
+
+
+                ;Loop Unrolling 1: 8 valori
+		vmovaps ymm1,[rbx]      ; copio i primi 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0       ; aggiungo a ymm0 i primi 8 valori di source
+		vmovaps [rax],ymm1      ; ricopio la somma dei primi 8 valori di dest e source in dest
+
+                ;Loop Unrolling 2: 8 valori
+		vmovaps ymm1,[rbx+32]      ; copio i secondi 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0      ; aggiungo a ymm0 i secondi 8 valori di source
+		vmovaps [rax+32],ymm1      ; ricopio la somma dei secondi 8 valori di dest e source in dest
+
+                ;Loop Unrolling 3: 8 valori
+		vmovaps ymm1,[rbx+64]      ; copio i terzi 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0          ; aggiungo a ymm0 i terzi 8 valori di source
+		vmovaps [rax+64],ymm1      ; ricopio la somma dei terzi 8 valori di dest e source in dest
+
+                ;Loop Unrolling 4: 8 valori
+		vmovaps ymm1,[rbx+96]      ; copio i quarti 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0          ; aggiungo a ymm0 i quarti 8 valori di source
+		vmovaps [rax+96],ymm1      ; ricopio la somma dei quarti 8 valori di dest e source in dest
+
+                ;Loop Unrolling 5: 8 valori
+		vmovaps ymm1,[rbx+128]      ; copio i quinti 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0       ; aggiungo a ymm0 i quinti 8 valori di source
+		vmovaps [rax+128],ymm1      ; ricopio la somma dei quinti 8 valori di dest e source in dest
+
+                ;Loop Unrolling 6: 8 valori
+		vmovaps ymm1,[rbx+160]      ; copio i sesti 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0      ; aggiungo a ymm0 i sesti 8 valori di source
+		vmovaps [rax+160],ymm1      ; ricopio la somma dei sesti 8 valori di dest e source in dest
+
+                ;Loop Unrolling 7: 8 valori
+		vmovaps ymm1,[rbx+192]      ; copio i settimi 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0          ; aggiungo a ymm0 i settimi 8 valori di source
+		vmovaps [rax+192],ymm1      ; ricopio la somma dei settimi 8 valori di dest e source in dest
+
+                ;Loop Unrolling 8: 8 valori
+		vmovaps ymm1,[rbx+224]      ; copio i ottavi 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0          ; aggiungo a ymm0 gli ottavi 8 valori di source
+		vmovaps [rax+224],ymm1      ; ricopio la somma degli ottavi 8 valori di dest e source in dest
+
+                ;Loop Unrolling 1: 8 valori
+		vmovaps ymm1,[rbx+256]      ; copio i primi 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0       ; aggiungo a ymm0 i primi 8 valori di source
+		vmovaps [rax+256],ymm1      ; ricopio la somma dei primi 8 valori di dest e source in dest
+
+                ;Loop Unrolling 2: 8 valori
+		vmovaps ymm1,[rbx+288]      ; copio i secondi 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0      ; aggiungo a ymm0 i secondi 8 valori di source
+		vmovaps [rax+288],ymm1      ; ricopio la somma dei secondi 8 valori di dest e source in dest
+
+                ;Loop Unrolling 3: 8 valori
+		vmovaps ymm1,[rbx+320]      ; copio i terzi 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0          ; aggiungo a ymm0 i terzi 8 valori di source
+		vmovaps [rax+320],ymm1      ; ricopio la somma dei terzi 8 valori di dest e source in dest
+
+                ;Loop Unrolling 4: 8 valori
+		vmovaps ymm1,[rbx+352]      ; copio i quarti 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0          ; aggiungo a ymm0 i quarti 8 valori di source
+		vmovaps [rax+352],ymm1      ; ricopio la somma dei quarti 8 valori di dest e source in dest
+
+                ;Loop Unrolling 5: 8 valori
+		vmovaps ymm1,[rbx+384]      ; copio i quinti 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0       ; aggiungo a ymm0 i quinti 8 valori di source
+		vmovaps [rax+384],ymm1      ; ricopio la somma dei quinti 8 valori di dest e source in dest
+
+                ;Loop Unrolling 6: 8 valori
+		vmovaps ymm1,[rbx+416]      ; copio i sesti 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0      ; aggiungo a ymm0 i sesti 8 valori di source
+		vmovaps [rax+416],ymm1      ; ricopio la somma dei sesti 8 valori di dest e source in dest
+
+                ;Loop Unrolling 7: 8 valori
+		vmovaps ymm1,[rbx+448]      ; copio i settimi 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0          ; aggiungo a ymm0 i settimi 8 valori di source
+		vmovaps [rax+448],ymm1      ; ricopio la somma dei settimi 8 valori di dest e source in dest
+
+                ;Loop Unrolling 8: 8 valori
+		vmovaps ymm1,[rbx+480]      ; copio i ottavi 8 valori di dest in ymm0
+		vdivps  ymm1,ymm0          ; aggiungo a ymm0 gli ottavi 8 valori di source
+		vmovaps [rax+480],ymm1      ; ricopio la somma degli ottavi 8 valori di dest e source in dest
+
+
+  	        sub rdx, 128            ;sottraggo i 128 elementi già presi
+    		add rax, 512           ;mi sposto di 128 elementi (512 posizioni)
+		add rbx, 512           ;mi sposto di 128 elementi (512 posizioni)
+
+		jmp for_128
+
 	  for_64:
 
 	        cmp rdx, 64	       ; Confronto n*m < 8 ?
@@ -145,8 +238,8 @@ divide64:
   	        vdivps ymm1, ymm0       ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
   	        vmovaps [rax+32], ymm1     ; centroids[(i+g*k)*d_star] = xmm0
 
-   	        sub rdx, 16             ;sottraggo i 4 elementi già presi
- 	        add rax, 64            ;mi sposto di 4 elementi (16 posizioni)
+   	        sub rdx, 16             ;sottraggo i 16 elementi già presi
+ 	        add rax, 64            ;mi sposto di 16 elementi (64 posizioni)
                 add rbx, 64
 
 		jmp for_16    ; salto incondizionato tanto la condizione la vedo dopo
@@ -159,8 +252,8 @@ divide64:
   	        vdivps ymm1, ymm0       ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
   	        vmovaps [rax], ymm1     ; centroids[(i+g*k)*d_star] = xmm0
 
-   	        sub rdx, 8             ;sottraggo i 4 elementi già presi
- 	        add rax, 32            ;mi sposto di 4 elementi (16 posizioni)
+   	        sub rdx, 8             ;sottraggo i 8 elementi già presi
+ 	        add rax, 32            ;mi sposto di 8 elementi (32 posizioni)
                 add rbx, 32
 
 		jmp for_8    ; salto incondizionato tanto la condizione la vedo dopo
