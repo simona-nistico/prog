@@ -75,6 +75,7 @@ end:
     haddps xmm0, xmm0     ;sommo i primi due valori del registro
     haddps xmm0, xmm0     ;sommo i secondi due valori del registro
 
+    sqrtps xmm0, xmm0     ;radice quadrata della funzione obiettivo
     sub esp, 4            ;sposo nel registro in cima allo stack FPU il risultato
     movss [esp], xmm0     ;al fine di prenderlo da c
     fld dword [esp]
