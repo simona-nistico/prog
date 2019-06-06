@@ -196,14 +196,14 @@ MATRIX load_data(char* filename, int *n, int *d) {
 	status = fread(&rows, sizeof(int), 1, fp);
 
 	MATRIX data = alloc_matrix(rows,cols);
-	status = fread(data, sizeof(double), rows*cols, fp);
+	status = fread(data, sizeof(float), rows*cols, fp);
 	fclose(fp);
 
 	*n = rows;
 	*d = cols;
 
 //----------Stampa tutti i punti-----------
-	//print_matrix(rows, cols, data);
+//	print_matrix(rows, cols, data);
 
 	return data;
 }

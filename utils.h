@@ -6,7 +6,8 @@
 
 
 //_____________________Funzioni esterne scritte in assembly_____________________
-extern void accumulate( MATRIX dest, MATRIX orig, int dim);
+//extern void accumulate( MATRIX dest, MATRIX orig, int dim);
+
 extern float distance(VECTOR x1,VECTOR x2,int d);
 extern void divide( MATRIX dest, MATRIX dividendo, float divisore, int dim);
 extern void memset_float( MATRIX data, float val, int dim);
@@ -21,7 +22,7 @@ extern void residual(VECTOR res,VECTOR x,VECTOR centroid,int d);
   * n =  numero di punti del data set
   * TODO: parallelizzare la somma in assembly
   */
-	/*
+/*
 float objective_function(int n,int m, MATRIX distances_from_centroids){
 	  float sum = 0;
     int i=0;
@@ -125,7 +126,7 @@ void print_matrix(int rows, int cols, int k, MATRIX data, char c){
 			if( i%k == 0) printf("Gruppo %d\n", i/k);
     	printf("Centroide n %d:\t", i%k);
 		}//else if( c=='p')
-			//printf("Punto n %d:\t", i);
+			printf("Punto n %d:\t", i);
 
     for (int j = 0; j < cols; j++)
       printf("%8.2f\t", data[i*cols+j] );

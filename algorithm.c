@@ -251,7 +251,7 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, MATRI
 	//COSTO: n
 	float obiettivo = objective_function(n,m, distances_from_centroids);
 	float obiettivoPrev = FLT_MAX;
-//  printf("Funzione obiettivo: %lf\n", obiettivo );
+  printf("Funzione obiettivo: %lf\n", obiettivo );
 
 //Per la formula della terminazione il prof deve aggiornare le specifiche di progetto sul sito
 //	while( ( (obiettivoPrev - obiettivo ) > eps || iter<=tmin) && iter<=tmax) {
@@ -278,7 +278,7 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, MATRI
 		obiettivoPrev = obiettivo;
     obiettivo = objective_function(n,m, distances_from_centroids);
 		iter++;
-//    printf("Funzione obiettivo: %lf\n", obiettivo );
+    printf("Funzione obiettivo: %lf\n", obiettivo );
 
 //    printf("Obiettivo vecchio: %14.2f\nObiettivo corrent: %14.2f\n", obiettivoPrev, obiettivo);
 //		printf("Variazione obiett: %14.2f\n", (obiettivoPrev - obiettivo) );
@@ -480,7 +480,34 @@ void non_exhaustive_indexing(params* input){
 
 }
 
+void padding(params* input){
+  int n = input->n;
+  int d = input->d;
+  int m = input->m;
+  MATRIX ds = input->ds;
+  printf("DATASET BRUTTO\n" );
+
+  //Quante colonne devo aggiungere
+  int pad = (4 - ((d/m) % 4)  )*m;
+  printf("PAD %d\n", pad);
+
+  MATRIX ds2 = alloc_matrix(n, d+pad);
+  for( int i=0; i<n; i++){
+    memcpy( &ds2[ i*(d+pad) ], &ds[ i*d ], d*sizeof(float) );
+    memset( &ds2[ i*(d+pad)+d+1 ], 0, pad*sizeof(float) );
+  }
+
+  input->d = d+pad;
+  input->ds = ds2;
+}
+
 void indexing(params* input){
+  if( (input->d / input->m) % 4 != 0 )
+    padding(input);
+
+  //print_matrix(200, input->d, input->k, input->ds,'p');
+
+
   int d_star = input->d/input->m;
 
 	if(input->nr > input->n){
@@ -496,6 +523,9 @@ void indexing(params* input){
 	}
 
   printf("Esaustiva: %d, Simmetrica: %d\n", input->exaustive, input->symmetric);
+
+  //----------Stampa tutti i punti-----------
+//  print_matrix(input->n, input->d, input->k, input->qs,'p');
 
 
 //_______________________Starting Algorithms_____________________
