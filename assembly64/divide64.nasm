@@ -5,9 +5,9 @@ section .bss			; Sezione contenente dati non inizializzati
 
 section .text			; Sezione contenente il codice macchina
 
-global divide64
+global divide
 
-divide64:
+divide:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------
@@ -31,7 +31,7 @@ divide64:
 		;--------------------------------
 		;PARAMETRI
 		;--------------------------------
-		
+
 		;rdi (r6) = indirizzo di partenza dell'array dest
 		;rsi (r5) = indirizzo di partenza dell'array dividendo
 		;xmm0 = divisore
@@ -262,7 +262,7 @@ divide64:
 
    		cmp rdx, 4	    ; Confronto edx < 4 ? salta al residuo
 	        jl for_remain   ; Se mancano meno di 4 elementi vai alla gestione residuo
-  
+
    	        movaps xmm1, [rbx]    ; xmm0 = tmp[i*d_star]
    	        divps xmm1, xmm0      ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
   	        movaps [rax], xmm1    ; centroids[(i+g*k)*d_star] = xmm0
@@ -310,4 +310,3 @@ divide64:
 		mov	rsp, rbp	; ripristina lo Stack Pointer
 		pop	rbp		; ripristina il Base Pointer
 		ret			; torna alla funzione C chiamante
-

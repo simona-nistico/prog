@@ -4,9 +4,9 @@ section .bss			; Sezione contenente dati non inizializzati
 
 section .text			; Sezione contenente il codice macchina
 
-global residual64
+global residual
 
-   residual64:
+   residual:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------
@@ -28,7 +28,7 @@ global residual64
 		;--------------------------------
 		;PARAMETRI
 		;--------------------------------
-		
+
 		;rdi (r6) =  indirizzo di partenza dell'array res
 		;rsi (r5) =  indirizzo di partenza dell'array x
 		;rdx (r3) =  indirizzo di partenza dell'array centroid
@@ -38,7 +38,7 @@ global residual64
 		mov rbx,rsi		;rcx=indirizzo di partenza di x
 		mov rdi,rcx		;rdi= d
 		mov rcx,rdx		;indirizzo di partenza di centroid
-		
+
 
 	  for_128:
 
@@ -239,7 +239,7 @@ global residual64
 		sub rdi, 4             ;sottraggo i 4 elementi già presi
 		add rbx, 16            ;mi sposto di 4 elementi (16 posizioni)
 		add rcx, 16
-		add rax, 16	
+		add rax, 16
 
      for_remain:
 
@@ -266,7 +266,7 @@ global residual64
 
 		mov rax,rdx	    ;viene ripristinato in rax l'indirizzo di partenza del risultato
 
-		
+
                 ; ------------------------------------------------------------
 		; Sequenza di uscita dalla funzione
 		; ------------------------------------------------------------
@@ -287,6 +287,3 @@ global residual64
 		mov	rsp, rbp	; ripristina lo Stack Pointer
 		pop	rbp		; ripristina il Base Pointer
 		ret			; torna alla funzione C chiamante
-
-
-

@@ -6,9 +6,9 @@ section .text			; Sezione contenente il codice macchina
 
 ;TESTATA
 
-global distance64
+global distance
 
-distance64:
+distance:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------
@@ -187,7 +187,7 @@ distance64:
 		  jmp for_128   ; Se edx è più grande o uguale a 32, salto al for
 
 	   for_64:
-			
+
 		  cmp rdx, 64	    ; Confronto edx < 32 ?
   		  jl for_32      ; Se edx è strettamente minore di 32, gestisco il residuo
 

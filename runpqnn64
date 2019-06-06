@@ -8,7 +8,7 @@ sed -i '1s/.*/#include "pqnn64c.c"/' algorithm.c
 
 a[0]="assembly64/accumulate64.o"
 a[1]="assembly64/distance64.o"
-#a[2]="assembly64/divide64.o"
+a[2]="assembly64/divide64.o"
 a[3]="assembly64/memset_float64.o"
 a[4]="assembly64/objective64.o"
 a[5]="assembly64/residual64.o"

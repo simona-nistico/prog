@@ -5,9 +5,9 @@ section .bss			; Sezione contenente dati non inizializzati
 
 section .text			; Sezione contenente il codice macchina
 
-global memset_float64
+global memset_float
 
-memset_float64:
+memset_float:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------
@@ -31,7 +31,7 @@ memset_float64:
 		;--------------------------------
 		;PARAMETRI
 		;--------------------------------
-		
+
 		;rdi (r6) = array
 		;rsi (r5) = dim
 		;xmm0 = val
@@ -54,7 +54,7 @@ memset_float64:
 		vmovaps [rax+160], ymm0  ; copio nei sesti 8 valori dell'array il valore val
 		vmovaps [rax+192], ymm0  ; copio nei settimi 8 valori dell'array il valore val
 		vmovaps [rax+224], ymm0  ; copio nei ottavi 8 valori dell'array il valore val
-	
+
 		;ripeto
 
 		vmovaps [rax+256], ymm0     ; copio nei primi 8 valori dell'array il valore val
@@ -175,4 +175,3 @@ memset_float64:
 		mov	rsp, rbp	; ripristina lo Stack Pointer
 		pop	rbp		; ripristina il Base Pointer
 		ret			; torna alla funzione C chiamante
-

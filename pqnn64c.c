@@ -193,7 +193,7 @@ MATRIX load_data(char* filename, int *n, int *d) {
 	status = fread(&rows, sizeof(int), 1, fp);
 
 	MATRIX data = alloc_matrix(rows,cols);
-	status = fread(data, sizeof(double), rows*cols, fp);
+	status = fread(data, sizeof(float), rows*cols, fp);
 	fclose(fp);
 
 	*n = rows;
@@ -253,7 +253,7 @@ void pqnn_search(params* input) {
     // Codificare qui l'algoritmo di interrogazione
     // -------------------------------------------------
 
-//		searching(input);
+		searching(input);
 
 	// Restituisce il risultato come una matrice di nq * knn
 	// identificatori associati agli ANN approssimati delle nq query.

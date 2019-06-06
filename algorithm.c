@@ -482,9 +482,11 @@ void non_exhaustive_indexing(params* input){
 
 void padding(params* input){
   int n = input->n;
+  int nq = input->nq;
   int d = input->d;
   int m = input->m;
   MATRIX ds = input->ds;
+  MATRIX qs = input->qs;
   printf("DATASET BRUTTO\n" );
 
   //Quante colonne devo aggiungere
@@ -497,16 +499,23 @@ void padding(params* input){
     memset( &ds2[ i*(d+pad)+d+1 ], 0, pad*sizeof(float) );
   }
 
+  MATRIX qs2 = alloc_matrix(nq, d+pad);
+  for( int i=0; i<nq; i++){
+    memcpy( &qs2[ i*(d+pad) ], &qs[ i*d ], d*sizeof(float) );
+    memset( &qs2[ i*(d+pad)+d+1 ], 0, pad*sizeof(float) );
+  }
+
+
   input->d = d+pad;
   input->ds = ds2;
+  input->qs = qs2;
 }
 
 void indexing(params* input){
   if( (input->d / input->m) % 4 != 0 )
     padding(input);
 
-  //print_matrix(200, input->d, input->k, input->ds,'p');
-
+  //print_matrix(200, input->d, input->k, input->qs,'p');
 
   int d_star = input->d/input->m;
 
