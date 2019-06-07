@@ -485,28 +485,31 @@ void padding(params* input){
   int nq = input->nq;
   int d = input->d;
   int m = input->m;
+  int d_star = d/m;
   MATRIX ds = input->ds;
   MATRIX qs = input->qs;
   printf("DATASET BRUTTO\n" );
 
   //Quante colonne devo aggiungere
-  int pad = (4 - ((d/m) % 4)  )*m;
+  int pad = 4 - ((d_star) % 4) ;
   printf("PAD %d\n", pad);
 
-  MATRIX ds2 = alloc_matrix(n, d+pad);
-  for( int i=0; i<n; i++){
-    memcpy( &ds2[ i*(d+pad) ], &ds[ i*d ], d*sizeof(float) );
-    memset( &ds2[ i*(d+pad)+d+1 ], 0, pad*sizeof(float) );
-  }
-
-  MATRIX qs2 = alloc_matrix(nq, d+pad);
-  for( int i=0; i<nq; i++){
-    memcpy( &qs2[ i*(d+pad) ], &qs[ i*d ], d*sizeof(float) );
-    memset( &qs2[ i*(d+pad)+d+1 ], 0, pad*sizeof(float) );
-  }
+  MATRIX ds2 = alloc_matrix(n, d+pad*m);
+  for( int i=0; i<n; i++)
+    for( int g=0; g<m; g++){
+      memcpy( &ds2[ i*(d+pad*m)+g*(d_star+pad) ], &ds[ i*d+g*d_star ], d_star*sizeof(float) );
+      memset( &ds2[ i*(d+pad*m)+g*(d_star+pad)+d_star+1 ], 0, pad*sizeof(float) );
+    }
 
 
-  input->d = d+pad;
+  MATRIX qs2 = alloc_matrix(nq, d+pad*m);
+  for( int i=0; i<n; i++)
+    for( int g=0; g<m; g++){
+      memcpy( &qs2[ i*(d+pad*m)+g*(d_star+pad) ], &qs[ i*d+g*d_star ], d_star*sizeof(float) );
+      memset( &qs2[ i*(d+pad*m)+g*(d_star+pad)+d_star+1 ], 0, pad*sizeof(float) );
+    }
+
+  input->d = d+pad*m;
   input->ds = ds2;
   input->qs = qs2;
 }
@@ -515,7 +518,16 @@ void indexing(params* input){
   if( (input->d / input->m) % 4 != 0 )
     padding(input);
 
-  //print_matrix(200, input->d, input->k, input->qs,'p');
+/*movups noPad
+Indexing time = 57.416 secs
+Searching time = 41.961 secs
+
+movaps newPad
+Indexing time = 56.146 secs
+Searching time = 42.275 secs
+*/
+
+//  print_matrix(20, input->d, input->k, input->qs,'p');
 
   int d_star = input->d/input->m;
 
