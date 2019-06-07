@@ -605,7 +605,7 @@ void padding(params* input){
 
 
   MATRIX qs2 = alloc_matrix(nq, d+pad*m);
-  for( int i=0; i<n; i++)
+  for( int i=0; i<nq; i++)
     for( int g=0; g<m; g++){
       memcpy( &qs2[ i*(d+pad*m)+g*(d_star+pad) ], &qs[ i*d+g*d_star ], d_star*sizeof(float) );
       memset( &qs2[ i*(d+pad*m)+g*(d_star+pad)+d_star+1 ], 0, pad*sizeof(float) );
@@ -629,7 +629,7 @@ Indexing time = 56.146 secs
 Searching time = 42.275 secs
 */
 
-//  print_matrix(20, input->d, input->k, input->qs,'p');
+//  print_matrix(input->nq, input->d, input->k, input->qs,'p');
 
   int d_star = input->d/input->m;
 
@@ -992,5 +992,5 @@ void searching(params* input){
       input->knn, input->m, input->nq, input->symmetric);
 	}
 
-  //print_matrix_int(input->nq, input->knn, input->knn, input->ANN,'p');
+  print_matrix_int(input->nq, input->knn, input->knn, input->ANN,'p');
 }

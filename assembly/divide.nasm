@@ -36,6 +36,8 @@ divide:
     movss  xmm1, [ebp+den]  ;prendo nella parte bassa il valore da dividere
     shufps xmm1, xmm1, 0x0  ;copio tale valore dappertutto
 
+;    jmp for_remain
+
 for_64:
     cmp edx, 64	    ; Confronto edx < 64 ?
     jl for_16     ; Se edx è strettamente minore di 16, gestisco il residuo

@@ -55,7 +55,7 @@ Funzione obiettivo: 2251319040.000000
 ############################ ITERAZIONE 16 ############################
 Funzione obiettivo: 2251305984.000000
 ############################ ITERAZIONE 17 ############################
-Funzione obiettivo: 2251299584.000000
+Funzione obiettivo: 2251299840.000000
 ############################ ITERAZIONE 18 ############################
 Funzione obiettivo: 2251296256.000000
 ############################ ITERAZIONE 19 ############################
@@ -73,7 +73,7 @@ Funzione obiettivo: 2251283200.000000
 ############################ ITERAZIONE 25 ############################
 Funzione obiettivo: 2251283200.000000
 
-Indexing time = 407.445 secs
+Indexing time = 136.534 secs
 ________________Chiamata a Search________________
 Numero punti: 30000
 Dimensione di ogni punto: 4
@@ -30080,6 +30080,6 @@ Punto n 29999:	107	982	3215	14613
 
 
 
-Searching time = 63.402 secs
+Searching time = 47.942 secs
 
 Done.

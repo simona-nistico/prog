@@ -33,6 +33,8 @@ accumulate:
     mov     ecx, [ebp+src]  ;in ecx ho l'indirizzo di partenza di source
     mov     edx, [ebp+d]    ;in edx ho la lunghezza dei vettori
 
+;    jmp for_remain
+
 for_64:
     cmp edx, 64	    ; Confronto edx < 64 ?
     jl for_16     ; Se edx è strettamente minore di 64, gestisco il residuo
@@ -160,7 +162,8 @@ for_4:
 	  jl for_remain   ; Se mancano meno di 4 elementi vai alla gestione residuo
 
     movaps xmm0, [eax]    ; xmm0 = tmp[centroide*d_star]
-    addps xmm0, [ecx]     ; xmm0 = xmm0+[src]   ;tmp[centroide*d_star] += ds[i*d+(g*d_star)]
+    movaps xmm1, [ecx]
+    addps xmm0, xmm1     ; xmm0 = xmm0+[src]   ;tmp[centroide*d_star] += ds[i*d+(g*d_star)]
     movaps [eax], xmm0    ; tmp[centroide*d_star] = xmm0
 
     sub edx, 4      ;sottraggo i 4 elementi già presi

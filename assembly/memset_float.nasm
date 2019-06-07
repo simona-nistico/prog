@@ -33,6 +33,9 @@ memset_float:
     movss  xmm0, [ebp+f]       ;prendo nella parte bassa il valore da copiare
     shufps xmm0, xmm0, 0x0     ;copio tale valore dappertutto
 
+
+;    jmp for_remain
+
 for_64:
     cmp edx, 64	    ; Confronto edx < 64 ?
     jl for_16    ; Se edx è strettamente minore di 64, gestisco il residuo

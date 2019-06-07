@@ -38,6 +38,8 @@ residual:
 		mov     ecx, [ebp+centr]   ;in edx ho l'indirizzo di partenza del centroide
 		mov     edi, [ebp+d]      ;in edi ho la lunghezza dei vettori
 
+;    jmp for_remain
+
 for_64:
 		cmp edi, 64	    ; Confronto edi < 64 ?
 		jl for_16       ; Se edi è strettamente minore di 64, gestisco il residuo

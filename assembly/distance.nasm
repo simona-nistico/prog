@@ -35,6 +35,8 @@ distance:
 
     xorps xmm2, xmm2          ;azzero xmm2 dove terrò la somma
 
+;    jmp for_remain
+
 for_64:
     cmp edx, 64	    ; Confronto edx < 64 ?
     jl for_16    ; Se edx è strettamente minore di 64, gestisco il residuo
