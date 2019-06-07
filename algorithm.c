@@ -14,23 +14,69 @@
  * ds = data set
  * m = numero di sottoquantizzatori
  */
- void generate_centroids(int n, int d, int k, MATRIX ds, int m, MATRIX centroids){
- 	int d_star = d/m;
+ void generate_centroids(int n, int d, int k, MATRIX ds, int m, MATRIX centroids,
+                          MATRIX distances_from_centroids, int* centroid_of_point){
 
- 	for(int g=0;g<m;g++){ //per ogni sottogruppo
+   float distanza;
+   float minDist; 	//Distanza minima dal centroide
+   int minCentr;			//Centroide a minima distanza
+   int i, y;
+   int c, g;
 
- 		for(int i=0;i<k;i++){
+   int d_star = d/m;
 
- 				// Inseriamo il centroide nella matrice
+   //Vettore che, per ogni centroide, conta quanti punti appartengono alla sua cella
+   //MATRIX tmp = alloc_matrix(k*m,d_star);
+   //int* cont = (int*) calloc(k*m,sizeof(int)); //usare calloc per inizializzare a 0?
 
-				memcpy( &centroids[(i+g*k)*d_star], &ds[i*d+d_star*g], d_star*sizeof(float) );
+  	for(y=0;y<k*d;y+=d_star){
 
-  		}//for i
+       //i = y/d;
+       //g = (y%d)/d_star;
 
- 	}//for g
+  			// Inseriamo il centroide nella matrice
+ 			 memcpy( &centroids[y/d*d_star+(y%d)*k], &ds[y], d_star*sizeof(float) );
+       // OK!
 
-    // TESTATA
+       distances_from_centroids[y/d_star] = 0;
+       centroid_of_point[y/d_star] = y/d;
+       // OK!
+
+  	}// settaggio centroidi
+
+   for(y;y<n*d;y+=d_star){	//per ogni punto del dataset devo trovare il centroide più vicino
+
+      i = y/d;
+      g = (y%d)/d_star;
+
+     //Inizializzo con il primo punto e con la distanza da esso
+     // centroids = [riga->(i+group*k)*d_star,colonna->j]
+     // dataset = [riga->number*d,colonna->d_star*g+j]
+     minDist = distance(&ds[y],&centroids[g*k*d_star],d_star); //(0+group*k)
+     minCentr = 0;
+
+     for(c=1;c<k;c++){ //Calcolo la distanza tra il punto attuale e ogni centroide
+
+       distanza = distance(&ds[y],&centroids[(g*k+c)*d_star],d_star);
+ //			printf("Distanza del punto %i dal centroide %i del gruppo %d: %f\n", i, c, g, distanza);
+
+       if(distanza < minDist){
+         minDist = distanza;
+         minCentr = c;
+       }//if
+     }//for ogni centroide
+
+       //Salvo i risultati trovati
+ //				printf("MIN: Distanza del punto %i dal centroide minimo %i del gruppo %d: %f\n", i, minCentr, g, minDist);
+     centroid_of_point[i*m+g] = minCentr;
+     distances_from_centroids[i*m+g] = minDist;
+
+     //print_matrix(k*m,d_star,m,tmp,'c');
+
+   }//for ogni punto
+
  }//generate_centroids
+
 
 /** La funzione seguente cerca i punti che appartengono ad ogni centroide
 	* Logicamente divide lo spazio in celle di Voronoi
@@ -52,39 +98,40 @@ void points_of_centroid(int n, int d, int k, MATRIX ds, int m, MATRIX centroids,
 		int i,j; //i = indice per i punti, j = indice per dimensioni
 		int c, g; //c = indice per centroidi, g = indice per gruppi
 
-		for(i=0;i<n;i++){	//per ogni punto del dataset devo trovare il centroide più vicino
+    for(int y=0;y<n*d;y+=d_star){	//per ogni punto del dataset devo trovare il centroide più vicino
 
-			for(g=0;g<m;g++){// devo considerare il codebook di ogni sottogruppo
+       i = y/d;
+       g = (y%d)/d_star;
 
-				//Inizializzo con il primo punto e con la distanza da esso
-				// centroids = [riga->(i+group*k)*d_star,colonna->j]
-				// dataset = [riga->number*d,colonna->d_star*g+j]
-				minDist = distance(&ds[i*d+g*d_star],&centroids[(g*k)*d_star],d_star); //(0+group*k)
-				minCentr = 0;
+ 			//Inizializzo con il primo punto e con la distanza da esso
+ 			// centroids = [riga->(i+group*k)*d_star,colonna->j]
+ 			// dataset = [riga->number*d,colonna->d_star*g+j]
+ 			minDist = distance(&ds[y],&centroids[g*k*d_star],d_star); //(0+group*k)
+ 			minCentr = 0;
 
-				for(c=1;c<k;c++){ //Calcolo la distanza tra il punto attuale e ogni centroide
+ 			for(c=1;c<k;c++){ //Calcolo la distanza tra il punto attuale e ogni centroide
 
-					distanza = distance(&ds[i*d+g*d_star],&centroids[(c+g*k)*d_star],d_star);
-//					printf("Distanza del punto %i dal centroide %i del gruppo %d: %f\n", i, c, g, distanza);
+ 				distanza = distance(&ds[y],&centroids[(g*k+c)*d_star],d_star);
+ //			printf("Distanza del punto %i dal centroide %i del gruppo %d: %f\n", i, c, g, distanza);
 
-					if(distanza < minDist){
-						minDist = distanza;
-						minCentr = c;
-					}//if
+ 				if(distanza < minDist){
+ 					minDist = distanza;
+ 					minCentr = c;
+ 				}//if
+ 			}//for ogni centroide
 
-				}//for ogni centroide
+ 				//Salvo i risultati trovati
+ //				printf("MIN: Distanza del punto %i dal centroide minimo %i del gruppo %d: %f\n", i, minCentr, g, minDist);
+ 			centroid_of_point[i*m+g] = minCentr;
+ 	    distances_from_centroids[i*m+g] = minDist;
 
-				//Salvo i risultati trovati
-//				printf("MIN: Distanza del punto %i dal centroide minimo %i del gruppo %d: %f\n", i, minCentr, g, minDist);
-				centroid_of_point[i*m+g] = minCentr;
-	      distances_from_centroids[i*m+g] = minDist;
+      //print_matrix(k*m,d_star,m,tmp,'c');
 
-			}//for ogni sottogruppo
-
-		}// for ogni punto
+ 		}//for ogni punto
 
     // TESTATA
 }//points_of_centroid
+
 
 /** La funzione seguente calcola il nuovo centroide facendo la media geometrica dei punti
 	* Per ogni punto del dataset, fa la media (componente per componente)
@@ -231,11 +278,11 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, MATRI
 	//Genera Centroidi casuali
 	//COSTO: d+k*d
 
-	generate_centroids(n, d, k, ds, m, centroids);
+  MATRIX distances_from_centroids = alloc_matrix(n,m);	//la matrice va aggiornata
+
+	generate_centroids(n, d, k, ds, m, centroids, distances_from_centroids, centroid_of_point);
 //  print_matrix(k*m, d_star, k, centroids, 'c');
 
-
-	MATRIX distances_from_centroids = alloc_matrix(n,m);	//la matrice va aggiornata
 
 //	printf("############################ ITERAZIONE %d ############################\n", 0);
 	//Divide lo spazio in celle di Voronoi
@@ -295,6 +342,58 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, MATRI
 
 }//calculate_centroids
 
+/** Funzione che effettua la quantizzazione della query
+  * cents = vettore in cui sarà memorizzata la quantizzazione
+  * x = punto di cui restituire il quantizzatore
+	* k = centroidi per ciascun sottogruppo
+	* m = numero totale di gruppi
+	* d_star = dimensione di ogni gruppo
+	* La funzione concatena i quantizzatori di ogni sottogruppo
+	* Esegue: q(x) = ( q1(u1(x)), q2(u2(x)), ....)
+	* COSTO: = g*k*(d_star)
+	*/
+void quantize(int* cents, MATRIX x, int k, int m, int d, VECTOR centroids, int points){
+
+  int d_star = d/m;
+
+  float distanza;
+  float minDist; 	//Distanza minima dal centroide
+  int minCentr;			//Centroide a minima distanza
+  int i,j; //i = indice per i punti, j = indice per dimensioni
+  int c,g; //c = indice per centroidi, g = indice per gruppi
+
+  for(int y=0;y<points*d;y+=d_star){	//per ogni punto del dataset devo trovare il centroide più vicino
+
+    i = y/d;
+    g = (y%d)/d_star;
+
+ 		//Inizializzo con il primo punto e con la distanza da esso
+ 		// centroids = [riga->(i+group*k)*d_star,colonna->j]
+ 		// dataset = [riga->number*d,colonna->d_star*g+j]
+ 		minDist = distance(&x[y],&centroids[g*k*d_star],d_star); //(0+group*k)
+ 		minCentr = 0;
+
+ 		for(c=1;c<k;c++){ //Calcolo la distanza tra il punto attuale e ogni centroide
+
+ 			distanza = distance(&x[y],&centroids[(g*k+c)*d_star],d_star);
+ //		printf("Distanza del punto %i dal centroide %i del gruppo %d: %f\n", i, c, g, distanza);
+
+ 			if(distanza < minDist){
+ 				minDist = distanza;
+ 				minCentr = c;
+ 			}//if
+		}//for ogni centroide
+
+ 			//Salvo i risultati trovati
+ //			printf("MIN: Distanza del punto %i dal centroide minimo %i del gruppo %d: %f\n", i, minCentr, g, minDist);
+ 		cents[i*m+g] = minCentr;
+    //print_matrix(k*m,d_star,m,tmp,'c');
+
+ 	}//for ogni punto
+
+	//TESTATA
+}//quantize
+
 // ------------------------- RICERCA NON ESAUSIVA --------------------------
 
 
@@ -347,6 +446,7 @@ void non_exhaustive_indexing(params* input){
   int tmin = input->tmin;
   int tmax = input->tmax;
   int d_star = d/m;
+  int i;
 
   // I centroidi vengono CALCOLATI su n_r punti del Dataset
   // Ora è necessario calcolare il centroide di tutti i punti restanti
@@ -368,11 +468,12 @@ void non_exhaustive_indexing(params* input){
 
   // Distances from centroids è una matrice che non serve a niente in realtà
   // se non a poter eseguire points_of_centroids (verrà infatti liberata subito dopo)
-  MATRIX distances_from_centroids = alloc_matrix(n,1);
 
   // Ora che abbiamo ottenuto i centroidi dobbiamo calcolare i centroidi coarse
   // di apartenenza per i punti che non erano stati considerati
-  points_of_centroid(n, d, kc, ds, 1, coarse_centroids, coarse_centroid_of_point, distances_from_centroids);
+  //for(i=nr;i<n;i++){
+    quantize(&coarse_centroid_of_point[nr], &ds[nr*d], kc, 1, d, coarse_centroids, (n-nr));
+  //}
 
 //  printf("\nDistanza AL QUADRATO del centroide COARSE più vicino ai punti (m=1)\n");
 //  print_matrix(n,1,1,distances_from_centroids,'p');
@@ -382,7 +483,6 @@ void non_exhaustive_indexing(params* input){
 //  print_matrix(kc,d,d,coarse_centroids,'c');
 
   // Deallochiamo la matrice perchè non ci serve più
-  dealloc_matrix(distances_from_centroids);
 
 	input->residuals = alloc_matrix(n,d);
   MATRIX residuals = input->residuals;
@@ -412,8 +512,11 @@ void non_exhaustive_indexing(params* input){
 
   // Anche in questo caso bisogna calcolare i quantizzatori di tutti i punti
   // rimasti fuori.
-	distances_from_centroids=alloc_matrix(n,m);
-  points_of_centroid(n, d, k, residuals,m, centroids, centroid_of_point, distances_from_centroids);
+	//distances_from_centroids=alloc_matrix(n,m);
+  //points_of_centroid(n, d, k, residuals,m, centroids, centroid_of_point, distances_from_centroids);
+  //for(i=nr;i<n;i++){
+    quantize(&centroid_of_point[nr*m], &residuals[nr*d], k, m, d, centroids, (n-nr));
+  //}
 
 //  printf("\nDistanza AL QUADRATO del centroide ACCURATO più vicino ai punti (m=1)\n");
 //  print_matrix(n,1,1,distances_from_centroids,'p');
@@ -424,7 +527,6 @@ void non_exhaustive_indexing(params* input){
 
   // Deallochiamo distances_from_centroids che non ci serve più, serve solo come
   // struttura di supporto per trovare i centroidi di ciascun punto
-  dealloc_matrix(distances_from_centroids);
 
   // Costruzione lista invertita
 	input->lista_invertita = (int*) malloc(n*(m+1)*sizeof(int));
@@ -519,6 +621,7 @@ void indexing(params* input){
 
   int d_star = input->d/input->m;
 
+
 	if(input->nr > input->n){
 		input->nr = input->n/2;
 	}
@@ -558,52 +661,6 @@ void indexing(params* input){
 }
 
 //--------------------------------- SEARCHING ----------------------------------
-
-/** Funzione che effettua la quantizzazione della query
-  * x = punto di cui restituire il quantizzatore
-	* k = centroidi per ciascun sottogruppo
-	* m = numero totale di gruppi
-	* d_star = dimensione di ogni gruppo
-	* La funzione concatena i quantizzatori di ogni sottogruppo
-	* Esegue: q(x) = ( q1(u1(x)), q2(u2(x)), ....)
-	* COSTO: = g*k*(d_star)
-	*/
-int* quantize(VECTOR x, int k, int m, int d, VECTOR centroids){
-	// Indice dei centroidi che quantizzano ciascuna porzione
-	int* cents = (int*) malloc(m*sizeof(int));
-	int centr;
-	int d_star = d/m;
-	float min,dist;
-
-	for(int g=0; g<m; g++){ //per ogni sottogruppo calcolo il centroide più vicino
-
-		centr = 0;
-		min = distance(&x[g*d_star],&centroids[g*k*d_star],d_star);
-		//printf("Distanza tra il punto e il centroide %d del gruppo %d : %f\n", 0, g, min);
-
-		// centroids = [riga->(i+group*k)*d_star,colonna->j]
-		// dataset = [riga->number*d,colonna->d_star*g+j]
-
-		//Considero tutti i punti del codebook del sottogruppo prendendo quello a
-		//dimensione minima
-		for(int i=1; i<k; i++){
-			dist = distance(&x[g*d_star],&centroids[(g*k+i)*d_star],d_star);
-			//printf("Distanza tra il punto e il centroide %d del gruppo %d : %f\n", i, g, dist);
-			if(dist < min){
-				centr = i;
-				min = dist;
-			}
-
-		}//for centroide del gruppo g
-
-		// Abbiamo trovato il centroide del gruppo g
-		cents[g] = centr;
-
-	}//for gruppo
-
-	return cents;
-	//TESTATA
-}//quantize
 
 
 /** La seguente funzione si occupa di precalcolare le distanze tra i sottogruppi
@@ -656,7 +713,9 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 
 	if(symmetric == 0){
 		dist_cent = alloc_matrix(m,k);
-	}
+	} else {
+    quant = (int*) malloc(m*sizeof(int));
+  }
 
 	// RICORDA:
 	// ANN = (int*) malloc(knn*nq*sizeof(int))
@@ -667,7 +726,7 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 
 		if(symmetric==1){
 			// Calcoliamo la quantizzazione del punto
-			quant = quantize(&qs[i*d], k, m, d, centroids);
+			quantize(quant, &qs[i*d], k, m, d, centroids, 1);
 //			printf("QUANTIZZAZIONE PUNTO:\n");
 //			print_quantizer(m, quant);
 		}else{
@@ -723,15 +782,14 @@ void calNearExt(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 
 		// Una volta terminato questo ciclo in ANN[i] ci saranno i knn punti del
 		// dataset più vicini alla query
-		if(symmetric==1){
-			free(quant);
-		}
 
 	}// for i
 
 	if(symmetric==0){
 		dealloc_matrix(dist_cent);
-	}
+	} else {
+    free(quant);
+  }
 
 	dealloc_matrix(distances);
 
@@ -757,10 +815,6 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 	int j,g,l,p,inizio,centroide,min,max;
 	int d_star = d/m;
 	float distanza;
-
-	if(symmetric == 0){
-		dist_cent = alloc_matrix(m,k);
-	}
 
 //	printf("\nPunti di ciascun centroide coarse\n");
 //	print_matrix_int(kc,1,1,punti_caricati,'c');
@@ -815,6 +869,12 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 
 		memset_float( dist, FLT_MAX, knn);
 
+    if(symmetric == 0){
+      dist_cent = alloc_matrix(m,k);
+    } else {
+      quantization = (int*) malloc(m*sizeof(int));
+    }
+
 //		print_matrix(1,knn,knn,dist,'p');
 
 		for(j=0;j<w;j++){
@@ -828,12 +888,13 @@ void NoExaSearch(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centroids
 			inizio = celle_prima[centroide];
 
 			if(symmetric == 1){
-				quantization = quantize(res,k,m,d,centroids);
+				quantize(quantization,res,k,m,d,centroids,1);
 			}else{
 				// Calcoliamo la distanza tra le porzioni del punto ed i centroidi dei
 				// relativi codebook
 				computeDistances(res,centroids,d,m,k,dist_cent);
 			}
+
 
 			// Calcoliamo i knn punti del queryset i cui residui sono più vicini ai
 			// residui del punto
@@ -919,5 +980,5 @@ void searching(params* input){
       input->knn, input->m, input->nq, input->symmetric);
 	}
 
-  print_matrix_int(input->nq, input->knn, input->knn, input->ANN,'p');
+  //print_matrix_int(input->nq, input->knn, input->knn, input->ANN,'p');
 }
