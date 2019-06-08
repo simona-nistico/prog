@@ -145,45 +145,44 @@ void points_of_centroid(int n, int d, int k, MATRIX ds, int m, MATRIX centroids,
   */
 void update_centroids(int n, int d, int k, MATRIX ds, int m, MATRIX centroids, int* centroid_of_point){
 		int d_star = d/m;
-    int i,j;
+    int i,j,centroide;
 
     // Matrice temporanea per memorizzare i nuovi centroidi
-    MATRIX tmp = alloc_matrix(k,d_star);
-    memset(tmp, 0, k*d_star*sizeof(float));
+    //MATRIX tmp = alloc_matrix(k*m,d_star);
+    memset_float(centroids, 0.0, k*m*d_star);
 
     //Vettore che, per ogni centroide, conta quanti punti appartengono alla sua cella
-    int* cont = (int*) calloc(k,sizeof(int)); //usare calloc per inizializzare a 0?
+    int* cont = (int*) calloc(k*m,sizeof(int)); //usare calloc per inizializzare a 0?
 
-		//Considero tutti i sottogruppi
-		for(int g=0;g<m;g++){ //per ogni sottogruppo
+    for(int y=0;y<n*m;y++){	//per ogni punto del dataset devo trovare il centroide più vicino
 
-			int centroide; //Centroide a cui appartiene il punto corrente
+       centroide = centroid_of_point[y]; //prendo il centroide di appartenenza
+       cont[(y%m)*k+centroide]++;	//conto un punto in più per questo centroide
 
-			for(int i=0;i<n;i++){ //per ogni punto del dataset
+       //printf("%d\n", cont[(y%m)*k+centroide]);
 
-				centroide = centroid_of_point[i*m+g]; //prendo il centroide di appartenenza
-				cont[centroide]++;	//conto un punto in più per questo centroide
+       //print_matrix(1,d_star,d_star,&centroids[((y%m)*k+centroide)],'p');
 
-				accumulate(&tmp[centroide*d_star], &ds[i*d+(g*d_star)], d_star);
+       accumulate(&centroids[((y%m)*k+centroide)*d_star], &ds[y*d_star], d_star);
 
-			}//for tutti i punti
+       //print_matrix(1,d_star,d_star,&centroids[((y%m)*k+centroide)],'p');
 
-			//Divido ogni somma di cordinate per il numero di punti e lo inserisco come nuovo centroide
-			for(int i=0;i<k;i++){	//per ogni centroide
+ 		}//for ogni punto
 
-        if( cont[i]!=0 ){
-					divide(&centroids[(i+g*k)*d_star], &tmp[i*d_star], cont[i], d_star);
-					memset(&tmp[i*d_star], 0, d_star*sizeof(float));
-					cont[i] = 0;
-        }
-//        else
-//					printf("\n######## Nessun punto appartiene al centroide #########");
+    //print_matrix(m*k,d_star,d_star,tmp,'p');
 
-			}// for tutti i centroidi
+		//Divido ogni somma di cordinate per il numero di punti e lo inserisco come nuovo centroide
+		for(int i=0;i<k*m;i++){	//per ogni centroide
+
+      if( cont[i]!=0 ){
+				divide(&centroids[i*d_star], cont[i], d_star);
+				//memset(&tmp[i*d_star], 0, d_star*sizeof(float));
+      } else
+					printf("\n######## Nessun punto appartiene al centroide #########");
 
 	  }//for tutti i sottogruppi
 
-    dealloc_matrix(tmp);
+    //dealloc_matrix(tmp);
     free(cont);
 
     // TESTATA
@@ -241,12 +240,10 @@ float get_distance(int a, int b, int k, int g){
   int min = ((a) < (b)) ? (a) : (b); //riga della matrice
   int max = ((a) > (b)) ? (a) : (b); //colonna della matrice
   //min*(min+1)/2+g*(k*(k+1)/2)+max
-
   //Spostarsi all'inizio della riga:
   //(k-1) + k-2 +  k-3  + k-4  = 4*k - 4*(4-1)/2 = 4*min - min*(min+1)/2
   //Spostarsi dentro la colonna:
   //dove voglio arrivare - da dove parto - 1 visto che la diagonale non la metto
-
   //printf("Gruppo %d, distanza da %d a %d: %f\n",g,min,max,
   //  input->distances_between_centroids[g*k*(k-1)/2 + min*k - min*(min+1)/2 +max -min-1] );
   return input->distances_between_centroids[g*k*(k-1)/2 + min*k - min*(min+1)/2 +max -min-1];
@@ -287,12 +284,11 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, MATRI
 //	printf("############################ ITERAZIONE %d ############################\n", 0);
 	//Divide lo spazio in celle di Voronoi
 //	//COSTO: n*k* O(distance)[cioè d] = n*k*d
-	points_of_centroid(n, d, k, ds, m, centroids, centroid_of_point, distances_from_centroids);
+	//points_of_centroid(n, d, k, ds, m, centroids, centroid_of_point, distances_from_centroids);
 //  printf("\nIndici del vettore 'centroids' indicante i centroidi più vicini al punto per sottogruppi\n");
 //  print_matrix_int(n,m, k, centroid_of_point, 'p');
 //  printf("\nDistanza AL QUADRATO del centroide più vicino ai punti per sottogruppi\n");
 //  print_matrix(n,m, k, distances_from_centroids, 'p');
-
 
 	//Verifica l'ottimalità dei Punti
 	//COSTO: n
@@ -308,6 +304,7 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, MATRI
 		//Trova i nuovi centroidi facendo la media dei punti delle celle di Voronoi
 		//COSTO: n*d+k*d
 		update_centroids(n, d, k, ds, m, centroids, centroid_of_point);
+
 //    printf("Nuovi centroidi:\n");
 //    print_matrix(k*m,d_star, k, centroids, 'c');
 
@@ -624,13 +621,12 @@ void indexing(params* input){
 /*movups noPad
 Indexing time = 57.416 secs
 Searching time = 41.961 secs
-
 movaps newPad
 Indexing time = 56.146 secs
 Searching time = 42.275 secs
 */
 
-//  print_matrix(input->nq, input->d, input->k, input->qs,'p');
+//  print_matrix(20, input->d, input->k, input->qs,'p');
 
   int d_star = input->d/input->m;
 
@@ -1164,5 +1160,5 @@ void searching(params* input){
     }
 	}
 
-  print_matrix_int(input->nq, input->knn, input->knn, input->ANN,'p');
+  //print_matrix_int(input->nq, input->knn, input->knn, input->ANN,'p');
 }

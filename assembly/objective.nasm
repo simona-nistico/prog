@@ -4,7 +4,7 @@ section .bss			; Sezione contenente dati non inizializzati
 
 section .text			; Sezione contenente il codice macchina
 
-;Loop Unrolling 64, 16, 4, 1
+;Loop Unrolling 128,64, 16, 4, 1
 ;TESTATA
 
 ;________________________Funzione________________________
@@ -22,7 +22,7 @@ objective_function:
     push    ebp       ; salva il Base Pointer
     mov     ebp, esp  ; il Base Pointer punta al Record di Attivazione corrente
 ;    push    ebx       ; salva i registri da preservare,
-;		push    ecx
+;		 push    ecx
 ;    push    esi
 ;    push    edi
 		pushad
@@ -37,7 +37,49 @@ objective_function:
 
 		imul ebx, ecx		;ebx = n*m cioè num_punti*num_gruppi
 
-;    jmp for_remain
+
+for_128:
+    cmp ebx, 128	    ; Confronto n*m < 64 ?
+    jl for_16    ; Se edx è strettamente minore di 64, gestisco il residuo
+
+    addps xmm0, [edx]		  ;sum += distances_from_centroids 0...4
+    addps xmm0, [edx+16]
+    addps xmm0, [edx+32]
+    addps xmm0, [edx+48]
+    addps xmm0, [edx+64]
+    addps xmm0, [edx+80]
+    addps xmm0, [edx+96]
+    addps xmm0, [edx+112]
+    addps xmm0, [edx+128]
+    addps xmm0, [edx+144]
+    addps xmm0, [edx+160]
+    addps xmm0, [edx+176]
+    addps xmm0, [edx+192]
+  	addps xmm0, [edx+208]
+    addps xmm0, [edx+224]
+    addps xmm0, [edx+240]
+    addps xmm0, [edx+256]
+    addps xmm0, [edx+272]
+    addps xmm0, [edx+288]
+    addps xmm0, [edx+304]
+    addps xmm0, [edx+320]
+    addps xmm0, [edx+336]
+    addps xmm0, [edx+352]
+    addps xmm0, [edx+368]
+    addps xmm0, [edx+384]
+    addps xmm0, [edx+400]
+    addps xmm0, [edx+416]
+    addps xmm0, [edx+432]
+    addps xmm0, [edx+448]
+  	addps xmm0, [edx+464]
+    addps xmm0, [edx+480]
+    addps xmm0, [edx+496]
+
+    sub ebx, 128      ;sottraggo i 128 elementi già presi
+    add edx, 512     ;mi sposto di 128 elementi
+
+    jmp for_128       ; Se edx è più grande o uguale a 8, salto al for
+
 
 for_64:
     cmp ebx, 64	    ; Confronto n*m < 64 ?
