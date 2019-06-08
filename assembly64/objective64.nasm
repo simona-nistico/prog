@@ -1,7 +1,7 @@
 
 section .data			; Sezione contenente dati inizializzati
 
-align 16 
+align 16
 vec1:	dd		1.0, 2.5, 3.5, 1.3,2.0,2.3,2.1,2.2
 
 section .bss			; Sezione contenente dati non inizializzati
@@ -34,7 +34,7 @@ objective64:
 		;--------------------------------
 		;PARAMETRI
 		;--------------------------------
-		
+
 		;rdi (r6) = n
 		;rsi (r5) = m
 		;rdx (r3) = distances_from_centroids
@@ -49,19 +49,19 @@ objective64:
 		; in rdx ci sono già la distanze dai centroidi
 		imul rbx,rcx
 		vxorps ymm0,ymm0
-		vxorps ymm1,ymm1		
+		vxorps ymm1,ymm1
 
 	        cmp rbx, 128	       ; Confronto n*m < 8 ?
                 jl for_64               ; Se edx è strettamente minore di 8, gestisco il residuo
 
-	  
+
 	  for_128:
 
 		vaddps ymm0,[rdx]      ;sum += distances_from_centroids 0...8
 		vaddps ymm0,[rdx+32]
 		vaddps ymm0,[rdx+64]
 		vaddps ymm0,[rdx+96]
-		vaddps ymm0,[rdx+128]     
+		vaddps ymm0,[rdx+128]
 		vaddps ymm0,[rdx+160]
 		vaddps ymm0,[rdx+192]
 		vaddps ymm0,[rdx+224]
@@ -69,7 +69,7 @@ objective64:
 		vaddps ymm0,[rdx+288]
 		vaddps ymm0,[rdx+320]
 		vaddps ymm0,[rdx+352]
-		vaddps ymm0,[rdx+384]     
+		vaddps ymm0,[rdx+384]
 		vaddps ymm0,[rdx+416]
 		vaddps ymm0,[rdx+448]
 		vaddps ymm0,[rdx+480]
@@ -89,7 +89,7 @@ objective64:
 		vaddps ymm0,[rdx+32]
 		vaddps ymm0,[rdx+64]
 		vaddps ymm0,[rdx+96]
-		vaddps ymm0,[rdx+128]     
+		vaddps ymm0,[rdx+128]
 		vaddps ymm0,[rdx+160]
 		vaddps ymm0,[rdx+192]
 		vaddps ymm0,[rdx+224]
@@ -126,7 +126,7 @@ objective64:
     		add rdx, 64            ;mi sposto di 16 elementi (64 posizioni)
 
 		jmp for_16              ; salto incondizionato tanto la condizione la vedo dopo
-        
+
           for_8:
     		cmp rbx, 8	       ; Confronto n*m < 8  ? salta al for4
 		jl for_4               ; Se mancano meno di 8 elementi vai alla gestione residuo
@@ -142,7 +142,7 @@ objective64:
 		cmp rbx, 4	       ; Confronto n*m < 4 ? salta al residuo
 	  	jl for_remain          ; Se mancano meno di 4 elementi vai alla gestione residuo
 
-		vaddps xmm0,[rdx]       ;sum += distances_from_centroids 0...4
+		vaddps xmm1,[rdx]       ;sum += distances_from_centroids 0...4
 
     		sub rbx, 4             ;sottraggo i 4 elementi già presi
     		add rdx, 16            ;mi sposto di 4 elementi (16 posizioni)
