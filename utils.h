@@ -10,7 +10,7 @@ extern void accumulate( MATRIX dest, MATRIX orig, int dim);
 extern float distance(VECTOR x1,VECTOR x2,int d);
 extern void divide( MATRIX dividendo, float divisore, int dim);
 extern void memset_float( MATRIX data, float val, int dim);
-extern float objective_function(int n,int m, MATRIX distances_from_centroids);
+//extern float objective_function(int n,int m, MATRIX distances_from_centroids);
 extern void residual(VECTOR res,VECTOR x,VECTOR centroid,int d);
 
 
@@ -21,7 +21,7 @@ extern void residual(VECTOR res,VECTOR x,VECTOR centroid,int d);
   * n =  numero di punti del data set
   * TODO: parallelizzare la somma in assembly
   */
-/*
+
 float objective_function(int n,int m, MATRIX distances_from_centroids){
 	  float sum = 0;
     int i=0;
@@ -41,7 +41,7 @@ float objective_function(int n,int m, MATRIX distances_from_centroids){
 }
 
 
-
+/*
 float distance(VECTOR x1,VECTOR x2,int d){
 	float diff,sum = 0;
 	int i=0;
@@ -74,7 +74,7 @@ float distance(VECTOR x1,VECTOR x2,int d){
 	// TESTATA
 }//distance
 
-
+/*
 
 // Funzione che calcola il residuo, versione ottimizzata
 // Esegue il calcolo: r(x) = x-q_c(x)
@@ -110,16 +110,11 @@ void accumulate( MATRIX dest, MATRIX orig, int dim){
 }
 
 
-
-void divide( MATRIX dest, MATRIX dividendo, float divisore, int dim){
-  for(int j=0;j<dim;j++)
-    dest[j] = dividendo[j] / divisore;
-}
-
 void divide( MATRIX dividendo, float divisore, int dim){
   for(int j=0;j<dim;j++)
     dividendo[j] = dividendo[j] / divisore;
 }
+
 */
 
 //----------Stampa tutti i punti-----------

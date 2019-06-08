@@ -1,4 +1,4 @@
-#include "pqnn32c.c"
+#include "pqnn64c.c"
 //La riga sopra viene cambiata in automatico a seconda del run che si lancia
 #include "utils.h"
 
@@ -618,6 +618,7 @@ void indexing(params* input){
   if( (input->d / input->m) % 4 != 0 )
     padding(input);
 
+
 /*movups noPad
 Indexing time = 57.416 secs
 Searching time = 41.961 secs
@@ -626,7 +627,7 @@ Indexing time = 56.146 secs
 Searching time = 42.275 secs
 */
 
-//  print_matrix(20, input->d, input->k, input->qs,'p');
+  //print_matrix(20, input->d, input->k, input->qs,'p');
 
   int d_star = input->d/input->m;
 
