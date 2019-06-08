@@ -1,17 +1,17 @@
 #ifndef utils
 #define utils
 //Siccome pqnn e testindex usano questo file, senza queste righe, l'header viene
-//definito ppiù volte
+//definito più volte
 
 
 
 //_____________________Funzioni esterne scritte in assembly_____________________
-extern void accumulate( MATRIX dest, MATRIX orig, int dim);
-extern float distance(VECTOR x1,VECTOR x2,int d);
-extern void divide( MATRIX dividendo, float divisore, int dim);
-extern void memset_float( MATRIX data, float val, int dim);
+//extern void accumulate( MATRIX dest, MATRIX orig, int dim);
+//extern float distance(VECTOR x1,VECTOR x2,int d);
+//extern void divide( MATRIX dividendo, float divisore, int dim);
+//extern void memset_float( MATRIX data, float val, int dim);
 //extern float objective_function(int n,int m, MATRIX distances_from_centroids);
-extern void residual(VECTOR res,VECTOR x,VECTOR centroid,int d);
+//extern void residual(VECTOR res,VECTOR x,VECTOR centroid,int d);
 
 
 /** La funzione seguente calcola il valore della funzione obiettivo
@@ -41,7 +41,7 @@ float objective_function(int n,int m, MATRIX distances_from_centroids){
 }
 
 
-/*
+
 float distance(VECTOR x1,VECTOR x2,int d){
 	float diff,sum = 0;
 	int i=0;
@@ -74,7 +74,7 @@ float distance(VECTOR x1,VECTOR x2,int d){
 	// TESTATA
 }//distance
 
-/*
+
 
 // Funzione che calcola il residuo, versione ottimizzata
 // Esegue il calcolo: r(x) = x-q_c(x)
@@ -115,7 +115,7 @@ void divide( MATRIX dividendo, float divisore, int dim){
     dividendo[j] = dividendo[j] / divisore;
 }
 
-*/
+
 
 //----------Stampa tutti i punti-----------
 void print_matrix(int rows, int cols, int k, MATRIX data, char c){

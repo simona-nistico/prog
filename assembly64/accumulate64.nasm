@@ -5,9 +5,9 @@ section .bss			; Sezione contenente dati non inizializzati
 
 section .text			; Sezione contenente il codice macchina
 
-global accumulate64
+global accumulate
 
-accumulate64:
+accumulate:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------
@@ -31,19 +31,19 @@ accumulate64:
 		;--------------------------------
 		;PARAMETRI
 		;--------------------------------
-		
+
 		;rdi (r6) = indirizzo di partenza dell'array dest
 		;rsi (r5) = indirizzo di partenza dell'array source
 		;rdx (r3) = dim
 
 		mov rax,rdi ; rax= dest
 		mov rcx,rsi ; rcx= source
-		;dim è già in rdx 
+		;dim è già in rdx
 
-	  for_128:
-		
-	        cmp rdx, 64	       ; Confronto n*m < 8 ?
-                jl for_32               ; Se edx è strettamente minore di 64, gestisco il residuo
+for_128:
+
+		cmp rdx, 64	       ; Confronto n*m < 8 ?
+		jl for_32               ; Se edx è strettamente minore di 64, gestisco il residuo
 
                 ;Loop Unrolling 1: 8 valori
 		vmovaps ymm0,[rax]      ; copio i primi 8 valori di dest in ymm0
@@ -86,15 +86,15 @@ accumulate64:
 		vmovaps [rax+224],ymm0      ; ricopio la somma degli ottavi 8 valori di dest e source in dest
 
 
-  	        sub rdx, 64            ;sottraggo i 32 elementi già presi
-    		add rax, 256           ;mi sposto di 32 elementi (256 posizioni)
+  	sub rdx, 64            ;sottraggo i 32 elementi già presi
+    add rax, 256           ;mi sposto di 32 elementi (256 posizioni)
 		add rcx, 256           ;mi sposto di 32 elementi (256 posizioni)
 		jmp for_64
 
 	  for_64:
-		
-	        cmp rdx, 64	       ; Confronto n*m < 8 ?
-                jl for_32               ; Se edx è strettamente minore di 64, gestisco il residuo
+
+	  cmp rdx, 64	       ; Confronto n*m < 8 ?
+    jl for_32               ; Se edx è strettamente minore di 64, gestisco il residuo
 
                 ;Loop Unrolling 1: 8 valori
 		vmovaps ymm0,[rax]      ; copio i primi 8 valori di dest in ymm0
@@ -137,17 +137,17 @@ accumulate64:
 		vmovaps [rax+224],ymm0      ; ricopio la somma degli ottavi 8 valori di dest e source in dest
 
 
-  	        sub rdx, 64            ;sottraggo i 32 elementi già presi
-    		add rax, 256           ;mi sposto di 32 elementi (256 posizioni)
+  	sub rdx, 64            ;sottraggo i 32 elementi già presi
+    add rax, 256           ;mi sposto di 32 elementi (256 posizioni)
 		add rcx, 256           ;mi sposto di 32 elementi (256 posizioni)
 		jmp for_64
-		
+
 
 
 	  for_32:
 
-	        cmp rdx, 32	       ; Confronto n*m < 8 ?
-                jl for_16               ; Se edx è strettamente minore di 8, gestisco il residuo
+	 	cmp rdx, 32	       ; Confronto n*m < 8 ?
+    jl for_16               ; Se edx è strettamente minore di 8, gestisco il residuo
 
 
                 ;Loop Unrolling 1: 8 valori
@@ -171,15 +171,15 @@ accumulate64:
 		vmovaps [rax+96],ymm0      ; ricopio la somma dei quarti 8 valori di dest e source in dest
 
 
-  	        sub rdx, 32            ;sottraggo i 32 elementi già presi
-    		add rax, 128           ;mi sposto di 32 elementi (128 posizioni)
+  	sub rdx, 32            ;sottraggo i 32 elementi già presi
+    add rax, 128           ;mi sposto di 32 elementi (128 posizioni)
 		add rcx, 128           ;mi sposto di 32 elementi (128 posizioni)
 		jmp for_32
 
 	  for_16:
 
-	        cmp rdx, 16	       ; Confronto n*m < 8 ?
-                jl for_8               ; Se edx è strettamente minore di 8, gestisco il residuo
+	  cmp rdx, 16	       ; Confronto n*m < 8 ?
+    jl for_8               ; Se edx è strettamente minore di 8, gestisco il residuo
 
                 ;Loop Unrolling 1: 8 valori
 		vmovaps ymm0,[rax]      ; copio i primi 8 valori di dest in ymm0
@@ -214,9 +214,9 @@ accumulate64:
     		cmp rdx, 4	    ; Confronto edx < 4 ? salta al residuo
 	        jl for_remain   ; Se mancano meno di 4 elementi vai alla gestione residuo
 
-    		vmovaps xmm0, [rax]    ; xmm0 = tmp[centroide*d_star]
-    		vaddps xmm0, [rcx]     ; xmm0 = xmm0+[src]   ;tmp[centroide*d_star] += ds[i*d+(g*d_star)]
-   		vmovaps [rax], xmm0    ; tmp[centroide*d_star] = xmm0
+    		movaps xmm0, [rax]    ; xmm0 = tmp[centroide*d_star]
+    		addps xmm0, [rcx]     ; xmm0 = xmm0+[src]   ;tmp[centroide*d_star] += ds[i*d+(g*d_star)]
+   		movaps [rax], xmm0    ; tmp[centroide*d_star] = xmm0
 
     		sub rdx, 4      ;sottraggo i 4 elementi già presi
    		add rax, 16     ;mi sposto di 4 elementi (16 posizioni)
@@ -228,9 +228,9 @@ accumulate64:
     	        cmp edx, 0	    ; edx == 0? fine
     		je end
 
-    		vmovss xmm0, [rax]    ; xmm0 = tmp[centroide*d_star]
-    		vaddss xmm0, [rcx]     ; xmm0 = xmm0+[src]   ;tmp[centroide*d_star] += ds[i*d+(g*d_star)]
-    		vmovss [rax], xmm0    ; tmp[centroide*d_star] = xmm0
+    		movss xmm0, [rax]    ; xmm0 = tmp[centroide*d_star]
+    		addss xmm0, [rcx]     ; xmm0 = xmm0+[src]   ;tmp[centroide*d_star] += ds[i*d+(g*d_star)]
+    		movss [rax], xmm0    ; tmp[centroide*d_star] = xmm0
 
     		dec rdx         ;sottraggo 1 elementi già preso
     		add rax, 4     ;mi sposto di 1 elemento (4 posizioni)
@@ -262,4 +262,3 @@ accumulate64:
 		mov	rsp, rbp	; ripristina lo Stack Pointer
 		pop	rbp		; ripristina il Base Pointer
 		ret			; torna alla funzione C chiamante
-

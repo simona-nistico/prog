@@ -4,9 +4,9 @@ section .bss			; Sezione contenente dati non inizializzati
 
 section .text			; Sezione contenente il codice macchina
 
-global residual64
+global residual
 
-   residual64:
+   residual:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------
@@ -28,7 +28,7 @@ global residual64
 		;--------------------------------
 		;PARAMETRI
 		;--------------------------------
-		
+
 		;rdi (r6) =  indirizzo di partenza dell'array res
 		;rsi (r5) =  indirizzo di partenza dell'array x
 		;rdx (r3) =  indirizzo di partenza dell'array centroid
@@ -38,7 +38,7 @@ global residual64
 		mov rbx,rsi		;rcx=indirizzo di partenza di x
 		mov rdi,rcx		;rdi= d
 		mov rcx,rdx		;indirizzo di partenza di centroid
-		
+
 
 	  for_128:
 
@@ -230,27 +230,27 @@ global residual64
 		cmp rdi, 4	       ; Confronto rdi < 4 ? salta al residuo
   		jl for_remain          ; Se mancano meno di 4 elementi vai alla gestione residuo
 
-		vmovaps xmm0, [rbx]     ; in xmm0 metto i primi 4 valori di x
-		vmovaps xmm1, [rcx]     ; in xmm1 metto i primi 4 valori di centr
+		movaps xmm0, [rbx]     ; in xmm0 metto i primi 4 valori di x
+		movaps xmm1, [rcx]     ; in xmm1 metto i primi 4 valori di centr
 
-		vsubps xmm0, xmm1       ; xmm0 = xmm0-xmm1  (x-centr)  x[i]-centroid[i];
-		vmovaps [rax], xmm0     ; res[i] = x[i]-centroid[i]  salvo nel vettore i valori
+		subps xmm0, xmm1       ; xmm0 = xmm0-xmm1  (x-centr)  x[i]-centroid[i];
+		movaps [rax], xmm0     ; res[i] = x[i]-centroid[i]  salvo nel vettore i valori
 
 		sub rdi, 4             ;sottraggo i 4 elementi già presi
 		add rbx, 16            ;mi sposto di 4 elementi (16 posizioni)
 		add rcx, 16
-		add rax, 16	
+		add rax, 16
 
      for_remain:
 
 		cmp rdi, 0	        ; rdi == 0? fine
 		je end
 
-		vmovss xmm0, [rbx]    ; in xmm0 metto gli ultimi <4 valori di x
-		vmovss xmm1, [rcx]    ; in xmm1 metto gli ultimi <4 valori di centroidi
+		movss xmm0, [rbx]    ; in xmm0 metto gli ultimi <4 valori di x
+		movss xmm1, [rcx]    ; in xmm1 metto gli ultimi <4 valori di centroidi
 
-		vsubss xmm0, xmm1     ; xmm0 = xmm0-xmm1  (x-centr)  x[i]-centroid[i];
-		vmovss [rax], xmm0    ; res[i] = x[i]-centroid[i]  salvo nel vettore i valori
+		subss xmm0, xmm1     ; xmm0 = xmm0-xmm1  (x-centr)  x[i]-centroid[i];
+		movss [rax], xmm0    ; res[i] = x[i]-centroid[i]  salvo nel vettore i valori
 
 		dec rdi              ;sottraggo 1 elementi già preso
 		add rbx, 4           ;mi sposto di 1 elemento (4 posizioni)
@@ -266,7 +266,7 @@ global residual64
 
 		mov rax,rdx	    ;viene ripristinato in rax l'indirizzo di partenza del risultato
 
-		
+
                 ; ------------------------------------------------------------
 		; Sequenza di uscita dalla funzione
 		; ------------------------------------------------------------
@@ -287,6 +287,3 @@ global residual64
 		mov	rsp, rbp	; ripristina lo Stack Pointer
 		pop	rbp		; ripristina il Base Pointer
 		ret			; torna alla funzione C chiamante
-
-
-

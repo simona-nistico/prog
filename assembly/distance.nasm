@@ -35,10 +35,11 @@ distance:
 
     xorps xmm2, xmm2          ;azzero xmm2 dove terrò la somma
 
+;jmp for_16
 
 for_128:
     cmp edx, 128	    ; Confronto edx < 64 ?
-    jl for_16    ; Se edx è strettamente minore di 64, gestisco il residuo
+    jl for_64    ; Se edx è strettamente minore di 64, gestisco il residuo
 
 		;Loop Unrolling 1: 4 valori
     movaps xmm0, [eax]    ; in xmm0 metto i primi 4 valori di x1

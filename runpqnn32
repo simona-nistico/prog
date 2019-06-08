@@ -6,12 +6,12 @@ done
 
 sed -i '1s/.*/#include "pqnn32c.c"/' algorithm.c
 
-a[0]="assembly/accumulate.o"
-a[1]="assembly/distance.o"
-a[2]="assembly/divide.o"
-a[3]="assembly/memset_float.o"
-a[4]="assembly/objective.o"
-a[5]="assembly/residual.o"
+#a[0]="assembly/accumulate.o"
+#a[1]="assembly/distance.o"
+#a[2]="assembly/divide.o"
+#a[3]="assembly/memset_float.o"
+#a[4]="assembly/objective.o"
+#a[5]="assembly/residual.o"
 
 gcc -O0 -m32 -msse pqnn32.o ${a[*]} algorithm.c -o pqnn32c -lm
 
