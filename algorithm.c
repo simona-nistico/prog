@@ -1160,5 +1160,5 @@ void searching(params* input){
     }
 	}
 
-  //print_matrix_int(input->nq, input->knn, input->knn, input->ANN,'p');
+  print_matrix_int(input->nq, input->knn, input->knn, input->ANN,'p');
 }
