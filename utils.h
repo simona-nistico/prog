@@ -8,7 +8,7 @@
 //_____________________Funzioni esterne scritte in assembly_____________________
 extern void accumulate( MATRIX dest, MATRIX orig, int dim);
 extern float distance(VECTOR x1,VECTOR x2,int d);
-extern void divide( MATRIX dest, MATRIX dividendo, float divisore, int dim);
+extern void divide( MATRIX dividendo, float divisore, int dim);
 extern void memset_float( MATRIX data, float val, int dim);
 extern float objective_function(int n,int m, MATRIX distances_from_centroids);
 extern void residual(VECTOR res,VECTOR x,VECTOR centroid,int d);
