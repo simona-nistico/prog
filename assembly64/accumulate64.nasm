@@ -5,9 +5,9 @@ section .bss			; Sezione contenente dati non inizializzati
 
 section .text			; Sezione contenente il codice macchina
 
-global accumulate
+global accumulate64
 
-accumulate:
+accumulate64:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------
@@ -31,17 +31,17 @@ accumulate:
 		;--------------------------------
 		;PARAMETRI
 		;--------------------------------
-
+		
 		;rdi (r6) = indirizzo di partenza dell'array dest
 		;rsi (r5) = indirizzo di partenza dell'array source
 		;rdx (r3) = dim
 
 		mov rax,rdi ; rax= dest
 		mov rcx,rsi ; rcx= source
-		;dim è già in rdx
+		;dim è già in rdx 
 
 	  for_128:
-
+		
 	        cmp rdx, 64	       ; Confronto n*m < 8 ?
                 jl for_32               ; Se edx è strettamente minore di 64, gestisco il residuo
 
@@ -92,7 +92,7 @@ accumulate:
 		jmp for_64
 
 	  for_64:
-
+		
 	        cmp rdx, 64	       ; Confronto n*m < 8 ?
                 jl for_32               ; Se edx è strettamente minore di 64, gestisco il residuo
 
@@ -141,7 +141,7 @@ accumulate:
     		add rax, 256           ;mi sposto di 32 elementi (256 posizioni)
 		add rcx, 256           ;mi sposto di 32 elementi (256 posizioni)
 		jmp for_64
-
+		
 
 
 	  for_32:
@@ -214,9 +214,9 @@ accumulate:
     		cmp rdx, 4	    ; Confronto edx < 4 ? salta al residuo
 	        jl for_remain   ; Se mancano meno di 4 elementi vai alla gestione residuo
 
-    		movaps xmm0, [rax]    ; xmm0 = tmp[centroide*d_star]
-    		addps xmm0, [rcx]     ; xmm0 = xmm0+[src]   ;tmp[centroide*d_star] += ds[i*d+(g*d_star)]
-   		movaps [rax], xmm0    ; tmp[centroide*d_star] = xmm0
+    		vmovaps xmm0, [rax]    ; xmm0 = tmp[centroide*d_star]
+    		vaddps xmm0, [rcx]     ; xmm0 = xmm0+[src]   ;tmp[centroide*d_star] += ds[i*d+(g*d_star)]
+   		vmovaps [rax], xmm0    ; tmp[centroide*d_star] = xmm0
 
     		sub rdx, 4      ;sottraggo i 4 elementi già presi
    		add rax, 16     ;mi sposto di 4 elementi (16 posizioni)
@@ -228,9 +228,9 @@ accumulate:
     	        cmp edx, 0	    ; edx == 0? fine
     		je end
 
-    		movss xmm0, [rax]    ; xmm0 = tmp[centroide*d_star]
-    		addss xmm0, [rcx]     ; xmm0 = xmm0+[src]   ;tmp[centroide*d_star] += ds[i*d+(g*d_star)]
-    		movss [rax], xmm0    ; tmp[centroide*d_star] = xmm0
+    		vmovss xmm0, [rax]    ; xmm0 = tmp[centroide*d_star]
+    		vaddss xmm0, [rcx]     ; xmm0 = xmm0+[src]   ;tmp[centroide*d_star] += ds[i*d+(g*d_star)]
+    		vmovss [rax], xmm0    ; tmp[centroide*d_star] = xmm0
 
     		dec rdx         ;sottraggo 1 elementi già preso
     		add rax, 4     ;mi sposto di 1 elemento (4 posizioni)
@@ -262,3 +262,4 @@ accumulate:
 		mov	rsp, rbp	; ripristina lo Stack Pointer
 		pop	rbp		; ripristina il Base Pointer
 		ret			; torna alla funzione C chiamante
+

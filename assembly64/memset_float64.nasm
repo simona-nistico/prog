@@ -5,9 +5,9 @@ section .bss			; Sezione contenente dati non inizializzati
 
 section .text			; Sezione contenente il codice macchina
 
-global memset_float
+global memset_float64
 
-memset_float:
+memset_float64:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------
@@ -31,7 +31,7 @@ memset_float:
 		;--------------------------------
 		;PARAMETRI
 		;--------------------------------
-
+		
 		;rdi (r6) = array
 		;rsi (r5) = dim
 		;xmm0 = val
@@ -54,7 +54,7 @@ memset_float:
 		vmovaps [rax+160], ymm0  ; copio nei sesti 8 valori dell'array il valore val
 		vmovaps [rax+192], ymm0  ; copio nei settimi 8 valori dell'array il valore val
 		vmovaps [rax+224], ymm0  ; copio nei ottavi 8 valori dell'array il valore val
-
+	
 		;ripeto
 
 		vmovaps [rax+256], ymm0     ; copio nei primi 8 valori dell'array il valore val
@@ -132,7 +132,7 @@ memset_float:
     		cmp rdx, 4	       ; Confronto n*m < 4 ? salta al residuo
 	  	jl for_remain          ; Se mancano meno di 4 elementi vai alla gestione residuo
 
-		movaps [rax], xmm0     ; copio nei primi 4 valori dell'array il valore val
+		vmovaps [rax], xmm0     ; copio nei primi 4 valori dell'array il valore val
 
     		sub rdx, 4             ;sottraggo i 4 elementi già presi
     		add rax, 16            ;mi sposto di 4 elementi (16 posizioni)
@@ -144,7 +144,7 @@ memset_float:
     		cmp rdx, 0	     ; n*m == 0? fine
     		je end
 
- 		movss [rax], xmm0    ; copio negli ultimi 4 valori dell'array il valore val
+ 		vmovss [rax], xmm0    ; copio negli ultimi 4 valori dell'array il valore val
 
 
     		dec rdx              ;sottraggo 1 elementi già preso
@@ -175,3 +175,4 @@ memset_float:
 		mov	rsp, rbp	; ripristina lo Stack Pointer
 		pop	rbp		; ripristina il Base Pointer
 		ret			; torna alla funzione C chiamante
+

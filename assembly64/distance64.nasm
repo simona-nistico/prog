@@ -6,9 +6,9 @@ section .text			; Sezione contenente il codice macchina
 
 ;TESTATA
 
-global distance
+global distance64
 
-distance:
+distance64:
 		; ------------------------------------------------------------
 		; Sequenza di ingresso nella funzione
 		; ------------------------------------------------------------
@@ -187,7 +187,7 @@ distance:
 		  jmp for_128   ; Se edx è più grande o uguale a 32, salto al for
 
 	   for_64:
-
+			
 		  cmp rdx, 64	    ; Confronto edx < 32 ?
   		  jl for_32      ; Se edx è strettamente minore di 32, gestisco il residuo
 
@@ -306,25 +306,23 @@ distance:
 
 		  jmp for_32   	; Verifico dopo la condizione
 
-      for_16:
+            for_16:
 	 	  cmp rdx, 16	    ; Confronto edx < 16 ?
-  	  jl for_8      ; Se edx è strettamente minore di 16, gestisco il residuo
+  		  jl for_8      ; Se edx è strettamente minore di 16, gestisco il residuo
 
 		  ;Loop Unrolling 1: 8 valori
 		  vmovaps ymm0, [rax]    ; in ymm0 metto i primi 8 valori di x1
  		  vmovaps ymm1, [rcx]    ; in ymm1 metto i primi 8 valori di x2
 
   		  vsubps ymm0, ymm1      ; ymm0 = ymm0-ymm1  (x1-x2)  diff = x1[i]-x2[i];
-
-			vsubps ymm0, ymm1      ; ymm0 = ymm0-ymm1  (x1-x2)  diff = x1[i]-x2[i];
-		  vmulps ymm0, ymm0      ; ymm0 = ymm0*ymm0           diff*diff;
+ 		  vmulps ymm0, ymm0      ; ymm0 = ymm0*ymm0           diff*diff;
  		  vaddps ymm2, ymm0      ; ymm2 = ymm2+ymm0           sum += diff*diff
 
 		  ;Loop Unrolling 2: 8 valori
 		  vmovaps ymm0, [rax+32]    ; in ymm0 metto i secondi 8 valori di x1
  		  vmovaps ymm1, [rcx+32]    ; in ymm1 metto i secondi 8 valori di x2
 
-  		vsubps ymm0, ymm1      ; ymm0 = ymm0-ymm1  (x1-x2)  diff = x1[i]-x2[i];
+  		  vsubps ymm0, ymm1      ; ymm0 = ymm0-ymm1  (x1-x2)  diff = x1[i]-x2[i];
  		  vmulps ymm0, ymm0      ; ymm0 = ymm0*ymm0           diff*diff;
  		  vaddps ymm2, ymm0      ; ymm2 = ymm2+ymm0           sum += diff*diff
 
@@ -356,14 +354,14 @@ distance:
 		  cmp rdx, 4	    ; Confronto edx < 4 ? salta al for_remainder
 		  jl for_remain     ; Se mancano meno di 4 elementi vai alla gestione residuo
 
-		  movaps xmm0, [rax]    ; in xmm0 metto gli ultimi <4 valori di x1
- 		  movaps xmm1, [rcx]    ; in xmm1 metto gli ultimi <4 valori di x2
+		  vmovaps xmm0, [rax]    ; in xmm0 metto gli ultimi <4 valori di x1
+ 		  vmovaps xmm1, [rcx]    ; in xmm1 metto gli ultimi <4 valori di x2
 
- 		  subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
- 		  mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
- 		  addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+ 		  vsubps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+ 		  vmulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+ 		  vaddps ymm2, ymm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
 
-  		sub rdx,4         ;sottraggo 4 elementi già presi
+  		  sub rdx,4         ;sottraggo 4 elementi già presi
  		  add rax, 16     ;mi sposto di 4 elementi (16 posizioni)
 		  add rcx, 16
 
@@ -373,12 +371,12 @@ distance:
    		 cmp rdx, 0	    ; edx == 0? fine
     		 je end
 
-   		 movss xmm0, [rax]    ; in xmm0 metto gli ultimi <4 valori di x1
-    	 movss xmm1, [rcx]    ; in xmm1 metto gli ultimi <4 valori di x2
+   		 vmovss xmm0, [rax]    ; in xmm0 metto gli ultimi <4 valori di x1
+    	         vmovss xmm1, [rcx]    ; in xmm1 metto gli ultimi <4 valori di x2
 
-  		 subss xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
-   		 mulss xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
-   		 addss xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+  		 vsubss xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+   		 vmulss xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+   		 vaddps ymm2, ymm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
 
   		 dec rdx         ;sottraggo 1 elementi già preso
   		 add rax, 4      ;mi sposto di 1 elemento (4 posizioni)
