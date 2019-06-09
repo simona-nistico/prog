@@ -46,11 +46,11 @@ objective_function:
 		imul rbx,rcx
 		vxorps ymm0,ymm0
 
-jmp for_remain
+;jmp for_remain
 
 for_128:
 		cmp rbx, 128	       ; Confronto n*m < 8 ?
-		jl for_64               ; Se edx è strettamente minore di 8, gestisco il residuo
+		jl for_32               ; Se edx è strettamente minore di 8, gestisco il residuo
 
 
 		vaddps ymm0,[rdx]      ;sum += distances_from_centroids 0...8
@@ -75,24 +75,6 @@ for_128:
 
 	  jmp for_128
 
-for_64:
-
-		cmp rbx, 64	       ; Confronto n*m < 8  ? salta al for4
-		jl for_32
-
-		vaddps ymm0,[rdx]      ;sum += distances_from_centroids 0...8
-		vaddps ymm0,[rdx+32]
-		vaddps ymm0,[rdx+64]
-		vaddps ymm0,[rdx+96]
-		vaddps ymm0,[rdx+128]
-		vaddps ymm0,[rdx+160]
-		vaddps ymm0,[rdx+192]
-		vaddps ymm0,[rdx+224]
-
-  	sub rbx, 64            ;sottraggo i 64 elementi già presi
-    add rdx, 256           ;mi sposto di 64 elementi (256 posizioni)
-
-		jmp for_64              ; salto incondizionato tanto la condizione la vedo dopo
 
 for_32:
 
@@ -109,21 +91,10 @@ for_32:
 
 		jmp for_32              ; salto incondizionato tanto la condizione la vedo dopo
 
-for_16:
-    cmp rbx, 16	       ; Confronto n*m < 8  ? salta al for4
-		jl for_8               ; Se mancano meno di 8 elementi vai alla gestione residuo
-
-		vaddps ymm0, [rdx]
-		vaddps ymm0, [rdx+32]
-
-		sub rbx, 16             ;sottraggo gli 16 elementi già presi
-    add rdx, 64            ;mi sposto di 16 elementi (64 posizioni)
-
-		jmp for_16              ; salto incondizionato tanto la condizione la vedo dopo
 
 for_8:
     cmp rbx, 8	       ; Confronto n*m < 8  ? salta al for4
-		jl for_remain               ; Se mancano meno di 8 elementi vai alla gestione residuo
+		jl for_4               ; Se mancano meno di 8 elementi vai alla gestione residuo
 
 		vaddps ymm0, [rdx]
 
@@ -136,8 +107,8 @@ for_4:
 		cmp rbx, 4	       ; Confronto n*m < 4 ? salta al residuo
 	  jl for_remain          ; Se mancano meno di 4 elementi vai alla gestione residuo
 
-		vmovaps ymm1, [rdx]
-		vaddps ymm0, ymm1       ;sum += distances_from_centroids 0...4
+		movaps xmm1, [rdx]
+		addps xmm0, xmm1       ;sum += distances_from_centroids 0...4
 
 		sub rbx, 4             ;sottraggo i 4 elementi già presi
 		add rdx, 16            ;mi sposto di 4 elementi (16 posizioni)
@@ -165,8 +136,8 @@ end:
 		addss xmm0,xmm1                          ; A3+B3 finisce in testa a xmm0 (verrà quindi ritornato in uscita)
 
 		;radice quadrata
-;		vxorps ymm1,ymm1
-	;	vsqrtss xmm0, xmm1, xmm0
+		vxorps ymm1,ymm1
+		vsqrtss xmm0, xmm1, xmm0
 
 		;VSQRTSS xmm1, xmm2, xmm3/m32
 		;Computes square root of the low single-precision floating-point

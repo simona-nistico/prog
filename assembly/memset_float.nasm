@@ -83,11 +83,13 @@ for_16:
     jmp for_16      ;salto incondizionato
 
 for_4:
+
+;    jmp end
+
     cmp edx, 4	    ; Confronto edx < 4 ? salta al residuo
 	  jl for_remain   ; Se mancano meno di 4 elementi vai alla gestione residuo
 
     movaps [eax], xmm0    ; assegno il valore ai primi 4 elementi di array
-
     sub edx, 4      ;sottraggo i 4 elementi già presi
     add eax, 16     ;mi sposto di 4 elementi (16 posizioni)
 

@@ -1,4 +1,4 @@
-#include "pqnn32c.c"
+#include "pqnn64c.c"
 //La riga sopra viene cambiata in automatico a seconda del run che si lancia
 #include "utils.h"
 
@@ -579,6 +579,7 @@ void non_exhaustive_indexing(params* input){
 
 }
 
+/* NON CANCELLARE
 void padding(params* input){
   int n = input->n;
   int nq = input->nq;
@@ -587,11 +588,9 @@ void padding(params* input){
   int d_star = d/m;
   MATRIX ds = input->ds;
   MATRIX qs = input->qs;
-  printf("DATASET BRUTTO\n" );
 
   //Quante colonne devo aggiungere
   int pad = 4 - ((d_star) % 4) ;
-  printf("PAD %d\n", pad);
 
   MATRIX ds2 = alloc_matrix(n, d+pad*m);
   for( int i=0; i<n; i++)
@@ -608,15 +607,16 @@ void padding(params* input){
       memset( &qs2[ i*(d+pad*m)+g*(d_star+pad)+d_star+1 ], 0, pad*sizeof(float) );
     }
 
-
   input->d = d+pad*m;
   input->ds = ds2;
   input->qs = qs2;
 }
+*/
+
 
 void indexing(params* input){
-  if( (input->d / input->m) % 4 != 0 )
-    padding(input);
+//  if( (input->d / input->m) % 4 != 0 )
+//    padding(input);
 
 
 /*movups noPad

@@ -186,6 +186,9 @@ for_16:
 		jmp for_16       ; Se ebx è più grande o uguale a 8, salto al for
 
 for_4:
+
+;    jmp end
+
 		cmp edi, 4	    ; Confronto edi < 4 ? salta al residuo
   	jl for_remain   ; Se mancano meno di 4 elementi vai alla gestione residuo
 

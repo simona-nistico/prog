@@ -37,7 +37,7 @@ objective_function:
 
 		imul ebx, ecx		;ebx = n*m cioè num_punti*num_gruppi
 
-jmp for_remain
+;jmp for_remain
 
 for_128:
     cmp ebx, 128	    ; Confronto n*m < 64 ?
@@ -125,6 +125,9 @@ for_16:
 	  jmp for_16       ; Se edx è più grande o uguale a 8, salto al for
 
 for_4:
+
+;    jmp end
+
     cmp ebx, 4	    ; Confronto n*m < 4 ? salta al residuo
 	  jl for_remain  ; Se mancano meno di 4 elementi vai alla gestione residuo
 
@@ -150,7 +153,7 @@ end:
     haddps xmm0, xmm0     ;sommo i primi due valori del registro
     haddps xmm0, xmm0     ;sommo i secondi due valori del registro
 
-;    sqrtps xmm0, xmm0     ;radice quadrata della funzione obiettivo
+    sqrtps xmm0, xmm0     ;radice quadrata della funzione obiettivo
     sub esp, 4            ;sposo nel registro in cima allo stack FPU il risultato
     movss [esp], xmm0     ;al fine di prenderlo da c
     fld dword [esp]

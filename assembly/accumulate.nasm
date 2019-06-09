@@ -158,6 +158,9 @@ for_16:
 	  jmp for_16      ; Salto incondizionato
 
 for_4:
+
+;    jmp end
+
     cmp edx, 4	    ; Confronto edx < 4 ? salta al residuo
 	  jl for_remain   ; Se mancano meno di 4 elementi vai alla gestione residuo
 

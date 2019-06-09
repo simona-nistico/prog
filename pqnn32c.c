@@ -176,7 +176,7 @@ void dealloc_matrix(MATRIX mat) {
  *****************************************************************************
  *
  */
-MATRIX load_data(char* filename, int *n, int *d) {
+MATRIX load_data(char* filename, int *n, int *d, int m) {
 	FILE* fp;
 	int rows, cols, status, i;
 
@@ -199,8 +199,30 @@ MATRIX load_data(char* filename, int *n, int *d) {
 	status = fread(data, sizeof(float), rows*cols, fp);
 	fclose(fp);
 
-	*n = rows;
-	*d = cols;
+//PADDING
+	int d1 = cols;
+	int d_star = d1/m;
+
+  if( d_star % 4 != 0 ){
+
+		//Quante colonne devo aggiungere
+		int pad = 4 - ((d_star) % 4) ;
+
+		MATRIX ds2 = alloc_matrix(rows, d1+pad*m);
+		for( int i=0; i<rows; i++)
+		  for( int g=0; g<m; g++){
+		    memcpy( &ds2[ i*(d1+pad*m)+g*(d_star+pad) ], &data[ i*d1+g*d_star ], d_star*sizeof(float) );
+		    memset( &ds2[ i*(d1+pad*m)+g*(d_star+pad)+d_star+1 ], 0, pad*sizeof(float) );
+		  }
+
+		*d = d1+pad*m;
+		*n = rows;
+		data = ds2;
+
+	}	else{
+		*n = rows;
+		*d = cols;
+	}
 
 //----------Stampa tutti i punti-----------
 //	print_matrix(rows, cols, data);
@@ -423,12 +445,12 @@ int main(int argc, char** argv) {
 	}
 
 	sprintf(fname, "%s.ds", input->filename);
-	input->ds = load_data(fname, &input->n, &input->d);
+	input->ds = load_data(fname, &input->n, &input->d, input->m);
 
 	input->nr = input->n/20;
 
 	sprintf(fname, "%s.qs", input->filename);
-	input->qs = load_data(fname, &input->nq, &input->d);
+	input->qs = load_data(fname, &input->nq, &input->d, input->m);
 
 	//
 	// Visualizza il valore dei parametri
