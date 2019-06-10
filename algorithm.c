@@ -1,4 +1,4 @@
-#include "pqnn32c.c"
+#include "pqnn64c.c"
 //La riga sopra viene cambiata in automatico a seconda del run che si lancia
 #include "utils.h"
 
@@ -295,12 +295,12 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, MATRI
 	//COSTO: n
 	float obiettivo = objective_function(n,m, distances_from_centroids);
 	float obiettivoPrev = FLT_MAX;
-  printf("Funzione obiettivo: %lf\n", obiettivo );
+  //printf("Funzione obiettivo: %lf\n", obiettivo );
 
 //Per la formula della terminazione il prof deve aggiornare le specifiche di progetto sul sito
 //	while( ( (obiettivoPrev - obiettivo ) > eps || iter<=tmin) && iter<=tmax) {
 	while( iter<=tmax && ( iter<=tmin || (obiettivoPrev - obiettivo ) > eps ) ){
-		printf("############################ ITERAZIONE %d ############################\n", iter);
+		//printf("############################ ITERAZIONE %d ############################\n", iter);
 
 		//Trova i nuovi centroidi facendo la media dei punti delle celle di Voronoi
 		//COSTO: n*d+k*d
@@ -325,7 +325,7 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, MATRI
 		obiettivoPrev = obiettivo;
     obiettivo = objective_function(n,m, distances_from_centroids);
 		iter++;
-    printf("Funzione obiettivo: %lf\n", obiettivo );
+    //printf("Funzione obiettivo: %lf\n", obiettivo );
 
 //    printf("Obiettivo vecchio: %14.2f\nObiettivo corrent: %14.2f\n", obiettivoPrev, obiettivo);
 //		printf("Variazione obiett: %14.2f\n", (obiettivoPrev - obiettivo) );
@@ -483,9 +483,7 @@ void non_exhaustive_indexing(params* input){
 //  print_matrix(kc,d,d,coarse_centroids,'c');
 
   // Deallochiamo la matrice perchè non ci serve più
-
-	input->residuals = alloc_matrix(n,d);
-  MATRIX residuals = input->residuals;
+  MATRIX residuals = alloc_matrix(n,d);
 
 
 // La matrice dei residui viene riempita
@@ -579,6 +577,7 @@ void non_exhaustive_indexing(params* input){
   // Deallochiamo questa struttura perchè non ci serve più, andessola memorizzazione
   // è mantenuta nella lista_invertita
   free(punti_quantizzatore_coarse);
+  dealloc_matrix(residuals);
 
 }
 
@@ -646,8 +645,6 @@ Searching time = 42.275 secs
 	if(input->kc > input->nr){
 		input->kc = input->nr/16;
 	}
-
-  printf("k: %d, nr: %d\n", input->k, input->nr);
 
   printf("Esaustiva: %d, Simmetrica: %d\n", input->exaustive, input->symmetric);
 
@@ -1143,7 +1140,7 @@ void NoExaSearchSim(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centro
 
 void searching(params* input){
 
-  printf("________________Chiamata a Search________________\n" );
+  //printf("________________Chiamata a Search________________\n" );
 	if(input->exaustive==1){
     if(input->symmetric==1){
   		exaSearchSim(input->n, input->d, input->k, input->m, input->knn, input->nq, input->qs,

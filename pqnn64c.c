@@ -113,9 +113,6 @@ typedef struct {
 	// TEST
 	int* celle_prima;    // Ha kc celle e memorizza la posizione di inizio per
 	                     // la lista relativa al centroide i
-	// TEST
-	// Matrice che tiene memoria dei residui
-	MATRIX residuals;
 	// ...
 	// ...
 	// ...

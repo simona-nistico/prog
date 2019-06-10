@@ -1,0 +1,273 @@
+############# Esecuzione con tutti i metodi scritti in C #############
+
+Input file name: 'prova'
+Data set size [n]: 8000
+Number of dimensions [d]: 128
+Query set size [nq]: 2000
+Number of ANN [knn]: 4
+PQ groups [m]: 8
+PQ centroids [k]: 256
+K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
+k: 256, nr: 400
+
+________________32______________
+Esaustiva: 1, Simmetrica: 0
+28.035
+0.514
+Esaustiva: 1, Simmetrica: 1
+27.758
+1.183
+Esaustiva: 0, Simmetrica: 0
+1.147
+2.908
+Esaustiva: 0, Simmetrica: 1
+1.122
+3.405
+
+________________64________________
+Esaustiva: 1, Simmetrica: 0
+27.472
+0.496
+Esaustiva: 1, Simmetrica: 1
+27.416
+1.216
+Esaustiva: 0, Simmetrica: 0
+1.117
+2.891
+Esaustiva: 0, Simmetrica: 1
+1.107
+3.339
+
+########## Esecuzione con 'accumulate' scritto in assembly ###########
+
+Input file name: 'prova'
+Data set size [n]: 8000
+Number of dimensions [d]: 128
+Query set size [nq]: 2000
+Number of ANN [knn]: 4
+PQ groups [m]: 8
+PQ centroids [k]: 256
+K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
+k: 256, nr: 400
+
+________________32______________
+Esaustiva: 1, Simmetrica: 0
+27.405
+0.519
+Esaustiva: 1, Simmetrica: 1
+27.347
+1.186
+Esaustiva: 0, Simmetrica: 0
+1.134
+2.898
+Esaustiva: 0, Simmetrica: 1
+1.135
+3.341
+
+________________64________________
+Esaustiva: 1, Simmetrica: 0
+26.941
+0.500
+Esaustiva: 1, Simmetrica: 1
+27.129
+1.211
+Esaustiva: 0, Simmetrica: 0
+1.101
+2.860
+Esaustiva: 0, Simmetrica: 1
+1.115
+3.295
+
+###### Esecuzione con 'accumulate', 'divide' scritto in assembly ######
+
+Input file name: 'prova'
+Data set size [n]: 8000
+Number of dimensions [d]: 128
+Query set size [nq]: 2000
+Number of ANN [knn]: 4
+PQ groups [m]: 8
+PQ centroids [k]: 256
+K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
+
+________________32______________
+Esaustiva: 1, Simmetrica: 0
+27.376
+0.504
+Esaustiva: 1, Simmetrica: 1
+27.445
+1.182
+Esaustiva: 0, Simmetrica: 0
+1.127
+2.896
+Esaustiva: 0, Simmetrica: 1
+1.126
+3.330
+
+________________64________________
+Esaustiva: 1, Simmetrica: 0
+27.033
+0.497
+Esaustiva: 1, Simmetrica: 1
+27.078
+1.201
+Esaustiva: 0, Simmetrica: 0
+1.122
+2.887
+Esaustiva: 0, Simmetrica: 1
+1.103
+3.357
+
+### Esecuzione con 'accumulate', 'divide', 'memset' scritto in assembly ###
+
+Input file name: 'prova'
+Data set size [n]: 8000
+Number of dimensions [d]: 128
+Query set size [nq]: 2000
+Number of ANN [knn]: 4
+PQ groups [m]: 8
+PQ centroids [k]: 256
+K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
+
+________________32______________
+Esaustiva: 1, Simmetrica: 0
+27.317
+0.508
+Esaustiva: 1, Simmetrica: 1
+27.370
+1.181
+Esaustiva: 0, Simmetrica: 0
+1.186
+2.899
+Esaustiva: 0, Simmetrica: 1
+1.220
+3.322
+
+________________64________________
+Esaustiva: 1, Simmetrica: 0
+26.894
+0.501
+Esaustiva: 1, Simmetrica: 1
+26.904
+1.201
+Esaustiva: 0, Simmetrica: 0
+1.092
+2.860
+Esaustiva: 0, Simmetrica: 1
+1.117
+3.372
+
+### Esecuzione con 'accumulate', 'divide', 'memset', 'residual' scritto in assembly ###
+Input file name: 'prova'
+Data set size [n]: 8000
+Number of dimensions [d]: 128
+Query set size [nq]: 2000
+Number of ANN [knn]: 4
+PQ groups [m]: 8
+PQ centroids [k]: 256
+K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
+
+________________32______________
+Esaustiva: 1, Simmetrica: 0
+27.433
+0.510
+Esaustiva: 1, Simmetrica: 1
+27.526
+1.183
+Esaustiva: 0, Simmetrica: 0
+1.106
+2.890
+Esaustiva: 0, Simmetrica: 1
+1.122
+3.321
+
+________________64________________
+Esaustiva: 1, Simmetrica: 0
+27.044
+0.500
+Esaustiva: 1, Simmetrica: 1
+27.022
+1.202
+Esaustiva: 0, Simmetrica: 0
+1.099
+2.850
+Esaustiva: 0, Simmetrica: 1
+1.124
+3.292
+
+### Esecuzione con 'distance' scritto in C ###
+
+Input file name: 'prova'
+Data set size [n]: 8000
+Number of dimensions [d]: 128
+Query set size [nq]: 2000
+Number of ANN [knn]: 4
+PQ groups [m]: 8
+PQ centroids [k]: 256
+K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
+
+________________32________________
+Esaustiva: 1, Simmetrica: 0
+27.430
+0.510
+Esaustiva: 1, Simmetrica: 1
+27.551
+1.188
+Esaustiva: 0, Simmetrica: 0
+1.112
+2.885
+Esaustiva: 0, Simmetrica: 1
+1.115
+3.311
+
+________________64________________
+Esaustiva: 1, Simmetrica: 0
+27.011
+0.501
+Esaustiva: 1, Simmetrica: 1
+26.995
+1.206
+Esaustiva: 0, Simmetrica: 0
+1.085
+2.865
+Esaustiva: 0, Simmetrica: 1
+1.102
+3.319
+
+### Esecuzione con tutto scritto in assembly ###
+Input file name: 'prova'
+Data set size [n]: 8000
+Number of dimensions [d]: 128
+Query set size [nq]: 2000
+Number of ANN [knn]: 4
+PQ groups [m]: 8
+PQ centroids [k]: 256
+K-means parameters: eps = 0.0100, tmin = 10, tmax = 100
+
+________________32________________
+Esaustiva: 1, Simmetrica: 0
+6.056
+0.378
+Esaustiva: 1, Simmetrica: 1
+6.468
+1.142
+Esaustiva: 0, Simmetrica: 0
+0.286
+0.840
+Esaustiva: 0, Simmetrica: 1
+0.277
+1.233
+
+________________64________________
+Esaustiva: 1, Simmetrica: 0
+6.047
+0.377
+Esaustiva: 1, Simmetrica: 1
+6.056
+1.085
+Esaustiva: 0, Simmetrica: 0
+0.296
+0.838
+Esaustiva: 0, Simmetrica: 1
+0.290
+1.438
+
