@@ -183,10 +183,6 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m, MATRIX centroids, i
 
 	  }//for tutti i sottogruppi
 
-    if(m>1)
-      //print_matrix(k*m,d_star,d_star,centroids,'p');
-      print_matrix_int(m,k,k,cont,'p');
-
     //dealloc_matrix(tmp);
     free(cont);
 
@@ -309,11 +305,6 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, MATRI
 		//Trova i nuovi centroidi facendo la media dei punti delle celle di Voronoi
 		//COSTO: n*d+k*d
 		update_centroids(n, d, k, ds, m, centroids, centroid_of_point);
-
-    if(m!=1){
-      //print_matrix(k*m,d_star,d_star,centroids,'p');
-      break;
-    }
 
 //    printf("Nuovi centroidi:\n");
 //    print_matrix(k*m,d_star, k, centroids, 'c');
