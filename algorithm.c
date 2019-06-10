@@ -1,4 +1,4 @@
-#include "pqnn64c.c"
+#include "pqnn32c.c"
 //La riga sopra viene cambiata in automatico a seconda del run che si lancia
 #include "utils.h"
 
@@ -149,7 +149,7 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m, MATRIX centroids, i
 
     // Matrice temporanea per memorizzare i nuovi centroidi
     //MATRIX tmp = alloc_matrix(k*m,d_star);
-    memset_float(centroids, 0.0, k*m*d_star);
+    memset_float(centroids, 0, k*m*d_star);
 
     //Vettore che, per ogni centroide, conta quanti punti appartengono alla sua cella
     int* cont = (int*) calloc(k*m,sizeof(int)); //usare calloc per inizializzare a 0?
@@ -171,16 +171,21 @@ void update_centroids(int n, int d, int k, MATRIX ds, int m, MATRIX centroids, i
 
     //print_matrix(m*k,d_star,d_star,tmp,'p');
 
+
 		//Divido ogni somma di cordinate per il numero di punti e lo inserisco come nuovo centroide
 		for(int i=0;i<k*m;i++){	//per ogni centroide
 
       if( cont[i]!=0 ){
 				divide(&centroids[i*d_star], cont[i], d_star);
 				//memset(&tmp[i*d_star], 0, d_star*sizeof(float));
-      } else
-					printf("\n######## Nessun punto appartiene al centroide #########");
+      } //else
+					//printf("\n######## Nessun punto appartiene al centroide #########");
 
 	  }//for tutti i sottogruppi
+
+    if(m>1)
+      //print_matrix(k*m,d_star,d_star,centroids,'p');
+      print_matrix_int(m,k,k,cont,'p');
 
     //dealloc_matrix(tmp);
     free(cont);
@@ -305,6 +310,11 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, MATRI
 		//COSTO: n*d+k*d
 		update_centroids(n, d, k, ds, m, centroids, centroid_of_point);
 
+    if(m!=1){
+      //print_matrix(k*m,d_star,d_star,centroids,'p');
+      break;
+    }
+
 //    printf("Nuovi centroidi:\n");
 //    print_matrix(k*m,d_star, k, centroids, 'c');
 
@@ -316,6 +326,8 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, MATRI
 //    print_matrix_int(n,m, k, centroid_of_point, 'p');
 //    printf("\nDistanza AL QUADRATO del centroide più vicino ai punti per sottogruppi\n");
 //    print_matrix(n,m, k, distances_from_centroids, 'p');
+
+
 
 		//Verifica l'ottimalità dei Punti
 		//COSTO: n
@@ -643,6 +655,8 @@ Searching time = 42.275 secs
 	if(input->kc > input->nr){
 		input->kc = input->nr/16;
 	}
+
+  printf("k: %d, nr: %d\n", input->k, input->nr);
 
   printf("Esaustiva: %d, Simmetrica: %d\n", input->exaustive, input->symmetric);
 
@@ -1161,5 +1175,5 @@ void searching(params* input){
     }
 	}
 
-  print_matrix_int(input->nq, input->knn, input->knn, input->ANN,'p');
+  //print_matrix_int(input->nq, input->knn, input->knn, input->ANN,'p');
 }
