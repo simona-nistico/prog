@@ -219,12 +219,12 @@ for_remain:
 		cmp rdx, 0	    ; edx == 0? fine
 		je end
 
-		movss xmm0, [rax]    ; in xmm0 metto gli ultimi <4 valori di x1
-		movss xmm1, [rcx]    ; in xmm1 metto gli ultimi <4 valori di x2
+		vmovss xmm0, [rax]    ; in xmm0 metto gli ultimi <4 valori di x1
+		vmovss xmm1, [rcx]    ; in xmm1 metto gli ultimi <4 valori di x2
 
-		subss xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
-		mulss xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
-		addss xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
+		vsubss xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
+		vmulss xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
+		vaddss xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
 
 		dec rdx         ;sottraggo 1 elementi già preso
 		add rax, 4      ;mi sposto di 1 elemento (4 posizioni)

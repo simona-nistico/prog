@@ -103,7 +103,7 @@ for_4:
 		cmp rdx, 4	       ; Confronto n*m < 4 ? salta al residuo
   	jl for_remain          ; Se mancano meno di 4 elementi vai alla gestione residuo
 
-		movaps [rax], xmm0     ; copio nei primi 4 valori dell'array il valore val
+		vmovaps [rax], xmm0     ; copio nei primi 4 valori dell'array il valore val
 
 		sub rdx, 4             ;sottraggo i 4 elementi già presi
 		add rax, 16            ;mi sposto di 4 elementi (16 posizioni)
@@ -115,7 +115,7 @@ for_remain:
 		cmp rdx, 0	     ; n*m == 0? fine
 		je end
 
- 		movss [rax], xmm0    ; copio negli ultimi 4 valori dell'array il valore val
+ 		vmovss [rax], xmm0    ; copio negli ultimi 4 valori dell'array il valore val
 
 		dec rdx              ;sottraggo 1 elementi già preso
 		add rax, 4           ;mi sposto di 1 elemento (4 posizioni)

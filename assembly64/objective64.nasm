@@ -107,8 +107,8 @@ for_4:
 		cmp rbx, 4	       ; Confronto n*m < 4 ? salta al residuo
 	  jl for_remain          ; Se mancano meno di 4 elementi vai alla gestione residuo
 
-		movaps xmm1, [rdx]
-		addps xmm0, xmm1       ;sum += distances_from_centroids 0...4
+		vmovaps xmm1, [rdx]
+		vaddps xmm0, xmm1       ;sum += distances_from_centroids 0...4
 
 		sub rbx, 4             ;sottraggo i 4 elementi già presi
 		add rdx, 16            ;mi sposto di 4 elementi (16 posizioni)
@@ -118,7 +118,7 @@ for_remain:
 		cmp rbx, 0	    ; n*m == 0? fine
     je end
 
- 		addss xmm0, [rdx]    ; in xmm0 metto gli ultimi <4 valori di x1
+ 		vaddss xmm0, [rdx]    ; in xmm0 metto gli ultimi <4 valori di x1
 
 		dec rbx         ;sottraggo 1 elementi già preso
 		add rdx, 4     ;mi sposto di 1 elemento (4 posizioni)

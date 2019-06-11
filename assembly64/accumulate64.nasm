@@ -126,7 +126,7 @@ for_32:
 
 for_8:
 		cmp rdx, 8	       ; Confronto n*m < 8  ? salta al for4
-		jl for_4               ; Se mancano meno di 8 elementi vai alla gestione residuo
+		jl for_remain               ; Se mancano meno di 8 elementi vai alla gestione residuo
 
 		vmovaps ymm0,[rax]      ; copio i primi 8 valori di dest in ymm0
 		vaddps  ymm0,[rcx]      ; aggiungo a ymm0 i primi 8 valori di source
@@ -138,27 +138,14 @@ for_8:
 
 		jmp for_8              ; salto incondizionato tanto la condizione la vedo dopo
 
-for_4:
-			cmp rdx, 4	    ; Confronto edx < 4 ? salta al residuo
-			jl for_remain   ; Se mancano meno di 4 elementi vai alla gestione residuo
-
-			movaps xmm0, [rax]    ; xmm0 = tmp[centroide*d_star]
-			addps xmm0, [rcx]     ; xmm0 = xmm0+[src]   ;tmp[centroide*d_star] += ds[i*d+(g*d_star)]
-			movaps [rax], xmm0    ; tmp[centroide*d_star] = xmm0
-
-			sub rdx, 4      ;sottraggo i 4 elementi già presi
-			add rax, 16     ;mi sposto di 4 elementi (16 posizioni)
-			add rcx, 16
-
-			jmp for_4    ; salto incondizionato tanto la condizione la vedo dopo
 
 for_remain:
 			cmp edx, 0	    ; edx == 0? fine
 			je end
 
-  		movss xmm0, [rax]    ; xmm0 = tmp[centroide*d_star]
-  		addss xmm0, [rcx]     ; xmm0 = xmm0+[src]   ;tmp[centroide*d_star] += ds[i*d+(g*d_star)]
-  		movss [rax], xmm0    ; tmp[centroide*d_star] = xmm0
+  		vmovss xmm0, [rax]    ; xmm0 = tmp[centroide*d_star]
+  		vaddss xmm0, [rcx]     ; xmm0 = xmm0+[src]   ;tmp[centroide*d_star] += ds[i*d+(g*d_star)]
+  		vmovss [rax], xmm0    ; tmp[centroide*d_star] = xmm0
 
   		dec rdx         ;sottraggo 1 elementi già preso
   		add rax, 4     ;mi sposto di 1 elemento (4 posizioni)

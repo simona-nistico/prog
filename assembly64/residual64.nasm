@@ -43,7 +43,7 @@ global residual
 for_128:
 
     cmp rdi, 128	       ; Confronto n*m < 8 ?
-    jl for_32               ; Se edx è strettamente minore di 8, gestisco il residuo
+    jl for_16               ; Se edx è strettamente minore di 8, gestisco il residuo
 
 		vmovaps ymm0,[rbx]     ; i primi 8 elementi di x vanno in ymm0
 		vsubps ymm0,[rcx]      ; sottraggo i primi 8 elementi di cent dai primi 8 elementi di x
@@ -117,10 +117,10 @@ for_128:
 		jmp for_128
 
 
-for_32:
+for_16:
 
     cmp rdi, 32	       ; Confronto n*m < 8 ?
-    jl for_8               ; Se edx è strettamente minore di 8, gestisco il residuo
+    jl for_remain               ; Se edx è strettamente minore di 8, gestisco il residuo
 
 		vmovaps ymm0,[rbx]     ; i primi 8 elementi di x vanno in ymm0
 		vsubps ymm0,[rcx]      ; sottraggo i primi 8 elementi di cent dai primi 8 elementi di x
@@ -130,63 +130,24 @@ for_32:
 		vsubps ymm0,[rcx+32]
 		vmovaps [rax+32], ymm0
 
-		vmovaps ymm0,[rbx+64]
-		vsubps ymm0,[rcx+64]
-		vmovaps [rax+64], ymm0
 
-		vmovaps ymm0,[rbx+96]
-		vsubps ymm0,[rcx+96]
-		vmovaps [rax+96], ymm0
+    sub rdi, 16            ;sottraggo i 32 elementi già presi
+    add rax, 64           ;mi sposto di 32 elementi (128 posizioni)
+	  add rbx, 64
+		add rcx, 64
 
-    sub rdi, 32            ;sottraggo i 32 elementi già presi
-    add rax, 128           ;mi sposto di 32 elementi (128 posizioni)
-	  add rbx, 128
-		add rcx, 128
-
-		jmp for_32
-
-
-for_8:
-    cmp rdi, 8	       ; Confronto n*m < 8  ? salta al for4
-		jl for_4               ; Se mancano meno di 8 elementi vai al for_4
-
-		vmovaps ymm0,[rbx]     ; i primi 8 elementi di x vanno in ymm0
-		vsubps ymm0,[rcx]      ; sottraggo i primi 8 elementi di cent dai primi 8 elementi di x
-		vmovaps [rax], ymm0
-
-  	sub rdi, 8            ;sottraggo i 8 elementi già presi
-    add rax, 32           ;mi sposto di 8 elementi (32 posizioni)
-		add rbx, 32
-		add rcx, 32
-
-		jmp for_8              ; salto incondizionato tanto la condizione la vedo dopo
-
-for_4:
-
-		cmp rdi, 4	       ; Confronto rdi < 4 ? salta al residuo
-  		jl for_remain          ; Se mancano meno di 4 elementi vai alla gestione residuo
-
-		movaps xmm0, [rbx]     ; in xmm0 metto i primi 4 valori di x
-		movaps xmm1, [rcx]     ; in xmm1 metto i primi 4 valori di centr
-
-		subps xmm0, xmm1       ; xmm0 = xmm0-xmm1  (x-centr)  x[i]-centroid[i];
-		movaps [rax], xmm0     ; res[i] = x[i]-centroid[i]  salvo nel vettore i valori
-
-		sub rdi, 4             ;sottraggo i 4 elementi già presi
-		add rbx, 16            ;mi sposto di 4 elementi (16 posizioni)
-		add rcx, 16
-		add rax, 16
+		jmp for_16
 
 for_remain:
 
 		cmp rdi, 0	        ; rdi == 0? fine
 		je end
 
-		movss xmm0, [rbx]    ; in xmm0 metto gli ultimi <4 valori di x
-		movss xmm1, [rcx]    ; in xmm1 metto gli ultimi <4 valori di centroidi
+		vmovss xmm0, [rbx]    ; in xmm0 metto gli ultimi <4 valori di x
+		vmovss xmm1, [rcx]    ; in xmm1 metto gli ultimi <4 valori di centroidi
 
-		subss xmm0, xmm1     ; xmm0 = xmm0-xmm1  (x-centr)  x[i]-centroid[i];
-		movss [rax], xmm0    ; res[i] = x[i]-centroid[i]  salvo nel vettore i valori
+		vsubss xmm0, xmm1     ; xmm0 = xmm0-xmm1  (x-centr)  x[i]-centroid[i];
+		vmovss [rax], xmm0    ; res[i] = x[i]-centroid[i]  salvo nel vettore i valori
 
 		dec rdi              ;sottraggo 1 elementi già preso
 		add rbx, 4           ;mi sposto di 1 elemento (4 posizioni)

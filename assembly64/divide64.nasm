@@ -187,9 +187,9 @@ for_4:
 	cmp rdx, 4	    ; Confronto edx < 4 ? salta al residuo
   jl for_remain   ; Se mancano meno di 4 elementi vai alla gestione residuo
 
-	movaps xmm1, [rax]    ; xmm0 = tmp[i*d_star]
-	divps xmm1, xmm0      ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
-	movaps [rax], xmm1    ; centroids[(i+g*k)*d_star] = xmm0
+	vmovaps xmm1, [rax]    ; xmm0 = tmp[i*d_star]
+	vdivps xmm1, xmm0      ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+	vmovaps [rax], xmm1    ; centroids[(i+g*k)*d_star] = xmm0
 
 	sub rdx, 4      ;sottraggo i 4 elementi già presi
 	add rax, 16     ;mi sposto di 4 elementi (16 posizioni)
@@ -200,9 +200,9 @@ for_remain:
 	cmp rdx, 0	    ; edx == 0? fine
 	je end
 
-	movss xmm1, [rax]    ; xmm0 = tmp[i*d_star]
-	divss xmm1, xmm0     ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
-	movss [rax], xmm1    ; centroids[(i+g*k)*d_star] = xmm0
+	vmovss xmm1, [rax]    ; xmm0 = tmp[i*d_star]
+	vdivss xmm1, xmm0     ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+	vmovss [rax], xmm1    ; centroids[(i+g*k)*d_star] = xmm0
 
 	dec rdx         ;sottraggo 1 elementi già preso
 	add rax, 4     ;mi sposto di 1 elemento (4 posizioni)
