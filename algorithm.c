@@ -1,9 +1,9 @@
-#include "pqnn64c.c"
+#include "pqnn32c.c"
 //La riga sopra viene cambiata in automatico a seconda del run che si lancia
 #include "utils.h"
 
-#define min(a, b) (((a) < (b)) ? (a) : (b))
-#define max(a, b) (((a) > (b)) ? (a) : (b))
+//#define min(a, b) (((a) < (b)) ? (a) : (b))
+//#define max(a, b) (((a) > (b)) ? (a) : (b))
 
 
 /**La funzione seguente seleziona k punti da usare come centroidi iniziali
@@ -207,23 +207,25 @@ void store_distances(params* input){
   int m = input->m;
   int k = input->k;
 
-  int pos = 0;
+
+  int i, g, j, p;
   int d_star = d/m;
 
-  input->distances_between_centroids=alloc_matrix(m,(k*(k+1)/2));
+  input->distances_between_centroids=alloc_matrix(m*k,k);
   MATRIX distances_between_centroids = input->distances_between_centroids;
 
 	//print_matrix(k*m,d_star,m,centroids,'c');
 
-	for(int g=0;g<m;g++){//per ciascun gruppo
-		for(int i=0;i<k;i++){//per ogni centroide
-			distances_between_centroids[pos++] = 0;
-			for(int j=i+1;j<k;j++){
-				//Calcoliamo e salviamo la distanza
-				distances_between_centroids[pos++] = distance(&centroids[(g*k+i)*d_star], &centroids[(g*k+j)*d_star], d_star);
+	for(g=0;g<m;g++){//per ciascun gruppo
+    for(i=0;i<k;i++){
+      distances_between_centroids[(g*k+i)*k+i] = 0;
+		  for(int j=i+1;j<k;j++){
+			   //Calcoliamo e salviamo la distanza
+			  distances_between_centroids[(g*k+i)*k+j] = distance(&centroids[(g*k+i)*d_star], &centroids[(g*k+j)*d_star], d_star);
+        distances_between_centroids[(g*k+j)*k+i] = distances_between_centroids[(g*k+i)*k+j];
       }// for j
-		}// for i
-	}// for gruppo
+    }
+	}// for p
 
   //TESTATA
 }//store_distances
@@ -299,7 +301,7 @@ void calculate_centroids(int n, int d, int k, MATRIX ds, float eps, int m, MATRI
 
 //Per la formula della terminazione il prof deve aggiornare le specifiche di progetto sul sito
 //	while( ( (obiettivoPrev - obiettivo ) > eps || iter<=tmin) && iter<=tmax) {
-	while( iter<=tmax && ( iter<=tmin || (obiettivoPrev - obiettivo ) > eps ) ){
+	while( iter<=tmax && ( iter<=tmin || abs(obiettivoPrev - obiettivo )/obiettivoPrev > eps ) ){
 		//printf("############################ ITERAZIONE %d ############################\n", iter);
 
 		//Trova i nuovi centroidi facendo la media dei punti delle celle di Voronoi
@@ -489,7 +491,6 @@ void non_exhaustive_indexing(params* input){
 // La matrice dei residui viene riempita
   for(int i=0;i<n;i++)
 			residual(&residuals[i*d],&ds[i*d],&coarse_centroids[coarse_centroid_of_point[i]*d],d);
-
   dealloc_matrix(ds);
 
 
@@ -514,6 +515,8 @@ void non_exhaustive_indexing(params* input){
   //points_of_centroid(n, d, k, residuals,m, centroids, centroid_of_point, distances_from_centroids);
   //for(i=nr;i<n;i++){
     quantize(&centroid_of_point[nr*m], &residuals[nr*d], k, m, d, centroids, (n-nr));
+
+    dealloc_matrix(residuals);
   //}
 
 //  printf("\nDistanza AL QUADRATO del centroide ACCURATO più vicino ai punti (m=1)\n");
@@ -577,7 +580,6 @@ void non_exhaustive_indexing(params* input){
   // Deallochiamo questa struttura perchè non ci serve più, andessola memorizzazione
   // è mantenuta nella lista_invertita
   free(punti_quantizzatore_coarse);
-  dealloc_matrix(residuals);
 
 }
 
@@ -633,7 +635,6 @@ Searching time = 42.275 secs
 
   int d_star = input->d/input->m;
 
-
 	if(input->nr > input->n){
 		input->nr = input->n/2;
 	}
@@ -645,6 +646,9 @@ Searching time = 42.275 secs
 	if(input->kc > input->nr){
 		input->kc = input->nr/16;
 	}
+
+  //input->n = 20;
+  //input->k = 4;
 
   printf("Esaustiva: %d, Simmetrica: %d\n", input->exaustive, input->symmetric);
 
@@ -659,6 +663,7 @@ Searching time = 42.275 secs
 		input->centroid_of_point=(int*) malloc(input->n*input->m*sizeof(int));
     calculate_centroids(input->n, input->d, input->k, input->ds, input->eps, input->m, input->centroids,
                         input->centroid_of_point, input->tmin, input->tmax);
+    dealloc_matrix(input->ds);
   } else {
     non_exhaustive_indexing(input);
 
@@ -745,9 +750,9 @@ void exaSearchSim(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 
 			for(g=0;g<m;g++){
 //				printf("Voglio sapere la distanza tra il centroide %d e il centroide %d\n",quant[g],  centroid_of_point[j*m+g]);
-        max = max(quant[i*m+g], centroid_of_point[j*m+g]);
-        min = min(quant[i*m+g], centroid_of_point[j*m+g]);
-        dist += distances_between_centroids[g*k*(k+1)/2+min*k-min*(min+1)/2+max-min];
+        //max = max(quant[i*m+g], centroid_of_point[j*m+g]);
+        //min = min(quant[i*m+g], centroid_of_point[j*m+g]);
+        dist += distances_between_centroids[(g*k+quant[i*m+g])*k+centroid_of_point[j*m+g]];
 //				printf(" Distanza parziale: %f\n", get_distance(quant[g], centroid_of_point[j*m+g],k,g));
 			}// for l
 
@@ -771,6 +776,7 @@ void exaSearchSim(int n, int d, int k, int m, int knn, int nq, MATRIX qs,
 		// dataset più vicini alla query
 
 	}// for i
+
 
   free(quant);
 
@@ -1093,9 +1099,9 @@ void NoExaSearchSim(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centro
 
 				for(g=0;g<m;g++){
 					l = lista_invertita[inizio+p*(m+1)+g+1];
-					max = max(quantization[g], l);
-					min = min(quantization[g], l);
-					distanza += distances_between_centroids[g*k*(k+1)/2+min*k-min*(min+1)/2+max-min];
+					//max = max(quantization[g], l);
+					//min = min(quantization[g], l);
+					distanza += distances_between_centroids[(g*k+l)*k+quantization[g]];
 				}
 
 //				printf("\nDistanza: %f \n",distanza);
@@ -1139,6 +1145,7 @@ void NoExaSearchSim(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centro
 
 
 void searching(params* input){
+
 
   //printf("________________Chiamata a Search________________\n" );
 	if(input->exaustive==1){
