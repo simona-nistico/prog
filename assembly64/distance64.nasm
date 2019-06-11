@@ -48,8 +48,6 @@ distance:
 
 		vxorps	ymm2, ymm2 ; azzero ymm2 dove metterò la somma
 
-;jmp for_16
-
 for_128:
 		cmp rdx, 128	    ; Confronto edx < 32 ?
   	jl for_16      ; Se edx è strettamente minore di 32, gestisco il residuo
@@ -192,7 +190,7 @@ for_128:
 
 for_16:
 		cmp rdx, 16	    ; Confronto edx < 4 ? salta al for_remainder
-		jl for_4     ; Se mancano meno di 4 elementi vai alla gestione residuo
+		jl for_remain     ; Se mancano meno di 4 elementi vai alla gestione residuo
 
 		;Loop Unrolling 1: 8 valori
 		vmovaps ymm0, [rax]    ; in xmm0 metto gli ultimi <4 valori di x1
@@ -216,23 +214,6 @@ for_16:
 
 		jmp for_16    ; salto incondizionato tanto la condizione la vedo dopo
 
-
-for_4:
-		cmp rdx, 4	    ; Confronto edx < 4 ? salta al for_remainder
-		jl for_remain     ; Se mancano meno di 4 elementi vai alla gestione residuo
-
-		movaps xmm0, [rax]    ; in xmm0 metto gli ultimi <4 valori di x1
-		movaps xmm1, [rcx]    ; in xmm1 metto gli ultimi <4 valori di x2
-
-		subps xmm0, xmm1      ; xmm0 = xmm0-xmm1  (x1-x2)  diff = x1[i]-x2[i];
-		mulps xmm0, xmm0      ; xmm0 = xmm0*xmm0           diff*diff;
-		addps xmm2, xmm0      ; xmm2 = xmm2+xmm0           sum += diff*diff
-
-		sub rdx, 4         ;sottraggo 4 elementi già presi
-		add rax, 16     ;mi sposto di 4 elementi (16 posizioni)
-		add rcx, 16
-
-		jmp for_4    ; salto incondizionato tanto la condizione la vedo dopo
 
 for_remain:
 		cmp rdx, 0	    ; edx == 0? fine
