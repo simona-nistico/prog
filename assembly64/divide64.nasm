@@ -47,7 +47,7 @@ divide:
 for_128:
 
     cmp rdx, 128	       ; Confronto n*m < 8 ?
-    jl for_32               ; Se edx è strettamente minore di 8, gestisco il residuo
+    jl for_16               ; Se edx è strettamente minore di 8, gestisco il residuo
 
                 ;Loop Unrolling 1: 8 valori
 		vmovaps ymm1,[rax]      ; copio i primi 8 valori di dest in ymm0
@@ -136,10 +136,10 @@ for_128:
 		jmp for_128
 
 
-for_32:
+for_16:
 
-     cmp rdx, 32	       ; Confronto n*m < 8 ?
-		 jl for_8               ; Se edx è strettamente minore di 8, gestisco il residuo
+    cmp rdx, 16	       ; Confronto n*m < 8 ?
+		jl for_remain               ; Se edx è strettamente minore di 8, gestisco il residuo
 
 
     ;Loop Unrolling 1: 8 valori
@@ -152,57 +152,20 @@ for_32:
 		vdivps  ymm1,ymm0      ; aggiungo a ymm0 i secondi 8 valori di source
 		vmovaps [rax+32],ymm1      ; ricopio la somma dei secondi 8 valori di dest e source in dest
 
-    ;Loop Unrolling 3: 8 valori
-		vmovaps ymm1,[rax+64]      ; copio i terzi 8 valori di dest in ymm0
-		vdivps  ymm1,ymm0          ; aggiungo a ymm0 i terzi 8 valori di source
-		vmovaps [rax+64],ymm1      ; ricopio la somma dei terzi 8 valori di dest e source in dest
 
-    ;Loop Unrolling 4: 8 valori
-		vmovaps ymm1,[rax+96]      ; copio i quarti 8 valori di dest in ymm0
-		vdivps  ymm1,ymm0          ; aggiungo a ymm0 i quarti 8 valori di source
-		vmovaps [rax+96],ymm1      ; ricopio la somma dei quarti 8 valori di dest e source in dest
+    sub rdx, 16            ;sottraggo i 32 elementi già presi
+		add rax, 64           ;mi sposto di 32 elementi (128 posizioni)
 
+		jmp for_16
 
-    sub rdx, 32            ;sottraggo i 32 elementi già presi
-		add rax, 128           ;mi sposto di 32 elementi (128 posizioni)
-
-		jmp for_32
-
-
-for_8:
-		cmp rdx, 8	       ; Confronto n*m < 8  ? salta al for4
-		jl for_4               ; Se mancano meno di 8 elementi vai alla gestione residuo
-
-  vmovaps ymm1, [rax]     ; xmm0 = tmp[i*d_star]
-  vdivps ymm1, ymm0       ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
-  vmovaps [rax], ymm1     ; centroids[(i+g*k)*d_star] = xmm0
-
-  sub rdx, 8             ;sottraggo i 8 elementi già presi
-  add rax, 32            ;mi sposto di 8 elementi (32 posizioni)
-
-	jmp for_8    ; salto incondizionato tanto la condizione la vedo dopo
-
-for_4:
-
-	cmp rdx, 4	    ; Confronto edx < 4 ? salta al residuo
-  jl for_remain   ; Se mancano meno di 4 elementi vai alla gestione residuo
-
-	movaps xmm1, [rax]    ; xmm0 = tmp[i*d_star]
-	divps xmm1, xmm0      ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
-	movaps [rax], xmm1    ; centroids[(i+g*k)*d_star] = xmm0
-
-	sub rdx, 4      ;sottraggo i 4 elementi già presi
-	add rax, 16     ;mi sposto di 4 elementi (16 posizioni)
-
-	jmp for_4    ; salto incondizionato tanto la condizione la vedo dopo
 
 for_remain:
 	cmp rdx, 0	    ; edx == 0? fine
 	je end
 
-	movss xmm1, [rax]    ; xmm0 = tmp[i*d_star]
-	divss xmm1, xmm0     ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
-	movss [rax], xmm1    ; centroids[(i+g*k)*d_star] = xmm0
+	vmovss xmm1, [rax]    ; xmm0 = tmp[i*d_star]
+	vdivss xmm1, xmm0     ; xmm0 = xmm0/cont[i]   ;tmp[centroide*d_star]/cont[i]
+	vmovss [rax], xmm1    ; centroids[(i+g*k)*d_star] = xmm0
 
 	dec rdx         ;sottraggo 1 elementi già preso
 	add rax, 4     ;mi sposto di 1 elemento (4 posizioni)
