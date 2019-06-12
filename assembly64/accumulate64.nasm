@@ -1,4 +1,3 @@
-
 section .data			; Sezione contenente dati inizializzati
 
 section .bss			; Sezione contenente dati non inizializzati
@@ -40,10 +39,10 @@ accumulate:
 		mov rcx,rsi ; rcx= source
 		;dim è già in rdx
 
-for_64:
+for_128:
 
-		cmp rdx, 64	       ; Confronto n*m < 8 ?
-		jl for_32               ; Se edx è strettamente minore di 64, gestisco il residuo
+		cmp rdx, 128	       ; Confronto n*m < 8 ?
+		jl for_16               ; Se edx è strettamente minore di 64, gestisco il residuo
 
                 ;Loop Unrolling 1: 8 valori
 		vmovaps ymm0,[rax]      ; copio i primi 8 valori di dest in ymm0
@@ -86,16 +85,57 @@ for_64:
 		vmovaps [rax+224],ymm0      ; ricopio la somma degli ottavi 8 valori di dest e source in dest
 
 
-  	sub rdx, 64            ;sottraggo i 32 elementi già presi
-    add rax, 256           ;mi sposto di 32 elementi (256 posizioni)
-		add rcx, 256           ;mi sposto di 32 elementi (256 posizioni)
-		jmp for_64
+				;Loop Unrolling 9: 8 valori
+		vmovaps ymm0,[rax+256]      ; copio i primi 8 valori di dest in ymm0
+		vaddps  ymm0,[rcx+256]      ; aggiungo a ymm0 i primi 8 valori di source
+		vmovaps [rax+256],ymm0      ; ricopio la somma dei primi 8 valori di dest e source in dest
+
+				;Loop Unrolling 10: 8 valori
+		vmovaps ymm0,[rax+288]      ; copio i secondi 8 valori di dest in ymm0
+		vaddps  ymm0,[rcx+288]      ; aggiungo a ymm0 i secondi 8 valori di source
+		vmovaps [rax+288],ymm0      ; ricopio la somma dei secondi 8 valori di dest e source in dest
+
+				;Loop Unrolling 11: 8 valori
+		vmovaps ymm0,[rax+320]      ; copio i terzi 8 valori di dest in ymm0
+		vaddps  ymm0,[rcx+320]      ; aggiungo a ymm0 i terzi 8 valori di source
+		vmovaps [rax+320],ymm0      ; ricopio la somma dei terzi 8 valori di dest e source in dest
+
+				;Loop Unrolling 12: 8 valori
+		vmovaps ymm0,[rax+352]      ; copio i quarti 8 valori di dest in ymm0
+		vaddps  ymm0,[rcx+352]      ; aggiungo a ymm0 i quarti 8 valori di source
+		vmovaps [rax+352],ymm0      ; ricopio la somma dei quarti 8 valori di dest e source in dest
+
+				;Loop Unrolling 13: 8 valori
+		vmovaps ymm0,[rax+384]      ; copio i quarti 8 valori di dest in ymm0
+		vaddps  ymm0,[rcx+384]      ; aggiungo a ymm0 i quinti 8 valori di source
+		vmovaps [rax+384],ymm0      ; ricopio la somma dei quinti 8 valori di dest e source in dest
+
+				;Loop Unrolling 14: 8 valori
+		vmovaps ymm0,[rax+416]      ; copio i quarti 8 valori di dest in ymm0
+		vaddps  ymm0,[rcx+416]      ; aggiungo a ymm0 i sesti 8 valori di source
+		vmovaps [rax+416],ymm0      ; ricopio la somma dei sesti 8 valori di dest e source in dest
+
+				;Loop Unrolling 15: 8 valori
+		vmovaps ymm0,[rax+448]      ; copio i quarti 8 valori di dest in ymm0
+		vaddps  ymm0,[rcx+448]      ; aggiungo a ymm0 i settimi 8 valori di source
+		vmovaps [rax+448],ymm0      ; ricopio la somma dei settimi 8 valori di dest e source in dest
+
+				;Loop Unrolling 16: 8 valori
+		vmovaps ymm0,[rax+480]      ; copio i quarti 8 valori di dest in ymm0
+		vaddps  ymm0,[rcx+480]      ; aggiungo a ymm0 gli ottavi 8 valori di source
+		vmovaps [rax+480],ymm0      ; ricopio la somma degli ottavi 8 valori di dest e source in dest
 
 
-for_32:
+  	sub rdx, 128            ;sottraggo i 32 elementi già presi
+    add rax, 512           ;mi sposto di 32 elementi (256 posizioni)
+		add rcx, 512           ;mi sposto di 32 elementi (256 posizioni)
+		jmp for_128
 
-	 	cmp rdx, 32	       ; Confronto n*m < 8 ?
-    jl for_8               ; Se edx è strettamente minore di 8, gestisco il residuo
+
+for_16:
+
+	 	cmp rdx, 16	       ; Confronto n*m < 8 ?
+    jl for_remain              ; Se edx è strettamente minore di 8, gestisco il residuo
 
                 ;Loop Unrolling 1: 8 valori
 		vmovaps ymm0,[rax]      ; copio i primi 8 valori di dest in ymm0
@@ -107,36 +147,12 @@ for_32:
 		vaddps  ymm0,[rcx+32]      ; aggiungo a ymm0 i secondi 8 valori di source
 		vmovaps [rax+32],ymm0      ; ricopio la somma dei secondi 8 valori di dest e source in dest
 
-                ;Loop Unrolling 3: 8 valori
-		vmovaps ymm0,[rax+64]      ; copio i terzi 8 valori di dest in ymm0
-		vaddps  ymm0,[rcx+64]      ; aggiungo a ymm0 i terzi 8 valori di source
-		vmovaps [rax+64],ymm0      ; ricopio la somma dei terzi 8 valori di dest e source in dest
 
-                ;Loop Unrolling 4: 8 valori
-		vmovaps ymm0,[rax+96]      ; copio i quarti 8 valori di dest in ymm0
-		vaddps  ymm0,[rcx+96]      ; aggiungo a ymm0 i quarti 8 valori di source
-		vmovaps [rax+96],ymm0      ; ricopio la somma dei quarti 8 valori di dest e source in dest
+  	sub rdx, 16            ;sottraggo i 32 elementi già presi
+    add rax, 64           ;mi sposto di 32 elementi (128 posizioni)
+		add rcx, 64           ;mi sposto di 32 elementi (128 posizioni)
+		jmp for_16
 
-
-  	sub rdx, 32            ;sottraggo i 32 elementi già presi
-    add rax, 128           ;mi sposto di 32 elementi (128 posizioni)
-		add rcx, 128           ;mi sposto di 32 elementi (128 posizioni)
-		jmp for_32
-
-
-for_8:
-		cmp rdx, 8	       ; Confronto n*m < 8  ? salta al for4
-		jl for_remain               ; Se mancano meno di 8 elementi vai alla gestione residuo
-
-		vmovaps ymm0,[rax]      ; copio i primi 8 valori di dest in ymm0
-		vaddps  ymm0,[rcx]      ; aggiungo a ymm0 i primi 8 valori di source
-		vmovaps [rax],ymm0      ; ricopio la somma dei primi 8 valori di dest e source in dest
-
-		sub rdx, 8             ;sottraggo gli 8 elementi già presi
-    add rax, 32            ;mi sposto di 8 elementi (32 posizioni)
-		add rcx, 32	       ;mi sposto di 8 elementi (32 posizioni)
-
-		jmp for_8              ; salto incondizionato tanto la condizione la vedo dopo
 
 
 for_remain:

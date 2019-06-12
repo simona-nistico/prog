@@ -1,4 +1,4 @@
-#include "pqnn32c.c"
+#include "pqnn64c.c"
 //La riga sopra viene cambiata in automatico a seconda del run che si lancia
 #include "utils.h"
 
