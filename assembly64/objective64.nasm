@@ -94,7 +94,7 @@ for_32:
 
 for_8:
     cmp rbx, 8	       ; Confronto n*m < 8  ? salta al for4
-		jl for_4               ; Se mancano meno di 8 elementi vai alla gestione residuo
+		jl for_remain               ; Se mancano meno di 8 elementi vai alla gestione residuo
 
 		vaddps ymm0, [rdx]
 
@@ -103,22 +103,13 @@ for_8:
 
 		jmp for_8              ; salto incondizionato tanto la condizione la vedo dopo
 
-for_4:
-		cmp rbx, 4	       ; Confronto n*m < 4 ? salta al residuo
-	  jl for_remain          ; Se mancano meno di 4 elementi vai alla gestione residuo
-
-		vmovaps xmm1, [rdx]
-		vaddps xmm0, xmm1       ;sum += distances_from_centroids 0...4
-
-		sub rbx, 4             ;sottraggo i 4 elementi già presi
-		add rdx, 16            ;mi sposto di 4 elementi (16 posizioni)
 
 for_remain:
 
 		cmp rbx, 0	    ; n*m == 0? fine
     je end
 
- 		vaddss xmm0, [rdx]    ; in xmm0 metto gli ultimi <4 valori di x1
+ 		addss xmm0, [rdx]    ; in xmm0 metto gli ultimi <4 valori di x1
 
 		dec rbx         ;sottraggo 1 elementi già preso
 		add rdx, 4     ;mi sposto di 1 elemento (4 posizioni)
