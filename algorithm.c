@@ -635,17 +635,25 @@ Searching time = 42.275 secs
 
   int d_star = input->d/input->m;
 
-	if(input->nr > input->n){
-		input->nr = input->n/2;
-	}
+  if(input->nr > input->n){
+    input->nr = input->n/2;
+  }
 
-	if(input->k > input->n){
-		input->k = input->n/16;
-	}
+  if(input->exaustive == 1 && input->k > input->n){
+    input->k = input->n/16;
+  }
 
-	if(input->kc > input->nr){
-		input->kc = input->nr/16;
-	}
+  if(input->exaustive == 0 && input->k > input->nr){
+    input->k = input->nr/16;
+  }
+
+  if(input->kc > input->nr){
+    input->kc = input->nr/16;
+  }
+
+  if(input->knn > input->nq){
+    input->knn = input->nq;
+  }
 
   //input->n = 20;
   //input->k = 4;
@@ -868,6 +876,7 @@ void NoExaSearchAsim(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centr
 	int* c_coarse = (int*) calloc(w, sizeof(int));
 
 	VECTOR dist;
+  VECTOR dist_c;
 	VECTOR res;
 	int j,g,l,p,inizio,centroide,min,max;
 	int d_star = d/m;
@@ -876,15 +885,15 @@ void NoExaSearchAsim(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centr
 //	printf("\nPunti di ciascun centroide coarse\n");
 //	print_matrix_int(kc,1,1,punti_caricati,'c');
 
-
+  dist_c = alloc_matrix(1,w);
+  dist = alloc_matrix(1,knn);
+  dist_cent = alloc_matrix(m,k);
   res = alloc_matrix(1,d);
 
 	for(int i=0;i<nq;i++){
 
-		dist = alloc_matrix(1,w);
-
 		// Settiamo il vettore delle distanze al massimo float rappresentabile
-		memset_float( dist, FLT_MAX, w);
+		memset_float( dist_c, FLT_MAX, w);
 
 
 		// Vediamo quali sono i centroidi coarse più vicini
@@ -898,15 +907,16 @@ void NoExaSearchAsim(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centr
 
 //			printf("\nDistanza dal centroide coarse: %f\n", distanza);
 
-			if(dist[0]>distanza){
+
+			if(dist_c[0]>distanza){
 				l = 0;
-				while(l<w-1 && dist[l+1]>distanza){
-					dist[l] = dist[l+1];
+				while(l<w-1 && dist_c[l+1]>distanza){
+					dist_c[l] = dist_c[l+1];
 					c_coarse[l] = c_coarse[l+1];
 					l++;
 				}// while
 
-				dist[l] = distanza;
+				dist_c[l] = distanza;
 				c_coarse[l] = j;
 			}// if
 		}// for j
@@ -920,13 +930,7 @@ void NoExaSearchAsim(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centr
 //		printf("\nMatrice delle distanze: \n");print_matrix(1,w,w,dist,'p');
 //		print_matrix(1,w,w,dist,'p');
 
-		dealloc_matrix(dist);
-
-		dist = alloc_matrix(1,knn);
-
 		memset_float( dist, FLT_MAX, knn);
-
-    dist_cent = alloc_matrix(m,k);
 
 //		print_matrix(1,knn,knn,dist,'p');
 
@@ -991,10 +995,9 @@ void NoExaSearchAsim(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centr
 	}//for i
 
 
-	dealloc_matrix(dist_cent);
-
-
 	free(c_coarse);
+  dealloc_matrix(dist_cent);
+  dealloc_matrix(dist_c);
 	dealloc_matrix(dist);
 	dealloc_matrix(res);
 
@@ -1012,6 +1015,7 @@ void NoExaSearchSim(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centro
 
 	int* quantization;
 	VECTOR dist;
+  VECTOR dist_c;
 	VECTOR res;
 	int j,g,l,p,inizio,centroide,min,max;
 	int d_star = d/m;
@@ -1022,13 +1026,13 @@ void NoExaSearchSim(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centro
 
 
   res = alloc_matrix(1,d);
+  dist_c = alloc_matrix(1,w);
+  dist = alloc_matrix(1,knn);
 
 	for(int i=0;i<nq;i++){
 
-		dist = alloc_matrix(1,w);
-
 		// Settiamo il vettore delle distanze al massimo float rappresentabile
-		memset_float( dist, FLT_MAX, w);
+		memset_float( dist_c, FLT_MAX, w);
 
 
 		// Vediamo quali sono i centroidi coarse più vicini
@@ -1042,15 +1046,15 @@ void NoExaSearchSim(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centro
 
 //			printf("\nDistanza dal centroide coarse: %f\n", distanza);
 
-			if(dist[0]>distanza){
+			if(dist_c[0]>distanza){
 				l = 0;
-				while(l<w-1 && dist[l+1]>distanza){
-					dist[l] = dist[l+1];
+				while(l<w-1 && dist_c[l+1]>distanza){
+					dist_c[l] = dist_c[l+1];
 					c_coarse[l] = c_coarse[l+1];
 					l++;
 				}// while
 
-				dist[l] = distanza;
+				dist_c[l] = distanza;
 				c_coarse[l] = j;
 			}// if
 		}// for j
@@ -1064,9 +1068,6 @@ void NoExaSearchSim(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centro
 //		printf("\nMatrice delle distanze: \n");print_matrix(1,w,w,dist,'p');
 //		print_matrix(1,w,w,dist,'p');
 
-		dealloc_matrix(dist);
-
-		dist = alloc_matrix(1,knn);
 
 		memset_float( dist, FLT_MAX, knn);
 
@@ -1131,11 +1132,12 @@ void NoExaSearchSim(MATRIX ds, MATRIX qs, MATRIX centroids, MATRIX coarse_centro
 
 	}//for i
 
+  dealloc_matrix(dist);
+  dealloc_matrix(dist_c);
 	free(quantization);
 
 
 	free(c_coarse);
-	dealloc_matrix(dist);
 	dealloc_matrix(res);
 
 	// TESTATA
