@@ -1,0 +1,18 @@
+nasm -f elf32 pqnn32_21.nasm
+
+for file in $(ls ./assembly | grep .nasm); do
+    nasm -f elf ./assembly/$file
+done
+
+sed -i '1s/.*/#include "pqnn32c_21.c"/' algorithm.c
+
+a[0]="assembly/accumulate.o"
+a[1]="assembly/distance.o"
+a[2]="assembly/divide.o"
+a[3]="assembly/memset_float.o"
+a[4]="assembly/objective.o"
+a[5]="assembly/residual.o"
+
+gcc -O0 -m32 -msse pqnn32_21.o ${a[*]} algorithm.c -o pqnn32c_21 -lm
+
+ ./pqnn32c_21 $1 $2 $3 $4 $5 $6 $7 $8 $9 ${10} ${11} ${12} ${13} ${14} ${15} ${16} ${17} ${18} ${19} ${20} ${21} ${22} ${23} ${24} ${25} ${26} ${27} ${28} ${29} ${30}

@@ -1,0 +1,18 @@
+nasm -f elf64 pqnn64_21.nasm
+
+for file in $(ls ./assembly64 | grep .nasm); do
+    nasm -f elf64 ./assembly64/$file
+done
+
+sed -i '1s/.*/#include "pqnn64c_21.c"/' algorithm.c
+
+a[0]="assembly64/accumulate64.o" #ok
+a[1]="assembly64/distance64.o"
+a[2]="assembly64/divide64.o" #ok
+a[3]="assembly64/memset_float64.o" #ok
+a[4]="assembly64/objective64.o"
+a[5]="assembly64/residual64.o"
+
+gcc -O0 -m64 -mavx pqnn64_21.o ${a[*]} algorithm.c -o pqnn64c_21 -lm
+
+./pqnn64c_21 $1 $2 $3 $4 $5 $6 $7 $8 $9 ${10} ${11} ${12} ${13} ${14} ${15} ${16} ${17} ${18} ${19} ${20} ${21} ${22} ${23} ${24} ${25} ${26} ${27} ${28} ${29} ${30}

@@ -1,0 +1,7 @@
+I file sorgente assembly *.nasm sono inseriti nelle cartelle "assembly" e "assembly64" per semplicità implementative.
+Il file "algorithm.c" contiene il codice sorgente scritto in C ed è lo stesso sia per la versione a 32-bit che per quella a 64-bit.
+Il file "utils.h" permette di abilitare o disabilitare i metodi implementati in assembly; è lo stesso per le due versioni.
+
+Entrambe i file "runpqnn*" provvedono a compilare, assemblare ed eseguire l'intero programma; sono stati scritti ad hoc e la loro modifica potrebbe non far funzionare il programma.
+
+Per ulteriori chiarimenti non esiti a contattarci.
