@@ -440,11 +440,12 @@ int main(int argc, char** argv) {
 		exit(1);
 	}
 
-	if(input->nr == 0)
-		input->nr = input->n/20;
 
 	sprintf(fname, "%s.ds", input->filename);
 	input->ds = load_data(fname, &input->n, &input->d, input->m);
+
+	if(input->nr == 0)
+		input->nr = input->n/20;
 
 	sprintf(fname, "%s.qs", input->filename);
 	input->qs = load_data(fname, &input->nq, &input->d, input->m);
