@@ -8,19 +8,15 @@
 
 #define	MATRIX float*
 #define	VECTOR float*
-/*
+
 float distance(VECTOR x1,VECTOR x2,int d){
 	float diff,sum = 0;
 	int i;
-	// Si lavora su gruppi di 4
-	for(i=0; i<=d-4; i+=4){
+	// Si lavora su gruppi di 2
+	for(i=0; i<=d-2; i+=2){
 		diff = x1[i]-x2[i];
 		sum += diff*diff;
 		diff = x1[i+1]-x2[i+1];
-		sum += diff*diff;
-		diff = x1[i+2]-x2[i+2];
-		sum += diff*diff;
-		diff = x1[i+3]-x2[i+3];
 		sum += diff*diff;
 	}
 
@@ -34,7 +30,7 @@ float distance(VECTOR x1,VECTOR x2,int d){
 
 	// TESTATA
 }//distance
-*/
+
 
 void brute_force(float* ds, float* qs, int n,int nq, int d, int knn){
 
